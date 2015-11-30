@@ -36,7 +36,19 @@ struct vec3f_s
 
 typedef struct vec3f_s vec3f_t;
 
+void vec3f_set(vec3f_t *r, double x, double y, double z);
+
 void vec3f_add(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
+void vec3f_sub(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
+void vec3f_neg(vec3f_t *r, const vec3f_t *v);
+
+double vec3f_dot(const vec3f_t *a, const vec3f_t *b);
+void vec3f_cross(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
+
+double vec3f_len(const vec3f_t *v);
+double vec3f_sqlen(const vec3f_t *v);
+
+double vec3f_tr(const vec3f_t *v);
 
 #ifdef __cplusplus
 }

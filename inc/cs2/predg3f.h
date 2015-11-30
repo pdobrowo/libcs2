@@ -46,8 +46,8 @@ struct predg3f_s
 
 typedef struct predg3f_s predg3f_t;
 
-void predg3f_from_predh3f(predg3f_t *r, const predh3f_t *p);
-void predg3f_from_preds3f(predg3f_t *r, const preds3f_t *p);
+void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h);
+void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s);
 
 #ifdef __cplusplus
 }

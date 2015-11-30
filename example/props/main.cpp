@@ -24,6 +24,8 @@
  */
 #include "cs2/vec3f.h"
 #include "cs2/vec3x.h"
+#include "cs2/spinquad3f.h"
+#include "cs2/predh3f.h"
 
 int main()
 {
@@ -47,6 +49,16 @@ int main()
     vec3x_clear(&u);
     vec3x_clear(&v);
     vec3x_clear(&w);
+
+    // test
+    predh3f_t p;
+
+    vec3f_set(&p.b, 1, 2, 3);
+    vec3f_set(&p.p.n, -1, -1, 2);
+    p.p.d = 1;
+
+    spinquad3f_t s;
+    spinquad3f_from_predh3f(&s, &p);
 
     return 0;
 }

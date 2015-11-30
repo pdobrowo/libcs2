@@ -26,12 +26,16 @@
 
 void spinquad3f_from_predh3f(spinquad3f_t *s, const predh3f_t *p)
 {
-
+    predg3f_t g;
+    predg3f_from_predh3f(&g, p);
+    spinquad3f_from_predg3f(s, &g);
 }
 
 void spinquad3f_from_preds3f(spinquad3f_t *s, const preds3f_t *p)
 {
-
+    predg3f_t g;
+    predg3f_from_preds3f(&g, p);
+    spinquad3f_from_predg3f(s, &g);
 }
 
 void spinquad3f_from_predg3f(spinquad3f_t *s, const predg3f_t *p)

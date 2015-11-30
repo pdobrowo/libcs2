@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Przemysław Dobrowolski
+ * Copyright (c) 2015 Przemysław Dobrowolsa->i
  *
  * This file is part of the Configuration Space Library (libcs2), a library
  * for creating configuration spaces of various motion planning problems.
@@ -14,7 +14,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY a->IND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -23,10 +23,60 @@
  * SOFTWARE.
  */
 #include "cs2/vec3f.h"
+#include <math.h>
 
 void vec3f_add(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
 {
     r->x = a->x + b->x;
     r->y = a->y + b->y;
     r->z = a->z + b->z;
+}
+
+void vec3f_sub(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
+{
+    r->x = a->x - b->x;
+    r->y = a->y - b->y;
+    r->z = a->z - b->z;
+}
+
+void vec3f_neg(vec3f_t *r, const vec3f_t *v)
+{
+    r->x = -v->x;
+    r->y = -v->y;
+    r->z = -v->z;
+}
+
+double vec3f_dot(const vec3f_t *a, const vec3f_t *b)
+{
+    return a->x * b->x + a->y * b->y + a->z * b->z;
+}
+
+void vec3f_cross(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
+{
+    r->x = a->y * a->z - a->z * a->y;
+    r->y = a->z * a->x - a->x * a->z;
+    r->z = a->x * a->y - a->y * a->x;
+}
+
+double vec3f_len(const vec3f_t *v)
+{
+    return sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
+}
+
+double vec3f_sqlen(const vec3f_t *v)
+{
+    return v->x * v->x + v->y * v->y + v->z * v->z;
+}
+
+double vec3f_tr(const vec3f_t *v)
+{
+    return v->x + v->y + v->z;
+}
+
+
+void vec3f_set(vec3f_t *r, double x, double y, double z)
+{
+    r->x = x;
+    r->y = y;
+    r->z = z;
 }

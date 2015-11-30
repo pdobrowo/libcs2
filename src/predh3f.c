@@ -23,8 +23,3 @@
  * SOFTWARE.
  */
 #include "cs2/predh3f.h"
-
-void predh3f_opposite(predh3f_t *r, const predh3f_t *a)
-{
-
-}
