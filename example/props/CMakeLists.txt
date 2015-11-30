@@ -23,7 +23,7 @@ set(props_HEADERS
 
 set(props_SOURCES
     ${props_HEADERS}
-    main.c
+    main.cpp
 )
 
 add_executable(props ${props_SOURCES})

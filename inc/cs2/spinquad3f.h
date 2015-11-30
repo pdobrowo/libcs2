@@ -22,32 +22,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/vec3x.h"
+#ifndef LIBCS2_SPINQUAD3F_H
+#define LIBCS2_SPINQUAD3F_H
 
-void vec3x_init(vec3x_t *v)
-{
-    mpz_init(v->x);
-    mpz_init(v->y);
-    mpz_init(v->z);
-}
+#include "predh3f.h"
+#include "preds3f.h"
+#include "predg3f.h"
 
-void vec3x_clear(vec3x_t *v)
-{
-    mpz_clear(v->x);
-    mpz_clear(v->y);
-    mpz_clear(v->z);
-}
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-void vec3x_set_si(vec3x_t *v, long x, long y, long z)
+/**
+ * spin quadric:
+ *
+ *    F(s) = a11 * s12^2 + a22 * s23^2 + a33 * s31^2 + a44 * s0^2
+ *           + 2 (a12 * s12 * s23 + a13 * s12 * s31 + a14 * s12 * s0
+ *              + a23 * s23 * s31 + a24 * s23 * s0 + a34 * s31 * s0)
+ *
+ *          | a11 a12 a13 a14 |
+ *    Q_s = | a12 a22 a23 a24 |
+ *          | a13 a23 a33 a34 |
+ *          | a14 a24 a34 a44 |
+ *
+ *    s = [s12; s23, s31; s0]^T
+ *
+ *    F(s) = s^T Q_s s
+ *
+ *    s12^2 + s23^2 + s31^2 + s0^2 = 1
+ */
+struct spinquad3f_s
 {
-    mpz_set_si(v->x, x);
-    mpz_set_si(v->y, y);
-    mpz_set_si(v->z, z);
-}
+    double a11, a22, a33, a44, a12, a13, a14, a23, a24, a34;
+};
 
-void vec3x_add(vec3x_t *r, const vec3x_t *a, const vec3x_t *b)
-{
-    mpz_add(r->x, a->x, b->x);
-    mpz_add(r->y, a->y, b->y);
-    mpz_add(r->z, a->z, b->z);
+typedef struct spinquad3f_s spinquad3f_t;
+
+void spinquad3f_from_predh3f(spinquad3f_t *s, const predh3f_t *p);
+void spinquad3f_from_preds3f(spinquad3f_t *s, const preds3f_t *p);
+void spinquad3f_from_predg3f(spinquad3f_t *s, const predg3f_t *p);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
+
+#endif /* LIBCS2_SPINQUAD3F_H */

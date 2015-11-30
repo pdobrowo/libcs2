@@ -34,14 +34,31 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 # inc
 set(cs2_HEADERS
+    # floating-point arithmetic
     inc/cs2/vec3f.h
+    inc/cs2/plane3f.h
+    inc/cs2/spinquad3f.h
+    inc/cs2/predh3f.h
+    inc/cs2/preds3f.h
+    inc/cs2/predg3f.h
+
+    # exact integer arithmetic
     inc/cs2/vec3x.h
 )
 
 # src
 set(cs2_SOURCES
     ${cs2_HEADERS}
+
+    # floating-point arithmetic
     src/vec3f.c
+    src/plane3f.c
+    src/spinquad3f.c
+    src/predh3f.c
+    src/preds3f.c
+    src/predg3f.c
+
+    # exact integer arithmetic
     src/vec3x.c
 )
 

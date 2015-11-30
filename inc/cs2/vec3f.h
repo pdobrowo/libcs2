@@ -1,8 +1,8 @@
 /**
- *
- * The MIT License (MIT)
- *
  * Copyright (c) 2015 Przemysław Dobrowolski
+ *
+ * This file is part of the Configuration Space Library (libcs2), a library
+ * for creating configuration spaces of various motion planning problems.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,10 @@
 #ifndef LIBCS2_VEC3F_H
 #define LIBCS2_VEC3F_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 struct vec3f_s
 {
     double x, y, z;
@@ -33,5 +37,9 @@ struct vec3f_s
 typedef struct vec3f_s vec3f_t;
 
 void vec3f_add(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* LIBCS2_VEC3F_H */
