@@ -22,32 +22,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/vec3x.h"
+#ifndef LIBCS2_VEC4F_H
+#define LIBCS2_VEC4F_H
 
-void vec3x_init(vec3x_t *v)
-{
-    mpz_init(v->x);
-    mpz_init(v->y);
-    mpz_init(v->z);
-}
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-void vec3x_clear(vec3x_t *v)
+struct vec4f_s
 {
-    mpz_clear(v->x);
-    mpz_clear(v->y);
-    mpz_clear(v->z);
-}
+    double x, y, z, w;
+};
 
-void vec3x_set_si(vec3x_t *v, long x, long y, long z)
-{
-    mpz_set_si(v->x, x);
-    mpz_set_si(v->y, y);
-    mpz_set_si(v->z, z);
-}
+typedef struct vec4f_s vec4f_t;
 
-void vec3x_add(vec3x_t *r, const vec3x_t *a, const vec3x_t *b)
-{
-    mpz_add(r->x, a->x, b->x);
-    mpz_add(r->y, a->y, b->y);
-    mpz_add(r->z, a->z, b->z);
+void vec4f_set(vec4f_t *r, double x, double y, double z, double w);
+void vec4f_zero(vec4f_t *r);
+
+void vec4f_add(vec4f_t *r, const vec4f_t *a, const vec4f_t *b);
+void vec4f_sub(vec4f_t *r, const vec4f_t *a, const vec4f_t *b);
+void vec4f_neg(vec4f_t *r, const vec4f_t *v);
+void vec4f_mul(vec4f_t *r, const vec4f_t *a, double as);
+
+void vec4f_mad2(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs);
+void vec4f_mad3(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs, const vec4f_t *c, double cs);
+void vec4f_mad4(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs, const vec4f_t *c, double cs, const vec4f_t *d, double ds);
+void vec4f_mad5(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs, const vec4f_t *c, double cs, const vec4f_t *d, double ds, const vec4f_t *e, double es);
+
+double vec4f_dot(const vec4f_t *a, const vec4f_t *b);
+
+double vec4f_len(const vec4f_t *v);
+double vec4f_sqlen(const vec4f_t *v);
+
+double vec4f_tr(const vec4f_t *v);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
+
+#endif /* LIBCS2_VEC4F_H */

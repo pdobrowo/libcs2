@@ -2,7 +2,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Przemysław Dobrowolski
+ * Copyright (c) 2015-2016 Przemysław Dobrowolski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,6 +59,18 @@ int main()
 
     spinquad3f_t s;
     spinquad3f_from_predh3f(&s, &p);
+
+    predg3f_t g = { { 1, 2, 3 }, { -1, 0, 2 }, { 4, 2, -2 }, { 0, -2, 3 }, 1 };
+    predgtype3f_e gt = predg3f_type(&g);
+    (void)gt;
+
+    predgparam3f_t par;
+    predg3f_param(&par, &g);
+
+    spin3f_t sp;
+    predgparam3f_eval(&sp, &par, 0.5, 0.3);
+
+    double chk = sp.s12 * sp.s12 + sp.s23 * sp.s23 + sp.s31 * sp.s31 + sp.s0 * sp.s0;
 
     return 0;
 }

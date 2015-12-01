@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Przemysław Dobrowolski
+ * Copyright (c) 2015-2016 Przemysław Dobrowolski
  *
  * This file is part of the Configuration Space Library (libcs2), a library
  * for creating configuration spaces of various motion planning problems.
@@ -28,6 +28,7 @@
 #include "vec3f.h"
 #include "predh3f.h"
 #include "preds3f.h"
+#include "spin3f.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +49,30 @@ typedef struct predg3f_s predg3f_t;
 
 void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h);
 void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s);
+
+/* type */
+enum predgtype3f_e
+{
+    predgtype3f_inproper,
+    predgtype3f_proper_ellipsoidal,
+    predgtype3f_proper_cylindrical
+};
+
+typedef enum predgtype3f_e predgtype3f_t;
+
+predgtype3f_t predg3f_type(const predg3f_t *g);
+
+/* parametrization */
+struct predgparam3f_s
+{
+    double q[4][4];
+    double r12, r23, r31;
+};
+
+typedef struct predgparam3f_s predgparam3f_t;
+
+void predg3f_param(predgparam3f_t *pp, const predg3f_t *g);
+void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v);
 
 #ifdef __cplusplus
 }
