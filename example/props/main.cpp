@@ -26,6 +26,7 @@
 #include "cs2/vec3x.h"
 #include "cs2/spinquad3f.h"
 #include "cs2/predh3f.h"
+#include <cstdio>
 
 int main()
 {
@@ -64,13 +65,37 @@ int main()
     predgtype3f_e gt = predg3f_type(&g);
     (void)gt;
 
+    spinquad3f_t gs;
+    spinquad3f_from_predg3f(&gs, &g);
+
+    mat44f_t em;
+    vec4f_t ev;
+    predg3f_eigen(&em, &ev, &g);
+
     predgparam3f_t par;
     predg3f_param(&par, &g);
 
-    spin3f_t sp;
-    predgparam3f_eval(&sp, &par, 0.5, 0.3);
+    double chk_min = 999;
+    double chk_max = -999;
 
-    double chk = sp.s12 * sp.s12 + sp.s23 * sp.s23 + sp.s31 * sp.s31 + sp.s0 * sp.s0;
+    for (double pu = 0; pu <= 1; pu += 0.1) for (double pv = 0; pv <= 1; pv += 0.1)
+    {
+        spin3f_t sp;
+        predgparam3f_eval(&sp, &par, pu, pv);
+
+        double chk = sp.s12 * sp.s12 + sp.s23 * sp.s23 + sp.s31 * sp.s31 + sp.s0 * sp.s0;
+
+        printf("chk: %20lf\n", chk);
+
+        if (chk < chk_min)
+            chk_min = chk;
+
+        if (chk > chk_max)
+            chk_max = chk;
+    }
+
+    printf("chk_min: %.20lf\n", chk_min);
+    printf("chk_max: %.20lf\n", chk_max);
 
     return 0;
 }

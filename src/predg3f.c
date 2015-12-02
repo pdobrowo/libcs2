@@ -27,6 +27,8 @@
 #include <math.h>
 #include <assert.h>
 
+#define PI (3.1415926535897932385)
+
 static int almost_zero(const vec3f_t *v)
 {
     static const double EPS = 10e-8;
@@ -66,7 +68,7 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
     double trq = vec3f_tr(q);
     double tru = vec3f_tr(u);
     double trv = vec3f_tr(v);
-    double l = a * vec3f_len(p) * vec3f_len(q) + b * vec3f_len(u) * vec3f_len(v);
+    double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
 
     vec3f_t pxq, uxv, pxu, qxv, t, r, d;
     vec3f_t j = { 1, 1, 1 };
@@ -137,7 +139,9 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
 
     vec3f_mad4(&t, p, trq, q, trp, u, trv, v, tru);
 
-    w->w = l * (vec3f_dot(&t, &r) - 2 * (a * sqrt(uu) * sqrt(vv) * vec3f_tr(&pxq) + b * sqrt(pp) * sqrt(qq) * vec3f_tr(&uxv)));
+    w->w = - vec3f_dot(&r, &d) / (pq + uv + l);
+
+    /* foolish way: q->w = l * (vec3f_dot(&t, &r) - 2 * (a * sqrt(uu) * sqrt(vv) * vec3f_tr(&pxq) + b * sqrt(pp) * sqrt(qq) * vec3f_tr(&uxv))) */
 }
 
 void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
@@ -184,11 +188,7 @@ predgtype3f_t predg3f_type(const predg3f_t *g)
 void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
 {
     vec3f_t p, q, u, v;
-    vec4f_t w1, w2, w3, w4;
-    double pl, ql, ul, vl, su, w1l, w2l, w3l, w4l;
-
-    /* only ellipsoidal param for now */
-    assert(predg3f_type(g) == predgtype3f_proper_ellipsoidal);
+    double pl, ql, ul, vl, su;
 
     calc_pquv(&p, &q, &u, &v, g);
 
@@ -204,46 +204,80 @@ void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
     pp->r31 = sqrt((g->c + su) / (2 * ul * vl));
 
     /* matrix q */
-    calc_w(&w1, &p, &q, &u, &v, 1, 1);
-    calc_w(&w2, &p, &q, &u, &v, 1, -1);
-    calc_w(&w3, &p, &q, &u, &v, -1, 1);
-    calc_w(&w4, &p, &q, &u, &v, -1, -1);
-
-    w1l = vec4f_len(&w1);
-    w2l = vec4f_len(&w2);
-    w3l = vec4f_len(&w3);
-    w4l = vec4f_len(&w4);
-
-    pp->q[0][0] = w1.x / w1l;
-    pp->q[1][0] = w1.y / w1l;
-    pp->q[2][0] = w1.z / w1l;
-    pp->q[3][0] = w1.w / w1l;
-
-    pp->q[0][1] = w2.x / w2l;
-    pp->q[1][1] = w2.y / w2l;
-    pp->q[2][1] = w2.z / w2l;
-    pp->q[3][1] = w2.w / w2l;
-
-    pp->q[0][2] = w3.x / w3l;
-    pp->q[1][2] = w3.y / w3l;
-    pp->q[2][2] = w3.z / w3l;
-    pp->q[3][2] = w3.w / w3l;
-
-    pp->q[0][3] = w4.x / w4l;
-    pp->q[1][3] = w4.y / w4l;
-    pp->q[2][3] = w4.z / w4l;
-    pp->q[3][3] = w4.w / w4l;
+    predg3f_eigen(&pp->q, 0, g);
 }
 
 void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v)
 {
-    double t12 = pp->r12 * sin(u) * cos(v);
-    double t23 = pp->r23 * sin(u) * sin(v);
-    double t31 = pp->r31 * cos(u);
+    double a = u * PI;
+    double b = v * 2 * PI;
+    double t12 = pp->r12 * sin(a) * cos(b);
+    double t23 = pp->r23 * sin(a) * sin(b);
+    double t31 = pp->r31 * cos(a);
     double t0 = sqrt(1 - t12 * t12 - t23 * t23 - t31 * t31);
 
-    s->s12 = pp->q[0][0] * t12 + pp->q[0][1] * t23 + pp->q[0][2] * t31 + pp->q[0][3] * t0;
-    s->s23 = pp->q[1][0] * t12 + pp->q[1][1] * t23 + pp->q[1][2] * t31 + pp->q[1][3] * t0;
-    s->s31 = pp->q[2][0] * t12 + pp->q[2][1] * t23 + pp->q[2][2] * t31 + pp->q[2][3] * t0;
-    s->s0 = pp->q[3][0] * t12 + pp->q[3][1] * t23 + pp->q[3][2] * t31 + pp->q[3][3] * t0;
+    s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
+    s->s23 = pp->q.m[1][0] * t12 + pp->q.m[1][1] * t23 + pp->q.m[1][2] * t31 + pp->q.m[1][3] * t0;
+    s->s31 = pp->q.m[2][0] * t12 + pp->q.m[2][1] * t23 + pp->q.m[2][2] * t31 + pp->q.m[2][3] * t0;
+    s->s0 = pp->q.m[3][0] * t12 + pp->q.m[3][1] * t23 + pp->q.m[3][2] * t31 + pp->q.m[3][3] * t0;
+}
+
+void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
+{
+    vec3f_t p, q, u, v;
+    vec4f_t w1, w2, w3, w4;
+    double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
+
+    calc_pquv(&p, &q, &u, &v, g);
+
+    /* eigenvalues */
+    if (e)
+    {
+        pl = vec3f_len(&p);
+        ql = vec3f_len(&q);
+        ul = vec3f_len(&u);
+        vl = vec3f_len(&v);
+
+        e->x = g->c - (pl * ql + ul * vl);
+        e->y = g->c - (pl * ql - ul * vl);
+        e->z = g->c - (- pl * ql + ul * vl);
+        e->w = g->c - (- pl * ql - ul * vl);
+    }
+
+    /* eigenvectors */
+    if (m)
+    {
+        /* only ellipsoidal param for now */
+        assert(predg3f_type(g) == predgtype3f_proper_ellipsoidal);
+
+        calc_w(&w1, &p, &q, &u, &v, 1, 1);
+        calc_w(&w2, &p, &q, &u, &v, 1, -1);
+        calc_w(&w3, &p, &q, &u, &v, -1, 1);
+        calc_w(&w4, &p, &q, &u, &v, -1, -1);
+
+        w1l = vec4f_len(&w1);
+        w2l = vec4f_len(&w2);
+        w3l = vec4f_len(&w3);
+        w4l = vec4f_len(&w4);
+
+        m->m[0][0] = w1.x / w1l;
+        m->m[1][0] = w1.y / w1l;
+        m->m[2][0] = w1.z / w1l;
+        m->m[3][0] = w1.w / w1l;
+
+        m->m[0][1] = w2.x / w2l;
+        m->m[1][1] = w2.y / w2l;
+        m->m[2][1] = w2.z / w2l;
+        m->m[3][1] = w2.w / w2l;
+
+        m->m[0][2] = w3.x / w3l;
+        m->m[1][2] = w3.y / w3l;
+        m->m[2][2] = w3.z / w3l;
+        m->m[3][2] = w3.w / w3l;
+
+        m->m[0][3] = w4.x / w4l;
+        m->m[1][3] = w4.y / w4l;
+        m->m[2][3] = w4.z / w4l;
+        m->m[3][3] = w4.w / w4l;
+    }
 }
