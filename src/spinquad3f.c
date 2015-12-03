@@ -24,37 +24,37 @@
  */
 #include "cs2/spinquad3f.h"
 
-void spinquad3f_from_predh3f(spinquad3f_t *s, const predh3f_t *p)
+void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph)
 {
     predg3f_t g;
-    predg3f_from_predh3f(&g, p);
-    spinquad3f_from_predg3f(s, &g);
+    predg3f_from_predh3f(&g, ph);
+    spinquad3f_from_predg3f(sq, &g);
 }
 
-void spinquad3f_from_preds3f(spinquad3f_t *s, const preds3f_t *p)
+void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps)
 {
     predg3f_t g;
-    predg3f_from_preds3f(&g, p);
-    spinquad3f_from_predg3f(s, &g);
+    predg3f_from_preds3f(&g, ps);
+    spinquad3f_from_predg3f(sq, &g);
 }
 
-void spinquad3f_from_predg3f(spinquad3f_t *s, const predg3f_t *p)
+void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg)
 {
-    double kx = p->k.x;
-    double ky = p->k.y;
-    double kz = p->k.z;
+    double kx = pg->k.x;
+    double ky = pg->k.y;
+    double kz = pg->k.z;
 
-    double lx = p->l.x;
-    double ly = p->l.y;
-    double lz = p->l.z;
+    double lx = pg->l.x;
+    double ly = pg->l.y;
+    double lz = pg->l.z;
 
-    double ax = p->a.x;
-    double ay = p->a.y;
-    double az = p->a.z;
+    double ax = pg->a.x;
+    double ay = pg->a.y;
+    double az = pg->a.z;
 
-    double bx = p->b.x;
-    double by = p->b.y;
-    double bz = p->b.z;
+    double bx = pg->b.x;
+    double by = pg->b.y;
+    double bz = pg->b.z;
 
     /* p, q, u, v */
     double px = ky * lz - kz * ly;
@@ -95,20 +95,35 @@ void spinquad3f_from_predg3f(spinquad3f_t *s, const predg3f_t *p)
     double uzvz = uz * vz;
 
     /* base spin quadric */
-    s->a11 = - uxvx - uyvy + uzvz - pxqx - pyqy + pzqz; /* s12^2 */
-    s->a22 =   uxvx - uyvy - uzvz + pxqx - pyqy - pzqz; /* s23^2 */
-    s->a33 = - uxvx + uyvy - uzvz - pxqx + pyqy - pzqz; /* s31^2 */
-    s->a44 =   uxvx + uyvy + uzvz + pxqx + pyqy + pzqz; /* s0^2 */
-    s->a12 =   uxvz + pzqx + uzvx + pxqz; /* s23 s12 */
-    s->a13 =   uyvz + pzqy + uzvy + pyqz; /* s31 s12 */
-    s->a14 =   uxvy - uyvx - pyqx + pxqy; /* s0 s12 */
-    s->a23 =   uxvy + uyvx + pyqx + pxqy; /* s23 s31 */
-    s->a24 =   uyvz - pzqy - uzvy + pyqz; /* s23 s0 */
-    s->a34 = - uxvz + pzqx + uzvx - pxqz; /* s0 s31 */
+    sq->a11 = - uxvx - uyvy + uzvz - pxqx - pyqy + pzqz; /* s12^2 */
+    sq->a22 =   uxvx - uyvy - uzvz + pxqx - pyqy - pzqz; /* s23^2 */
+    sq->a33 = - uxvx + uyvy - uzvz - pxqx + pyqy - pzqz; /* s31^2 */
+    sq->a44 =   uxvx + uyvy + uzvz + pxqx + pyqy + pzqz; /* s0^2 */
+    sq->a12 =   uxvz + pzqx + uzvx + pxqz; /* s23 s12 */
+    sq->a13 =   uyvz + pzqy + uzvy + pyqz; /* s31 s12 */
+    sq->a14 =   uxvy - uyvx - pyqx + pxqy; /* s0 s12 */
+    sq->a23 =   uxvy + uyvx + pyqx + pxqy; /* s23 s31 */
+    sq->a24 =   uyvz - pzqy - uzvy + pyqz; /* s23 s0 */
+    sq->a34 = - uxvz + pzqx + uzvx - pxqz; /* s0 s31 */
 
     /* reduced spin-quadric */
-    s->a11 += p->c;
-    s->a22 += p->c;
-    s->a33 += p->c;
-    s->a44 += p->c;
+    sq->a11 += pg->c;
+    sq->a22 += pg->c;
+    sq->a33 += pg->c;
+    sq->a44 += pg->c;
+}
+
+
+double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s)
+{
+    return sq->a11 * s->s12 * s->s12 +
+           sq->a22 * s->s23 * s->s23 +
+           sq->a33 * s->s31 * s->s31 +
+           sq->a44 * s->s0 * s->s0 +
+           2 * (sq->a12 * s->s12 * s->s23 +
+                sq->a13 * s->s12 * s->s31 +
+                sq->a14 * s->s12 * s->s0 +
+                sq->a23 * s->s23 * s->s31 +
+                sq->a24 * s->s23 * s->s0 +
+                sq->a34 * s->s31 * s->s0);
 }

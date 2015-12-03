@@ -58,9 +58,11 @@ struct spinquad3f_s
 
 typedef struct spinquad3f_s spinquad3f_t;
 
-void spinquad3f_from_predh3f(spinquad3f_t *s, const predh3f_t *p);
-void spinquad3f_from_preds3f(spinquad3f_t *s, const preds3f_t *p);
-void spinquad3f_from_predg3f(spinquad3f_t *s, const predg3f_t *p);
+void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph);
+void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps);
+void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg);
+
+double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s);
 
 #ifdef __cplusplus
 }

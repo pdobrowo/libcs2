@@ -75,27 +75,38 @@ int main()
     predgparam3f_t par;
     predg3f_param(&par, &g);
 
-    double chk_min = 999;
-    double chk_max = -999;
+    double sqnorm_min = 999;
+    double sqnorm_max = -999;
+    double val_min = 999;
+    double val_max = -999;
 
-    for (double pu = 0; pu <= 1; pu += 0.1) for (double pv = 0; pv <= 1; pv += 0.1)
+    for (double pu = 0; pu < 1; pu += 0.01) for (double pv = 0; pv < 1; pv += 0.01)
     {
         spin3f_t sp;
         predgparam3f_eval(&sp, &par, pu, pv);
 
-        double chk = sp.s12 * sp.s12 + sp.s23 * sp.s23 + sp.s31 * sp.s31 + sp.s0 * sp.s0;
+        double sqnorm = sp.s12 * sp.s12 + sp.s23 * sp.s23 + sp.s31 * sp.s31 + sp.s0 * sp.s0;
 
-        printf("chk: %20lf\n", chk);
+        if (sqnorm < sqnorm_min)
+            sqnorm_min = sqnorm;
 
-        if (chk < chk_min)
-            chk_min = chk;
+        if (sqnorm > sqnorm_max)
+            sqnorm_max = sqnorm;
 
-        if (chk > chk_max)
-            chk_max = chk;
+        double val = spinquad3f_eval(&gs, &sp);
+
+        if (val < val_min)
+            val_min = val;
+
+        if (val > val_max)
+            val_max = val;
     }
 
-    printf("chk_min: %.20lf\n", chk_min);
-    printf("chk_max: %.20lf\n", chk_max);
+    printf("sqnorm_min: %.20lf\n", sqnorm_min);
+    printf("sqnorm_max: %.20lf\n", sqnorm_max);
+
+    printf("val_min: %.20lf\n", val_min);
+    printf("val_max: %.20lf\n", val_max);
 
     return 0;
 }
