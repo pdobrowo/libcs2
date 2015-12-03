@@ -326,12 +326,12 @@ void RenderView::drawGradientBackground()
     // Autodesk Maya 2011 background
     glBegin(GL_QUADS);
         glColor3ub(125, 145, 165);
-        glVertex2i(-1, 1);
         glVertex2i( 1, 1);
+        glVertex2i(-1, 1);
 
         glColor3ub(26, 27, 29);
-        glVertex2i( 1, -1);
         glVertex2i(-1, -1);
+        glVertex2i( 1, -1);
     glEnd();
 
     glPopMatrix();

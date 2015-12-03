@@ -56,7 +56,31 @@
      <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuCamera">
+    <property name="title">
+     <string>&amp;Camera</string>
+    </property>
+    <addaction name="actionArcballCamera"/>
+    <addaction name="actionFreeCamera"/>
+    <addaction name="actionAutoCamera"/>
+   </widget>
+   <addaction name="menuCamera"/>
   </widget>
+  <action name="actionArcballCamera">
+   <property name="text">
+    <string>&amp;Arcball</string>
+   </property>
+  </action>
+  <action name="actionFreeCamera">
+   <property name="text">
+    <string>&amp;Free</string>
+   </property>
+  </action>
+  <action name="actionAutoCamera">
+   <property name="text">
+    <string>A&amp;uto</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

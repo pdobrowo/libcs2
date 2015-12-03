@@ -22,7 +22,7 @@
 #include <GL/gl.h>
 
 // settings
-#define DRAW_NORMALS    0
+#define DRAW_NORMALS    1
 #define DRAW_OUTLINES   1
 #define FLAT_SHADING    1
 
