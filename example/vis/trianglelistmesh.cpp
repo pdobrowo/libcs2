@@ -21,15 +21,78 @@
 #include <QVector3D>
 #include <GL/gl.h>
 
-// settings
-#define DRAW_NORMALS    1
-#define DRAW_OUTLINES   1
 #define FLAT_SHADING    1
 
 TriangleListMesh::TriangleListMesh(QGLWidget *gl, TriangleListPtr triangleList)
     : Mesh(gl),
       m_triangleList(triangleList)
 {
+}
+
+void TriangleListMesh::renderOutlines()
+{
+    // draw outlines
+    glColor3ub(100, 100, 100);
+
+    glBegin(GL_LINES);
+
+    for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
+    {
+        const Triangle &triangle = *iterator;
+
+        QVector3D vertex_a(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
+        QVector3D vertex_b(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
+        QVector3D vertex_c(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
+
+        QVector3D plane_normal = QVector3D::crossProduct(vertex_b - vertex_a, vertex_c - vertex_a);
+        plane_normal /= plane_normal.length();
+
+        glNormal3d(plane_normal.x(), plane_normal.y(), plane_normal.z());
+
+        glVertex3d(vertex_a.x(), vertex_a.y(), vertex_a.z());
+        glVertex3d(vertex_b.x(), vertex_b.y(), vertex_b.z());
+
+        glVertex3d(vertex_b.x(), vertex_b.y(), vertex_b.z());
+        glVertex3d(vertex_c.x(), vertex_c.y(), vertex_c.z());
+
+        glVertex3d(vertex_c.x(), vertex_c.y(), vertex_c.z());
+        glVertex3d(vertex_a.x(), vertex_a.y(), vertex_a.z());
+    }
+
+    glEnd();
+}
+
+void TriangleListMesh::renderNormals()
+{
+    // draw normals
+    glColor3ub(255, 127, 0);
+
+    glBegin(GL_LINES);
+
+    for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
+    {
+        const Triangle &triangle = *iterator;
+
+        QVector3D vertex_a(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
+        QVector3D vertex_b(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
+        QVector3D vertex_c(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
+
+        QVector3D normal(triangle.normal().x(), triangle.normal().y(), triangle.normal().z());
+        normal /= normal.length();
+
+        const double SCALE = 0.05;
+
+        glVertex3d(vertex_a.x(), vertex_a.y(), vertex_a.z());
+        glVertex3d(vertex_a.x() + SCALE * normal.x(), vertex_a.y() + SCALE * normal.y(), vertex_a.z() + SCALE * normal.z());
+
+        glVertex3d(vertex_b.x(), vertex_b.y(), vertex_b.z());
+        glVertex3d(vertex_b.x() + SCALE * normal.x(), vertex_b.y() + SCALE * normal.y(), vertex_b.z() + SCALE * normal.z());
+
+        glVertex3d(vertex_c.x(), vertex_c.y(), vertex_c.z());
+        glVertex3d(vertex_c.x() + SCALE * normal.x(), vertex_c.y() + SCALE * normal.y(), vertex_c.z() + SCALE * normal.z());
+    }
+
+    glEnd();
 }
 
 void TriangleListMesh::drawMesh()
@@ -84,72 +147,4 @@ void TriangleListMesh::drawTriangleList()
     }
 
     glEnd();
-
-#if DRAW_OUTLINES
-
-    // draw outlines
-    glColor3ub(100, 100, 100);
-
-    glBegin(GL_LINES);
-
-    for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
-    {
-        const Triangle &triangle = *iterator;
-
-        QVector3D vertex_a(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
-        QVector3D vertex_b(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
-        QVector3D vertex_c(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
-
-        QVector3D plane_normal = QVector3D::crossProduct(vertex_b - vertex_a, vertex_c - vertex_a);
-        plane_normal /= plane_normal.length();
-
-        glNormal3d(plane_normal.x(), plane_normal.y(), plane_normal.z());
-
-        glVertex3d(vertex_a.x(), vertex_a.y(), vertex_a.z());
-        glVertex3d(vertex_b.x(), vertex_b.y(), vertex_b.z());
-
-        glVertex3d(vertex_b.x(), vertex_b.y(), vertex_b.z());
-        glVertex3d(vertex_c.x(), vertex_c.y(), vertex_c.z());
-
-        glVertex3d(vertex_c.x(), vertex_c.y(), vertex_c.z());
-        glVertex3d(vertex_a.x(), vertex_a.y(), vertex_a.z());
-    }
-
-    glEnd();
-
-#endif // DRAW_OUTLINES
-
-#if DRAW_NORMALS
-
-    // draw normals
-    glColor3ub(255, 127, 0);
-
-    glBegin(GL_LINES);
-
-    for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
-    {
-        const Triangle &triangle = *iterator;
-
-        QVector3D vertex_a(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
-        QVector3D vertex_b(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
-        QVector3D vertex_c(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
-
-        QVector3D normal(triangle.normal().x(), triangle.normal().y(), triangle.normal().z());
-        normal /= normal.length();
-
-        const double SCALE = 0.05;
-
-        glVertex3d(vertex_a.x(), vertex_a.y(), vertex_a.z());
-        glVertex3d(vertex_a.x() + SCALE * normal.x(), vertex_a.y() + SCALE * normal.y(), vertex_a.z() + SCALE * normal.z());
-
-        glVertex3d(vertex_b.x(), vertex_b.y(), vertex_b.z());
-        glVertex3d(vertex_b.x() + SCALE * normal.x(), vertex_b.y() + SCALE * normal.y(), vertex_b.z() + SCALE * normal.z());
-
-        glVertex3d(vertex_c.x(), vertex_c.y(), vertex_c.z());
-        glVertex3d(vertex_c.x() + SCALE * normal.x(), vertex_c.y() + SCALE * normal.y(), vertex_c.z() + SCALE * normal.z());
-    }
-
-    glEnd();
-
-#endif // DRAW_NORMALS
 }

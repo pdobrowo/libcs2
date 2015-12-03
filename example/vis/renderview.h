@@ -72,6 +72,8 @@ public:
                      QColor color);
 
     void    render(bool wireframe);
+    void    renderOutlines();
+    void    renderNormals();
 
     void    setColor(QColor color);
     QColor  color() const;

@@ -72,6 +72,9 @@ class TriangleListMesh
 public:
     TriangleListMesh(QGLWidget *gl, TriangleListPtr triangleList);
 
+    void renderOutlines();
+    void renderNormals();
+
 private:
     TriangleListPtr m_triangleList;
 

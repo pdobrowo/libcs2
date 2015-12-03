@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // setup
     m_rv = new RenderView();
 
-    m_rv->setCaption("cspace");
+    m_rv->setCaption("S^4->(st.proj.)->R^3");
     m_rv->setCullingEnabled(true);
 
     ui->widgetView->layout()->addWidget(m_rv);
@@ -31,14 +31,16 @@ MainWindow::MainWindow(QWidget *parent) :
     predgparam3f_t param;
     predg3f_param(&param, &pred);
 
-    for (double pu = 0; pu < 1; pu += 0.01) for (double pv = 0; pv < 1; pv += 0.01)
+    const static double STEP = 0.02;
+
+    for (double pu = 0; pu < 1; pu += STEP) for (double pv = 0; pv < 1; pv += STEP)
     {
         spin3f_t sp00, sp01, sp10, sp11;
 
         predgparam3f_eval(&sp00, &param, pu, pv);
-        predgparam3f_eval(&sp01, &param, pu, pv + 0.01);
-        predgparam3f_eval(&sp10, &param, pu + 0.01, pv);
-        predgparam3f_eval(&sp11, &param, pu + 0.01, pv + 0.01);
+        predgparam3f_eval(&sp01, &param, pu, pv + STEP);
+        predgparam3f_eval(&sp10, &param, pu + STEP, pv);
+        predgparam3f_eval(&sp11, &param, pu + STEP, pv + STEP);
 
         QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
         QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));

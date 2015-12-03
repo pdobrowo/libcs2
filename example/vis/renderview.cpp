@@ -367,6 +367,7 @@ void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)
 
 void RenderView::renderMeshes()
 {
+    // draw bodies
     if (m_wireframe)
     {
         // wireframe rendering
@@ -391,6 +392,13 @@ void RenderView::renderMeshes()
 
     m_perPixelLightingShader->unbind();
     glDisable(GL_LIGHTING);
+
+    // draw unlit attributes: outlines, normals etc.
+    for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
+    {
+        it->second->renderOutlines();
+        it->second->renderNormals();
+    }
 }
 
 void RenderView::setTriangleListVisible(TriangleListPtr triangleList, bool visible)
@@ -572,6 +580,34 @@ void TriangleListData::render(bool wireframe)
 
     if (wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void TriangleListData::renderOutlines()
+{
+    // check visibility
+    if (!m_visible)
+        return;
+
+    // draw outlines
+    glPushMatrix();
+        glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+        applyRotationGL(m_quaternion);
+        m_renderObject.renderOutlines();
+    glPopMatrix();
+}
+
+void TriangleListData::renderNormals()
+{
+    // check visibility
+    if (!m_visible)
+        return;
+
+    // draw normals
+    glPushMatrix();
+        glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+        applyRotationGL(m_quaternion);
+        m_renderObject.renderNormals();
+    glPopMatrix();
 }
 
 void TriangleListData::setColor(QColor color)
