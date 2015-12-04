@@ -207,14 +207,14 @@ void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
     predg3f_eigen(&pp->q, 0, g);
 }
 
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v)
+void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, double sgn)
 {
     double a = u * PI;
     double b = v * 2 * PI;
     double t12 = pp->r12 * sin(a) * cos(b);
     double t23 = pp->r23 * sin(a) * sin(b);
     double t31 = pp->r31 * cos(a);
-    double t0 = sqrt(1 - t12 * t12 - t23 * t23 - t31 * t31);
+    double t0 = sgn * sqrt(1 - t12 * t12 - t23 * t23 - t31 * t31);
 
     s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
     s->s23 = pp->q.m[1][0] * t12 + pp->q.m[1][1] * t23 + pp->q.m[1][2] * t31 + pp->q.m[1][3] * t0;

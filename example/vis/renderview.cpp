@@ -396,8 +396,8 @@ void RenderView::renderMeshes()
     // draw unlit attributes: outlines, normals etc.
     for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
     {
-        it->second->renderOutlines();
-        it->second->renderNormals();
+        //it->second->renderOutlines();
+        //it->second->renderNormals();
     }
 }
 

@@ -74,7 +74,7 @@ struct predgparam3f_s
 typedef struct predgparam3f_s predgparam3f_t;
 
 void predg3f_param(predgparam3f_t *pp, const predg3f_t *g);
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v);
+void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, double sgn);
 
 /* special */
 void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g);
