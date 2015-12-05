@@ -248,7 +248,34 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     if (m)
     {
         /* only ellipsoidal param for now */
-        assert(predg3f_type(g) == predgtype3f_proper_ellipsoidal);
+        /*assert(predg3f_type(g) == predgtype3f_proper_ellipsoidal);*/
+
+        if (predg3f_type(g) != predgtype3f_proper_ellipsoidal)
+        {
+            /* note: debug code */
+            m->m[0][0] = 0;
+            m->m[1][0] = 0;
+            m->m[2][0] = 0;
+            m->m[3][0] = 0;
+
+            m->m[0][1] = 0;
+            m->m[1][1] = 0;
+            m->m[2][1] = 0;
+            m->m[3][1] = 0;
+
+            m->m[0][2] = 0;
+            m->m[1][2] = 0;
+            m->m[2][2] = 0;
+            m->m[3][2] = 0;
+
+            m->m[0][3] = 0;
+            m->m[1][3] = 0;
+            m->m[2][3] = 0;
+            m->m[3][3] = 0;
+
+            return;
+        }
+
 
         calc_w(&w1, &p, &q, &u, &v, 1, 1);
         calc_w(&w2, &p, &q, &u, &v, 1, -1);

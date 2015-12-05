@@ -23,10 +23,37 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->widgetView->layout()->addWidget(m_rv);
 
+    // predicate
+    updatePredicate();
+}
 
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
 
-    // add predicate g
-    predg3f_t pred = { { 1, 2, 3 }, { -1, 0, 2 }, { 4, 2, -2 }, { 0, -2, 3 }, 1 };
+void MainWindow::updatePredicate()
+{
+    // note: tests
+    //predg3f_t pred = { { 1, 2, 3 }, { -1, 0, 2 }, { 4, 2, -2 }, { 0, -2, 3 }, 1 };
+    //predg3f_t pred = { { 1, 0, 0 }, { -1, 1, 1 }, { 0, 0, -1 }, { 1, 0, 1 }, 2 };
+    //predg3f_t pred = { { 1, -3, 0 }, { -1, 0, 2 }, { 0, 0, -1 }, { 1, 0, 1 }, 0 };
+
+    // predicate g
+    predg3f_t pred = {
+                        { sliderToValue(ui->verticalSliderKX), sliderToValue(ui->verticalSliderKY), sliderToValue(ui->verticalSliderKZ) },
+                        { sliderToValue(ui->verticalSliderLX), sliderToValue(ui->verticalSliderLY), sliderToValue(ui->verticalSliderLZ) },
+                        { sliderToValue(ui->verticalSliderAX), sliderToValue(ui->verticalSliderAY), sliderToValue(ui->verticalSliderAZ) },
+                        { sliderToValue(ui->verticalSliderBX), sliderToValue(ui->verticalSliderBY), sliderToValue(ui->verticalSliderBZ) },
+                        sliderToValue(ui->verticalSliderC) };
+
+    ui->labelKval->setText(QString("(%1, %2, %3)").arg(pred.k.x).arg(pred.k.y).arg(pred.k.z));
+    ui->labelLval->setText(QString("(%1, %2, %3)").arg(pred.l.x).arg(pred.l.y).arg(pred.l.z));
+    ui->labelAval->setText(QString("(%1, %2, %3)").arg(pred.a.x).arg(pred.a.y).arg(pred.a.z));
+    ui->labelBval->setText(QString("(%1, %2, %3)").arg(pred.b.x).arg(pred.b.y).arg(pred.b.z));
+    ui->labelCval->setText(QString("%1").arg(pred.c));
+
+    m_rv->removeAllObjects();
 
     predgparam3f_t param;
     predg3f_param(&param, &pred);
@@ -36,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QImage *imgs[2] = { &img, &img2 };
 
-    const static double STEP = 0.005;
+    const static double STEP = 0.01;
 
     for (int sgni = 0; sgni < 2; ++sgni)
     {
@@ -95,9 +122,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->labelParam2->setPixmap(QPixmap::fromImage(*imgs[1]));
 }
 
-MainWindow::~MainWindow()
+double MainWindow::sliderToValue(QSlider *slider)
 {
-    delete ui;
+    return 0.01 * (slider->value() - 300) / 3.0;
 }
 
 void MainWindow::on_actionArcballCamera_triggered()
@@ -114,3 +141,21 @@ void MainWindow::on_actionAutoCamera_triggered()
 {
     m_rv->setRenderViewCamera(new RenderViewAutoCamera());
 }
+
+void MainWindow::on_verticalSliderKX_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderKY_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderKZ_valueChanged(int value) { (void)value; updatePredicate(); }
+
+void MainWindow::on_verticalSliderLX_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderLY_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderLZ_valueChanged(int value) { (void)value; updatePredicate(); }
+
+void MainWindow::on_verticalSliderAX_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderAY_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderAZ_valueChanged(int value) { (void)value; updatePredicate(); }
+
+void MainWindow::on_verticalSliderBX_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderBY_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderBZ_valueChanged(int value) { (void)value; updatePredicate(); }
+
+void MainWindow::on_verticalSliderC_valueChanged(int value) { (void)value; updatePredicate(); }
