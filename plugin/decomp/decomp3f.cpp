@@ -39,37 +39,60 @@ typedef CGAL::Nef_polyhedron_3<Kernel, CGAL::SNC_indexed_items> Nef_polyhedron_3
 typedef Nef_polyhedron_3::Volume_const_iterator Volume_const_iterator;
 
 template <class HDS>
-class converter : public CGAL::Modifier_base<HDS>
+class Polyhedron_builder
+    : public CGAL::Modifier_base<HDS>
 {
+    typedef typename HDS::Vertex Vertex;
+    typedef typename Vertex::Point Point;
+
 public:
-    converter()
+    Polyhedron_builder(const decompmesh3f_t *m)
+        : m_m(m)
     {
     }
 
-    void operator()( HDS& hds)
+    void operator()(HDS &hds)
     {
+        size_t i, j;
+
+        /* polyhedron builder */
         CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
-        builder.begin_surface( 3, 1, 6);
-        typedef typename HDS::Vertex Vertex;
-        typedef typename Vertex::Point Point;
-        builder.add_vertex(Point(0, 0, 0));
-        builder.add_vertex(Point(1, 0, 0));
-        builder.add_vertex(Point(0, 1, 0));
-        builder.begin_facet();
-        builder.add_vertex_to_facet(0);
-        builder.add_vertex_to_facet(1);
-        builder.add_vertex_to_facet(2);
-        builder.end_facet();
+
+        /* create surface */
+        builder.begin_surface(m_m->vs, m_m->fs);
+
+        /* create vertex list */
+        for (i = 0; i < m_m->vs; ++i)
+            builder.add_vertex(conv(m_m->v + i));
+
+        /* create facets */
+        for (i = 0; i < m_m->fs; ++i)
+        {
+            builder.begin_facet();
+
+            for (j = 0; j < m_m->f[i].is; ++j)
+                builder.add_vertex_to_facet(m_m->f[i].i[j]);
+
+            builder.end_facet();
+        }
+
+        /* finish surface */
         builder.end_surface();
+    }
+
+private:
+    const decompmesh3f_t *m_m;
+
+    Point conv(const vec3f_t *v)
+    {
+        return Point(v->x, v->y, v->z);
     }
 };
 
 static void decomp3f_conv(Polyhedron_3 *p, const decompmesh3f_t *m)
 {
-//    Polyhedron P;
-//    Build_triangle<HalfedgeDS> triangle;
-//    P.delegate( triangle);
-//    return 0;
+    Polyhedron_builder<HalfedgeDS> c(m);
+    p->delegate(c);
 }
 
 static void decomp3f_conv(decompmesh3f_t *m, const Polyhedron_3 *p)
@@ -84,8 +107,8 @@ static void decompmesh3f_init(decompmesh3f_t *m)
 {
     m->v = 0;
     m->vs = 0;
-    m->i = 0;
-    m->is = 0;
+    m->f = 0;
+    m->fs = 0;
 }
 
 static void decompmesh3f_clear(decompmesh3f_t *m)
@@ -95,10 +118,10 @@ static void decompmesh3f_clear(decompmesh3f_t *m)
 
     m->vs = 0;
 
-    if (m->i)
-        free(m->i);
+    if (m->f)
+        free(m->f);
 
-    m->is = 0;
+    m->fs = 0;
 }
 
 void decomp3f_init(decomp3f_t *d)
@@ -108,7 +131,7 @@ void decomp3f_init(decomp3f_t *d)
     d->ms = 0;
 }
 
-void decomp3f(decomp3f_t *d, const decompmesh3f_t *dm)
+void decomp3f_make(decomp3f_t *d, const decompmesh3f_t *dm)
 {
     /* clear any previous decomposition */
     decomp3f_clear(d);

@@ -22,73 +22,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plugin.h"
-#include <string.h>
-#include <stdlib.h>
-#include <dlfcn.h>
+#include "cs2/timer.h"
+#include <time.h>
 
-#define PLUGIN_MAXPATH 1024
-
-static char g_ldpath[PLUGIN_MAXPATH] = "";
-static size_t g_ldpathlen = 0;
-
-int plugin_ldpath(const char *p)
+uint64_t timer_sec()
 {
-    size_t l = strlen(p);
-
-    if (l >= sizeof(g_ldpath))
-        return -1;
-
-    memcpy(g_ldpath, p, l + 1);
-    g_ldpathlen = l;
-
-    return 0;
+    struct timespec ts;
+    (void)clock_gettime(CLOCK_REALTIME, &ts);
+    return (uint64_t)ts.tv_sec;
 }
 
-void *plugin_load(const char *f)
+uint64_t timer_msec()
 {
-    size_t pl, fl;
-    char *p, *r;
-    void *d;
-
-    /* real ld path */
-    p = realpath(g_ldpath, 0);
-
-    if (!p)
-        return 0;
-
-    pl = strlen(p);
-
-    /* file name */
-    fl = strlen(f);
-
-    /* full path */
-    r = (char *)malloc(pl + fl + 2);
-
-    if (!r)
-    {
-        free(p);
-        return 0;
-    }
-
-    memcpy(r, p, pl);
-    r[pl] = '/';
-    memcpy(r + pl + 1, f, fl + 1);
-
-    d = dlopen(r, RTLD_NOW);
-
-    free(r);
-    free(p);
-
-    return d;
+    struct timespec ts;
+    (void)clock_gettime(CLOCK_REALTIME, &ts);
+    return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
 }
 
-void *plugin_sym(void *p, const char *s)
+uint64_t timer_usec()
 {
-    return dlsym(p, s);
+    struct timespec ts;
+    (void)clock_gettime(CLOCK_REALTIME, &ts);
+    return (uint64_t)ts.tv_sec * 1000000 + (uint64_t)ts.tv_nsec / 1000;
 }
 
-void plugin_unload(void *p)
+uint64_t timer_nsec()
 {
-    (void)dlclose(p);
+    struct timespec ts;
+    (void)clock_gettime(CLOCK_REALTIME, &ts);
+    return (uint64_t)ts.tv_sec * 1000000000 + (uint64_t)ts.tv_nsec;
+}
+
+uint64_t timer_rdtsc()
+{
+    uint32_t hi, lo;
+
+    __asm__ volatile
+    (
+        "rdtsc"
+        : "=a"(lo), "=d"(hi)
+    );
+
+    return lo + ((uint64_t)hi << 32);
 }

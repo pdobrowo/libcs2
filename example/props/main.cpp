@@ -26,7 +26,55 @@
 #include "cs2/vec3x.h"
 #include "cs2/spinquad3f.h"
 #include "cs2/predh3f.h"
+#include "../../plugin/decomp/decomp3f.h"
+#include "cs2/plugin.h"
 #include <cstdio>
+#include <cstdlib>
+
+void load_mesh(decompmesh3f_t *m, const char *fp)
+{
+    int vs, fs, i, j;
+    FILE *f = fopen(fp, "r");
+
+    if (!f)
+        return;
+
+    if (fscanf(f, "%*s%d%d%*d",&vs,&fs) != 2)
+        return;
+
+    m->v = (vec3f_t *)malloc(sizeof(vec3f_t) * vs);
+    m->vs = vs;
+
+    for (i = 0; i < vs; ++i)
+        if (fscanf(f, "%lf%lf%lf", &m->v[i].x, &m->v[i].y, &m->v[i].z) != 3)
+            return;
+
+    m->f = (decompface3f_t *)malloc(sizeof(decompface3f_t) * fs);
+    m->fs = fs;
+
+    for (i = 0; i < fs; ++i)
+    {
+        int is;
+
+        if (fscanf(f, "%d", &is) != 1)
+            return;
+
+        m->f[i].i = (size_t *)malloc(sizeof(size_t) * is);
+        m->f[i].is = is;
+
+        for (j = 0; j < is; ++j)
+        {
+            double x;
+
+            if (fscanf(f, "%lf", &x) != 1)
+                return;
+
+            m->f[i].i[j] = x;
+        }
+    }
+
+    fclose(f);
+}
 
 int main()
 {
@@ -102,11 +150,33 @@ int main()
             val_max = val;
     }
 
-    printf("sqnorm_min: %.20lf\n", sqnorm_min);
-    printf("sqnorm_max: %.20lf\n", sqnorm_max);
+    printf("sqnorm_min: %.20f\n", sqnorm_min);
+    printf("sqnorm_max: %.20f\n", sqnorm_max);
 
-    printf("val_min: %.20lf\n", val_min);
-    printf("val_max: %.20lf\n", val_max);
+    printf("val_min: %.20f\n", val_min);
+    printf("val_max: %.20f\n", val_max);
+
+    // decomp
+    plugin_ldpath("../../plugin/decomp/lib");
+
+    void *pl = plugin_load("libdecomp.so");
+
+    decomp3f_init_f pl_init = (decomp3f_init_f)plugin_sym(pl, DECOMP3F_INIT_F_SYM);
+    decomp3f_make_f pl_make = (decomp3f_make_f)plugin_sym(pl, DECOMP3F_MAKE_F_SYM);
+    decomp3f_clear_f pl_clear = (decomp3f_clear_f)plugin_sym(pl, DECOMP3F_CLEAR_F_SYM);
+
+    decomp3f_t d;
+
+    decompmesh3f_t dm;
+    load_mesh(&dm, "../../data/teapot.off");
+
+    pl_init(&d);
+    pl_make(&d, &dm);
+    pl_clear(&d);
+
+
+
+    plugin_unload(pl);
 
     return 0;
 }

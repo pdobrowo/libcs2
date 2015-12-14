@@ -80,7 +80,7 @@ void MainWindow::updatePredicate()
 
     QImage *imgs[2] = { &img, &img2 };
 
-    const static double STEP = 0.002;
+    const static double STEP = 0.005;
 
     for (int sgni = 0; sgni < 2; ++sgni)
     {
@@ -176,3 +176,4 @@ void MainWindow::on_verticalSliderBY_valueChanged(int value) { (void)value; upda
 void MainWindow::on_verticalSliderBZ_valueChanged(int value) { (void)value; updatePredicate(); }
 
 void MainWindow::on_verticalSliderC_valueChanged(int value) { (void)value; updatePredicate(); }
+

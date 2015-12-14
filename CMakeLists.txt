@@ -19,7 +19,6 @@ add_definitions(
     -Wall
     -Wextra
     -pedantic
-    -ansi
     -Wno-long-long
 )
 
@@ -54,6 +53,7 @@ set(cs2_HEADERS
 
     # other
     inc/cs2/plugin.h
+    inc/cs2/timer.h
 )
 
 # src
@@ -80,6 +80,7 @@ set(cs2_SOURCES
 
     # other
     src/plugin.c
+    src/timer.c
 )
 
 add_library(cs2 STATIC ${cs2_SOURCES})

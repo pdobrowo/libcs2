@@ -31,6 +31,10 @@ extern "C" {
 
 int plugin_ldpath(const char *p);
 
+void *plugin_load(const char *f);
+void *plugin_sym(void *p, const char *s);
+void plugin_unload(void *p);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
