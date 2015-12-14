@@ -5,6 +5,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = vis
 TEMPLATE = app
 
+freebsd*:{
+    INCLUDEPATH += /usr/local/include
+    LIBS += -L/usr/local/lib
+}
+
 INCLUDEPATH += ../../inc
 
 LIBS += -lGLEW

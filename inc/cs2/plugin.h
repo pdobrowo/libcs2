@@ -22,4 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plane3f.h"
+#ifndef LIBCS2_PLUGIN_H
+#define LIBCS2_PLUGIN_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+int plugin_ldpath(const char *p);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* LIBCS2_PLUGIN_H */

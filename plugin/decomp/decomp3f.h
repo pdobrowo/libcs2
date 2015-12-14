@@ -22,4 +22,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plane3f.h"
+#ifndef LIBCS2_PLUGIN_DECOMP3F_H
+#define LIBCS2_PLUGIN_DECOMP3F_H
+
+#include "cs2/vec3f.h"
+#include <stddef.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+struct decompmesh3f_s
+{
+    /* vertices */
+    vec3f_t *v;
+    size_t vs;
+
+    /* indices */
+    size_t *i;
+    size_t is;
+};
+
+typedef struct decompmesh3f_s decompmesh3f_t;
+
+enum decomptype3f_e
+{
+    decomptype3f_success,
+
+    decomptype3f_undefined,
+    decomptype3f_internal_error,
+    decomptype3f_out_of_memory
+};
+
+typedef enum decomptype3f_e decomptype3f_t;
+
+struct decomp3f_s
+{
+    decomptype3f_t t;
+
+    /* meshes */
+    decompmesh3f_t *m;
+    size_t ms;
+};
+
+typedef struct decomp3f_s decomp3f_t;
+
+__attribute__((visibility("default"))) void decomp3f_init(decomp3f_t *d);
+__attribute__((visibility("default"))) void decomp3f(decomp3f_t *d, const decompmesh3f_t *dm);
+__attribute__((visibility("default"))) void decomp3f_clear(decomp3f_t *d);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* LIBCS2_PLUGIN_DECOMP3F_H */

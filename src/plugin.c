@@ -22,4 +22,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plane3f.h"
+#include "cs2/plugin.h"
+#include <string.h>
+
+#define PLUGIN_MAXPATH 1024
+
+static char g_ldpath[PLUGIN_MAXPATH] = "";
+
+int plugin_ldpath(const char *p)
+{
+    size_t l = strlen(p);
+
+    if (l >= sizeof(g_ldpath))
+        return -1;
+
+    memcpy(g_ldpath, p, l + 1);
+    return 0;
+}

@@ -83,7 +83,7 @@ int main()
     for (double pu = 0; pu < 1; pu += 0.01) for (double pv = 0; pv < 1; pv += 0.01)
     {
         spin3f_t sp;
-        predgparam3f_eval(&sp, &par, pu, pv);
+        predgparam3f_eval(&sp, &par, pu, pv, 1);
 
         double sqnorm = sp.s12 * sp.s12 + sp.s23 * sp.s23 + sp.s31 * sp.s31 + sp.s0 * sp.s0;
 

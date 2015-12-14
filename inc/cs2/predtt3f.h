@@ -22,4 +22,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plane3f.h"
+#ifndef LIBCS2_PREDTT3F_H
+#define LIBCS2_PREDTT3F_H
+
+#include "vec3f.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+/**
+ * triangle-triangle predicate:
+ *
+ *    .
+ */
+struct predtt3f_s
+{
+    int a;
+};
+
+typedef struct predtt3f_s predtt3f_t;
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* LIBCS2_PREDTT3F_H */

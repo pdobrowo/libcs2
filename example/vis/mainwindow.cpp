@@ -6,6 +6,7 @@
 #include "renderviewautocamera.h"
 #include "cs2/predg3f.h"
 #include "cs2/spin3f.h"
+#include "cs2/vec3f.h"
 #include <QImage>
 #include <cmath>
 
@@ -32,6 +33,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+static void calc_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g)
+{
+    vec3f_cross(p, &g->k, &g->l);
+    vec3f_sub(q, &g->a, &g->b);
+    vec3f_sub(u, &g->k, &g->l);
+    vec3f_cross(v, &g->a, &g->b);
+}
+
 void MainWindow::updatePredicate()
 {
     // note: tests
@@ -53,6 +62,14 @@ void MainWindow::updatePredicate()
     ui->labelBval->setText(QString("(%1, %2, %3)").arg(pred.b.x).arg(pred.b.y).arg(pred.b.z));
     ui->labelCval->setText(QString("%1").arg(pred.c));
 
+    vec3f_t p, q, u, v;
+    calc_pquv(&p, &q, &u, &v, &pred);
+
+    ui->labelPQval->setText(QString("%1").arg(vec3f_len(&p) * vec3f_len(&q)));
+    ui->labelUVval->setText(QString("%1").arg(vec3f_len(&u) * vec3f_len(&v)));
+
+    ui->labelABval->setText(QString("%1").arg(vec3f_len(&p) * vec3f_len(&q) + vec3f_len(&u) * vec3f_len(&v)));
+
     m_rv->removeAllObjects();
 
     predgparam3f_t param;
@@ -63,7 +80,7 @@ void MainWindow::updatePredicate()
 
     QImage *imgs[2] = { &img, &img2 };
 
-    const static double STEP = 0.01;
+    const static double STEP = 0.002;
 
     for (int sgni = 0; sgni < 2; ++sgni)
     {

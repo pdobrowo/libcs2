@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 2.6)
 # modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
-# apr and apr-util
+# gmp
 find_package(GMP REQUIRED)
 include_directories(${GMP_INCLUDE_DIR})
 
@@ -24,7 +24,7 @@ add_definitions(
 )
 
 # optimizations
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fomit-frame-pointer -march=native")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fomit-frame-pointer -march=native")
 
 # output directory
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
@@ -44,9 +44,16 @@ set(cs2_HEADERS
     inc/cs2/predh3f.h
     inc/cs2/preds3f.h
     inc/cs2/predg3f.h
+    inc/cs2/predbb3f.h
+    inc/cs2/predtt3f.h
+    inc/cs2/predcc3f.h
+    inc/cs2/predmm3f.h
 
     # exact integer arithmetic
     inc/cs2/vec3x.h
+
+    # other
+    inc/cs2/plugin.h
 )
 
 # src
@@ -63,14 +70,21 @@ set(cs2_SOURCES
     src/predh3f.c
     src/preds3f.c
     src/predg3f.c
+    src/predbb3f.c
+    src/predtt3f.c
+    src/predcc3f.c
+    src/predmm3f.c
 
     # exact integer arithmetic
     src/vec3x.c
+
+    # other
+    src/plugin.c
 )
 
 add_library(cs2 STATIC ${cs2_SOURCES})
 
 message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")
-message("CS2 compiler: ${CMAKE_CXX_COMPILER_ID}")
+message("CS2 compiler: ${CMAKE_C_COMPILER_ID}")
 message("CS2 processor: ${CMAKE_SYSTEM_PROCESSOR}")

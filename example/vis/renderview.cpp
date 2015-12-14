@@ -45,15 +45,6 @@ static QColor OBJECT_COLOR[] =
 
 static const size_t NUM_OBJECT_COLORS = sizeof(OBJECT_COLOR) / sizeof(OBJECT_COLOR[0]);
 
-// QSIC
-const double    QSIC_RADIUS = 0.008;
-const int       QSIC_SIDES  = 24;
-
-// QSIP
-const double    QSIP_RADIUS = 0.02;
-const int       QSIP_SLICES = 24;
-const int       QSIP_STACKS = 24;
-
 void applyRotationGL(const QQuaternion &quaternion)
 {
     double x2 = quaternion.x() * quaternion.x();

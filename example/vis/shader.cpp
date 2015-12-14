@@ -28,7 +28,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <malloc.h>
+#include <cstdlib>
 
 Shader::Shader(const char *vsFile, const char *fsFile)
 {
@@ -39,16 +39,16 @@ void Shader::init(const char *vsFile, const char *fsFile)
 {
     m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
     m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    
+
     char *vertexShaderSource = readTextFile(vsFile);
     char *fragmentProgramSource = readTextFile(fsFile);
-    
+
     if (vertexShaderSource == 0 || fragmentProgramSource == 0)
     {
         fprintf(stderr, "Vertex shader or fragment shader not found!\n");
         return;
     }
-    
+
     const GLchar *vertexShaderLines = vertexShaderSource;
     const GLchar *fragmentProgramLines = fragmentProgramSource;
 
@@ -59,7 +59,7 @@ void Shader::init(const char *vsFile, const char *fsFile)
     checkShaderCompileError(m_vertexShader, vsFile);
     glCompileShader(m_fragmentShader);
     checkShaderCompileError(m_fragmentShader, fsFile);
-    
+
     m_program = glCreateProgram();
     glAttachShader(m_program, m_fragmentShader);
     glAttachShader(m_program, m_vertexShader);
@@ -74,7 +74,7 @@ Shader::~Shader()
 {
     glDetachShader(m_program, m_fragmentShader);
     glDetachShader(m_program, m_vertexShader);
-    
+
     glDeleteShader(m_fragmentShader);
     glDeleteShader(m_vertexShader);
     glDeleteProgram(m_program);
