@@ -29,10 +29,13 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef void (*plugin_fn_t)();
+
 int plugin_ldpath(const char *p);
 
 void *plugin_load(const char *f);
 void *plugin_sym(void *p, const char *s);
+plugin_fn_t plugin_fn(void *p, const char *s);
 void plugin_unload(void *p);
 
 #ifdef __cplusplus

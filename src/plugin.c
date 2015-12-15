@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dlfcn.h>
+#include <assert.h>
 
 #define PLUGIN_MAXPATH 1024
 
@@ -91,4 +92,14 @@ void *plugin_sym(void *p, const char *s)
 void plugin_unload(void *p)
 {
     (void)dlclose(p);
+}
+
+
+plugin_fn_t plugin_fn(void *p, const char *s)
+{
+    plugin_fn_t fn;
+    void *sym = plugin_sym(p, s);
+    assert(sizeof(fn) == sizeof(sym));
+    memcpy(&fn, &sym, sizeof(fn));
+    return fn;
 }
