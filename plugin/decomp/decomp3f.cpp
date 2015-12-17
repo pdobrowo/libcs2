@@ -97,10 +97,60 @@ static void decomp3f_conv(Polyhedron_3 *p, const decompmesh3f_t *m)
 
 static void decomp3f_conv(decompmesh3f_t *m, const Polyhedron_3 *p)
 {
-//    Polyhedron P;
-//    Build_triangle<HalfedgeDS> triangle;
-//    P.delegate( triangle);
-//    return 0;
+    size_t vs = p->size_of_vertices();
+    size_t fs = p->size_of_facets();
+
+    m->v = static_cast<vec3f_t *>(malloc(sizeof(vec3f_t) * vs));
+
+    if (!m->v)
+        return; // todo: handle
+
+    m->f = static_cast<decompface3f_t *>(malloc(sizeof(decompface3f_t) * fs));
+
+    if (!m->f)
+    {
+        free(m->v);
+        m->v = 0;
+        return; // todo: handle
+    }
+
+    m->vs = vs;
+    m->fs = fs;
+
+    /* convert */
+    size_t i = 0;
+
+    for (Polyhedron_3::Vertex_const_iterator vi = p->vertices_begin(); vi != p->vertices_end(); ++vi)
+    {
+        m->v[i].x = CGAL::to_double(vi->point().x());
+        m->v[i].y = CGAL::to_double(vi->point().y());
+        m->v[i].z = CGAL::to_double(vi->point().z());
+        ++i;
+    }
+
+    i = 0;
+
+    for (Polyhedron_3::Facet_const_iterator fi = p->facets_begin(); fi != p->facets_end(); ++fi)
+    {
+            Polyhedron_3::Halfedge_around_facet_const_circulator hc = fi->facet_begin();
+            size_t is = CGAL::circulator_size(hc);
+
+            m->f[i].i = static_cast<size_t *>(malloc(sizeof(size_t) * is));
+
+            if (!m->f[i].i)
+                return; // todo: handle
+
+            m->f[i].is = is;
+
+            size_t j = 0;
+
+            do
+            {
+                m->f[i].i[j] = std::distance(p->vertices_begin(), hc->vertex());
+                ++j;
+            }
+            while (++hc != fi->facet_begin());
+    }
 }
 
 static void decompmesh3f_init(decompmesh3f_t *m)

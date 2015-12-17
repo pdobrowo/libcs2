@@ -28,6 +28,7 @@
 #include "cs2/predh3f.h"
 #include "../../plugin/decomp/decomp3f.h"
 #include "cs2/plugin.h"
+#include "cs2/timer.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -157,7 +158,7 @@ int main()
     printf("val_max: %.20f\n", val_max);
 
     // decomp
-    plugin_ldpath("../../plugin/decomp/lib");
+    plugin_ldpath(".");
 
     void *pl = plugin_load("libdecomp.so");
 
@@ -168,13 +169,19 @@ int main()
     decomp3f_t d;
 
     decompmesh3f_t dm;
-    load_mesh(&dm, "../../data/teapot.off");
+    load_mesh(&dm, "../data/mushroom.off");
 
     pl_init(&d);
+
+    uint64_t start = timer_usec();
+
     pl_make(&d, &dm);
+
+    uint64_t end = timer_usec();
+
+    printf("decomposition took %llu usecs; sub-meshes: %d\n", end - start, static_cast<int>(d.ms));
+
     pl_clear(&d);
-
-
 
     plugin_unload(pl);
 

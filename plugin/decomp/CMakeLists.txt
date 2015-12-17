@@ -36,7 +36,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fomit-frame-pointer -march=native")
 
 # output directory
-set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../../bin)
 
 # internal
 include_directories(${CMAKE_SOURCE_DIR}/inc)

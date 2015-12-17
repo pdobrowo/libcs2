@@ -9,6 +9,9 @@ find_package(CS2 REQUIRED)
 include_directories(${CS2_INCLUDE_DIR})
 link_directories(${CS2_LIBRARY_DIR})
 
+# output directory
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../../bin)
+
 # compiler settings
 add_definitions(
     -Wall
