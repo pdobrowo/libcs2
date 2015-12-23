@@ -87,6 +87,8 @@ int main()
 
     vec3f_add(&r, &a, &b);
 
+double xxx = vec3f_tr(&r);
+
     vec3x_init(&u);
     vec3x_init(&v);
     vec3x_init(&w);
