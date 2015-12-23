@@ -41,6 +41,31 @@ static void calc_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const pred
     vec3f_cross(v, &g->a, &g->b);
 }
 
+static int par_type(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, double c)
+{
+    double a = vec3f_len(p) * vec3f_len(q);
+    double b = vec3f_len(u) * vec3f_len(v);
+
+    if (a <= b)
+    {
+        if (c < - a - b) return 1;
+        if (c == - a - b) return 2;
+        if (c <= a - b) return 3;
+        if (c <= b - a) return 4;
+        if (c <= a + b) return 5;
+        return 6;
+    }
+    else
+    {
+        if (c < - a - b) return 1;
+        if (c == - a - b) return 2;
+        if (c <= b - a) return 3;
+        if (c <= a - b) return 4;
+        if (c <= a + b) return 5;
+        return 6;
+    }
+}
+
 void MainWindow::updatePredicate()
 {
     // note: tests
@@ -69,6 +94,8 @@ void MainWindow::updatePredicate()
     ui->labelUVval->setText(QString("%1").arg(vec3f_len(&u) * vec3f_len(&v)));
 
     ui->labelABval->setText(QString("%1").arg(vec3f_len(&p) * vec3f_len(&q) + vec3f_len(&u) * vec3f_len(&v)));
+
+    ui->labelParamTypeValue->setText(QString("%1").arg(par_type(&p, &q, &u, &v, pred.c)));
 
     m_rv->removeAllObjects();
 
