@@ -50,6 +50,10 @@ set(cs2_HEADERS
 
     # exact integer arithmetic
     inc/cs2/vec3x.h
+    inc/cs2/plane3x.h
+    inc/cs2/predh3x.h
+    inc/cs2/preds3x.h
+    inc/cs2/predg3x.h
 
     # other
     inc/cs2/plugin.h
@@ -77,6 +81,10 @@ set(cs2_SOURCES
 
     # exact integer arithmetic
     src/vec3x.c
+    src/plane3x.c
+    src/predh3x.c
+    src/preds3x.c
+    src/predg3x.c
 
     # other
     src/plugin.c

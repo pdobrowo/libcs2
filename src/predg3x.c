@@ -22,63 +22,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/predg3f.h"
-#include "cs2/vec4f.h"
-#include <math.h>
+#include "cs2/predg3x.h"
 #include <assert.h>
 
-#define PI (3.1415926535897932385)
-
-static int almost_zero(const vec3f_t *v)
+static void calc_r(vec3x_t *r, const vec3x_t *v)
 {
-    static const double EPS = 10e-8;
-
-    return fabs(v->x) < EPS && fabs(v->y) < EPS && fabs(v->z) < EPS;
-}
-
-static void calc_r(vec3f_t *r, const vec3f_t *v)
-{
-    if (v->x != 0)
-        vec3f_set(r, -v->y, v->x, v->z); /* take x-y plane */
-    else if (v->y != 0)
-        vec3f_set(r, v->x, -v->z, v->y); /* take y-z plane */
+    if (mpz_sgn(v->x))
+    {
+        /* take x-y plane */
+        vec3x_set(r, v->y, v->x, v->z);
+        mpz_neg(r->x, r->x);
+    }
+    else if (mpz_sgn(v->y))
+    {
+        /* take y-z plane */
+        vec3x_set(r, v->x, v->z, v->y);
+        mpz_neg(r->y, r->y);
+    }
     else
-        vec3f_set(r, v->z, v->y, -v->x); /* take z-x plane */
+    {
+        /* take z-x plane */
+        vec3x_set(r, v->z, v->y, v->x);
+        mpz_neg(r->z, r->z);
+    }
 }
 
-static void calc_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g)
+static void calc_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g)
 {
-    vec3f_cross(p, &g->k, &g->l);
-    vec3f_sub(q, &g->a, &g->b);
-    vec3f_sub(u, &g->k, &g->l);
-    vec3f_cross(v, &g->a, &g->b);
+    vec3x_cross(p, &g->k, &g->l);
+    vec3x_sub(q, &g->a, &g->b);
+    vec3x_sub(u, &g->k, &g->l);
+    vec3x_cross(v, &g->a, &g->b);
 }
 
-static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
+#if 0
+
+static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t *u, const vec3x_t *v, double a, double b)
 {
-    double pp = vec3f_sqlen(p);
-    double qq = vec3f_sqlen(q);
-    double uu = vec3f_sqlen(u);
-    double vv = vec3f_sqlen(v);
-    double pq = vec3f_dot(p, q);
-    double pv = vec3f_dot(p, v);
-    double qu = vec3f_dot(q, u);
-    double uv = vec3f_dot(u, v);
-    double trp = vec3f_tr(p);
-    double trq = vec3f_tr(q);
-    double tru = vec3f_tr(u);
-    double trv = vec3f_tr(v);
+    double pp = vec3x_sqlen(p);
+    double qq = vec3x_sqlen(q);
+    double uu = vec3x_sqlen(u);
+    double vv = vec3x_sqlen(v);
+    double pq = vec3x_dot(p, q);
+    double pv = vec3x_dot(p, v);
+    double qu = vec3x_dot(q, u);
+    double uv = vec3x_dot(u, v);
+    double trp = vec3x_tr(p);
+    double trq = vec3x_tr(q);
+    double tru = vec3x_tr(u);
+    double trv = vec3x_tr(v);
     double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
 
-    vec3f_t pxq, uxv, pxu, qxv, t, r, d;
-    vec3f_t j = { 1, 1, 1 };
+    vec3x_t pxq, uxv, pxu, qxv, t, r, d;
+    vec3x_t j = { 1, 1, 1 };
 
-    vec3f_cross(&pxq, p, q);
-    vec3f_cross(&uxv, u, v);
-    vec3f_cross(&pxu, p, u);
-    vec3f_cross(&qxv, q, v);
+    vec3x_cross(&pxq, p, q);
+    vec3x_cross(&uxv, u, v);
+    vec3x_cross(&pxu, p, u);
+    vec3x_cross(&qxv, q, v);
 
-    vec3f_add(&r, &pxq, &uxv);
+    vec3x_add(&r, &pxq, &uxv);
 
     /* calc d:
      *
@@ -93,109 +96,136 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
      *     + L (P.V (Q tr(U) + U tr(Q)) + Q.U (P tr(V) + V tr(P)))
      *     + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2) ( J (P.Q + U.V + L) - (P tr(Q) + Q tr(P) + U tr(V) + V tr(U)) )
      */
-    vec3f_mad2(&d, &pxu, vec3f_tr(&qxv), &qxv, vec3f_tr(&pxu));
-    vec3f_mul(&d, &d, pq + uv + l);
+    vec3x_mad2(&d, &pxu, vec3x_tr(&qxv), &qxv, vec3x_tr(&pxu));
+    vec3x_mul(&d, &d, pq + uv + l);
 
-    vec3f_mad2(&t, p, tru, u, trp);
-    vec3f_mul(&t, &t, - pv * qq - qu * vv);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad2(&t, p, tru, u, trp);
+    vec3x_mul(&t, &t, - pv * qq - qu * vv);
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad2(&t, q, trv, v, trq);
-    vec3f_mul(&t, &t, - pv * uu - qu * pp);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad2(&t, q, trv, v, trq);
+    vec3x_mul(&t, &t, - pv * uu - qu * pp);
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad2(&t, p, trq, q, trp);
-    vec3f_mul(&t, &t, - uu * vv - vec3f_dot(&pxu, &qxv));
-    vec3f_add(&d, &d, &t);
+    vec3x_mad2(&t, p, trq, q, trp);
+    vec3x_mul(&t, &t, - uu * vv - vec3x_dot(&pxu, &qxv));
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad2(&t, u, trv, v, tru);
-    vec3f_mul(&t, &t, - pp * qq - vec3f_dot(&pxu, &qxv));
-    vec3f_add(&d, &d, &t);
+    vec3x_mad2(&t, u, trv, v, tru);
+    vec3x_mul(&t, &t, - pp * qq - vec3x_dot(&pxu, &qxv));
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad2(&t, p, trp * qq, q, trq * pp);
-    vec3f_mul(&t, &t, 2 * uv);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad2(&t, p, trp * qq, q, trq * pp);
+    vec3x_mul(&t, &t, 2 * uv);
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad2(&t, u, tru * vv, v, trv * uu);
-    vec3f_mul(&t, &t, 2 * pq);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad2(&t, u, tru * vv, v, trv * uu);
+    vec3x_mul(&t, &t, 2 * pq);
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad4(&t, u, trv * pq, v, tru * pq, p, trq * uv, q, trp * uv);
-    vec3f_mul(&t, &t, -l);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad4(&t, u, trv * pq, v, tru * pq, p, trq * uv, q, trp * uv);
+    vec3x_mul(&t, &t, -l);
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad4(&t, q, tru * pv, u, trq * pv, p, trv * qu, v, trp * qu);
-    vec3f_mul(&t, &t, l);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad4(&t, q, tru * pv, u, trq * pv, p, trv * qu, v, trp * qu);
+    vec3x_mul(&t, &t, l);
+    vec3x_add(&d, &d, &t);
 
-    vec3f_mad5(&t, &j, pq + uv + l, p, - trq, q, - trp, u, - trv, v, - tru);
-    vec3f_mul(&t, &t, l * l - pp * qq - uu * vv);
-    vec3f_add(&d, &d, &t);
+    vec3x_mad5(&t, &j, pq + uv + l, p, - trq, q, - trp, u, - trv, v, - tru);
+    vec3x_mul(&t, &t, l * l - pp * qq - uu * vv);
+    vec3x_add(&d, &d, &t);
 
     /* calc w */
     w->x = d.z;
     w->y = d.x;
     w->z = d.y;
 
-    vec3f_mad4(&t, p, trq, q, trp, u, trv, v, tru);
+    vec3x_mad4(&t, p, trq, q, trp, u, trv, v, tru);
 
-    w->w = - vec3f_dot(&r, &d) / (pq + uv + l);
+    w->w = - vec3x_dot(&r, &d) / (pq + uv + l);
 
-    /* foolish way: q->w = l * (vec3f_dot(&t, &r) - 2 * (a * sqrt(uu) * sqrt(vv) * vec3f_tr(&pxq) + b * sqrt(pp) * sqrt(qq) * vec3f_tr(&uxv))) */
+    /* foolish way: q->w = l * (vec3x_dot(&t, &r) - 2 * (a * sqrt(uu) * sqrt(vv) * vec3x_tr(&pxq) + b * sqrt(pp) * sqrt(qq) * vec3x_tr(&uxv))) */
 }
 
-void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
+#endif
+
+void predg3x_init(predg3x_t *g)
 {
-    vec3f_t r, nr;
-
-    calc_r(&r, &h->p.n);
-    vec3f_cross(&nr, &h->p.n, &r);
-
-    g->k = nr;
-    vec3f_cross(&g->l, &h->p.n, &nr);
-    g->a = h->b;
-    vec3f_neg(&g->b, &h->b);
-    g->c = 2 * h->p.d * vec3f_sqlen(&nr);
+    vec3x_init(&g->k);
+    vec3x_init(&g->l);
+    vec3x_init(&g->a);
+    vec3x_init(&g->b);
+    mpz_init(g->c);
 }
 
-void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s)
+void predg3x_clear(predg3x_t *g)
 {
-    g->k = s->k;
-    g->l = s->l;
-    g->a = s->a;
-    g->b = s->b;
-    g->c = 0;
+    vec3x_clear(&g->k);
+    vec3x_clear(&g->l);
+    vec3x_clear(&g->a);
+    vec3x_clear(&g->b);
+    mpz_clear(g->c);
 }
 
-predgtype3f_t predg3f_type(const predg3f_t *g)
+void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h)
 {
-    vec3f_t p, q, u, v;
-    int pqf, uvf;
+    calc_r(&g->l, &h->p.n);
+    vec3x_cross(&g->k, &h->p.n, &g->l);
+    vec3x_cross(&g->l, &h->p.n, &g->k);
+    vec3x_copy(&g->a, &h->b);
+    vec3x_neg(&g->b, &h->b);
+    vec3x_sqlen(g->c, &g->k);
+    mpz_mul(g->c, g->c, h->p.d);
+    mpz_mul_2exp(g->c, g->c, 1);
+}
 
+void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s)
+{
+    vec3x_copy(&g->k, &s->k);
+    vec3x_copy(&g->l, &s->l);
+    vec3x_copy(&g->a, &s->a);
+    vec3x_copy(&g->b, &s->b);
+    mpz_set_si(g->c, 0);
+}
+
+predgtype3x_t predg3x_type(const predg3x_t *g)
+{
+    vec3x_t p, q, u, v;
+    int pq, uv;
+    predgtype3x_t t;
+    vec3x_init(&p);
+    vec3x_init(&q);
+    vec3x_init(&u);
+    vec3x_init(&v);
     calc_pquv(&p, &q, &u, &v, g);
-
-    pqf = !almost_zero(&p) && !almost_zero(&q);
-    uvf = !almost_zero(&u) && !almost_zero(&v);
-
-    if (pqf && uvf)
-        return predgtype3f_proper_ellipsoidal;
-    else if (pqf || uvf)
-        return predgtype3f_proper_cylindrical;
+    pq = !vec3x_is_zero(&p) && !vec3x_is_zero(&q);
+    uv = !vec3x_is_zero(&u) && !vec3x_is_zero(&v);
+    if (pq && uv)
+        t = predgtype3x_proper_ellipsoidal;
+    else if (pq || uv)
+        t = predgtype3x_proper_cylindrical;
     else
-        return predgtype3f_inproper;
+        t = predgtype3x_inproper;
+    vec3x_init(&p);
+    vec3x_init(&q);
+    vec3x_init(&u);
+    vec3x_init(&v);
+    return t;
 }
 
-void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
+#if 0
+
+void predg3x_param(predgparam3x_t *pp, const predg3x_t *g)
 {
-    vec3f_t p, q, u, v;
+    vec3x_t p, q, u, v;
     double pl, ql, ul, vl, su;
 
     calc_pquv(&p, &q, &u, &v, g);
 
-    pl = vec3f_len(&p);
-    ql = vec3f_len(&q);
-    ul = vec3f_len(&u);
-    vl = vec3f_len(&v);
+    pl = vec3x_len(&p);
+    ql = vec3x_len(&q);
+    ul = vec3x_len(&u);
+    vl = vec3x_len(&v);
     su = pl * ql + ul * vl;
 
     /* radii */
@@ -204,10 +234,10 @@ void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
     pp->r31 = sqrt((g->c + su) / (2 * ul * vl));
 
     /* matrix q */
-    predg3f_eigen(&pp->q, 0, g);
+    predg3x_eigen(&pp->q, 0, g);
 }
 
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, double sgn)
+void predgparam3x_eval(spin3x_t *s, const predgparam3x_t *pp, double u, double v, double sgn)
 {
     double a = u * PI;
     double b = v * 2 * PI;
@@ -222,9 +252,9 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
     s->s0 = pp->q.m[3][0] * t12 + pp->q.m[3][1] * t23 + pp->q.m[3][2] * t31 + pp->q.m[3][3] * t0;
 }
 
-void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
+void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g)
 {
-    vec3f_t p, q, u, v;
+    vec3x_t p, q, u, v;
     vec4f_t w1, w2, w3, w4;
     double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
 
@@ -233,10 +263,10 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     /* eigenvalues */
     if (e)
     {
-        pl = vec3f_len(&p);
-        ql = vec3f_len(&q);
-        ul = vec3f_len(&u);
-        vl = vec3f_len(&v);
+        pl = vec3x_len(&p);
+        ql = vec3x_len(&q);
+        ul = vec3x_len(&u);
+        vl = vec3x_len(&v);
 
         e->x = g->c - (pl * ql + ul * vl);
         e->y = g->c - (pl * ql - ul * vl);
@@ -248,9 +278,9 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     if (m)
     {
         /* only ellipsoidal param for now */
-        /*assert(predg3f_type(g) == predgtype3f_proper_ellipsoidal);*/
+        /*assert(predg3x_type(g) == predgtype3x_proper_ellipsoidal);*/
 
-        if (predg3f_type(g) != predgtype3f_proper_ellipsoidal)
+        if (predg3x_type(g) != predgtype3x_proper_ellipsoidal)
         {
             /* note: debug code */
             m->m[0][0] = 0;
@@ -308,3 +338,5 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
         m->m[3][3] = w4.w / w4l;
     }
 }
+
+#endif
