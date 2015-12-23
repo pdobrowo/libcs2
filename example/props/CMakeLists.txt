@@ -21,6 +21,9 @@ add_definitions(
     -Wno-variadic-macros
 )
 
+# optimizations
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fomit-frame-pointer -march=native")
+
 set(props_HEADERS
 )
 
