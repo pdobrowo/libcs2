@@ -1,4 +1,4 @@
-project(props)
+project(decomp)
 cmake_minimum_required(VERSION 2.6)
 
 # modules
@@ -24,16 +24,16 @@ add_definitions(
 # optimizations
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fomit-frame-pointer -march=native")
 
-set(props_HEADERS
+set(decomp_HEADERS
 )
 
-set(props_SOURCES
-    ${props_HEADERS}
+set(decomp_SOURCES
+    ${decomp_HEADERS}
     main.cpp
 )
 
-add_executable(props ${props_SOURCES})
+add_executable(decomp ${decomp_SOURCES})
 
-target_link_libraries(props
+target_link_libraries(decomp
     ${CS2_LIBRARIES}
 )

@@ -206,10 +206,10 @@ predgtype3x_t predg3x_type(const predg3x_t *g)
         t = predgtype3x_proper_cylindrical;
     else
         t = predgtype3x_inproper;
-    vec3x_init(&p);
-    vec3x_init(&q);
-    vec3x_init(&u);
-    vec3x_init(&v);
+    vec3x_clear(&p);
+    vec3x_clear(&q);
+    vec3x_clear(&u);
+    vec3x_clear(&v);
     return t;
 }
 
