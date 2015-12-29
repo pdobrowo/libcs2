@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/spinquad3f.h"
+#include "cs2/vec3f.h"
 
 void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph)
 {
@@ -40,59 +41,31 @@ void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps)
 
 void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg)
 {
-    double kx = pg->k.x;
-    double ky = pg->k.y;
-    double kz = pg->k.z;
-
-    double lx = pg->l.x;
-    double ly = pg->l.y;
-    double lz = pg->l.z;
-
-    double ax = pg->a.x;
-    double ay = pg->a.y;
-    double az = pg->a.z;
-
-    double bx = pg->b.x;
-    double by = pg->b.y;
-    double bz = pg->b.z;
+    vec3f_t p, q, u, v;
+    double pxqx, pxqy, pxqz, pyqx, pyqy, pyqz, pzqx, pzqy, pzqz, uxvx, uxvy, uxvz, uyvx, uyvy, uyvz, uzvx, uzvy, uzvz;
 
     /* p, q, u, v */
-    double px = ky * lz - kz * ly;
-    double py = kz * lx - kx * lz;
-    double pz = kx * ly - ky * lx;
-
-    double qx = ax - bx;
-    double qy = ay - by;
-    double qz = az - bz;
-
-    double ux = kx - lx;
-    double uy = ky - ly;
-    double uz = kz - lz;
-
-    double vx = ay * bz - az * by;
-    double vy = az * bx - ax * bz;
-    double vz = ax * by - ay * bx;
+    predg3f_pquv(&p, &q, &u, &v, pg);
 
     /* multiplies */
-    double pxqx = px * qx;
-    double pxqy = px * qy;
-    double pxqz = px * qz;
-    double pyqx = py * qx;
-    double pyqy = py * qy;
-    double pyqz = py * qz;
-    double pzqx = pz * qx;
-    double pzqy = pz * qy;
-    double pzqz = pz * qz;
-
-    double uxvx = ux * vx;
-    double uxvy = ux * vy;
-    double uxvz = ux * vz;
-    double uyvx = uy * vx;
-    double uyvy = uy * vy;
-    double uyvz = uy * vz;
-    double uzvx = uz * vx;
-    double uzvy = uz * vy;
-    double uzvz = uz * vz;
+    pxqx = p.x * q.x;
+    pxqy = p.x * q.y;
+    pxqz = p.x * q.z;
+    pyqx = p.y * q.x;
+    pyqy = p.y * q.y;
+    pyqz = p.y * q.z;
+    pzqx = p.z * q.x;
+    pzqy = p.z * q.y;
+    pzqz = p.z * q.z;
+    uxvx = u.x * v.x;
+    uxvy = u.x * v.y;
+    uxvz = u.x * v.z;
+    uyvx = u.y * v.x;
+    uyvy = u.y * v.y;
+    uyvz = u.y * v.z;
+    uzvx = u.z * v.x;
+    uzvy = u.z * v.y;
+    uzvz = u.z * v.z;
 
     /* base spin quadric */
     sq->a11 = - uxvx - uyvy + uzvz - pxqx - pyqy + pzqz; /* s12^2 */
@@ -112,7 +85,6 @@ void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg)
     sq->a33 += pg->c;
     sq->a44 += pg->c;
 }
-
 
 double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s)
 {

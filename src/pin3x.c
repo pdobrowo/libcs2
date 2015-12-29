@@ -22,12 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/spin3f.h"
+#include "cs2/pin3x.h"
 
-void spin3f_set(spin3f_t *s, double s12, double s23, double s31, double s0)
+void pin3x_init(pin3x_t *p)
 {
-    s->s12 = s12;
-    s->s23 = s23;
-    s->s31 = s31;
-    s->s0 = s0;
+    mpz_init(p->p12);
+    mpz_init(p->p23);
+    mpz_init(p->p31);
+    mpz_init(p->p0);
+}
+
+void pin3x_clear(pin3x_t *p)
+{
+    mpz_clear(p->p12);
+    mpz_clear(p->p23);
+    mpz_clear(p->p31);
+    mpz_clear(p->p0);
+}
+
+void pin3x_set(pin3x_t *p, const mpz_t p12, const mpz_t p23, const mpz_t p31, const mpz_t p0)
+{
+    mpz_set(p->p12, p12);
+    mpz_set(p->p23, p23);
+    mpz_set(p->p31, p31);
+    mpz_set(p->p0, p0);
+}
+
+void pin3x_set_si(pin3x_t *p, long p12, long p23, long p31, long p0)
+{
+    mpz_set_si(p->p12, p12);
+    mpz_set_si(p->p23, p23);
+    mpz_set_si(p->p31, p31);
+    mpz_set_si(p->p0, p0);
 }

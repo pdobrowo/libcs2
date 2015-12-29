@@ -47,14 +47,6 @@ static void calc_r(vec3x_t *r, const vec3x_t *v)
     }
 }
 
-static void calc_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g)
-{
-    vec3x_cross(p, &g->k, &g->l);
-    vec3x_sub(q, &g->a, &g->b);
-    vec3x_sub(u, &g->k, &g->l);
-    vec3x_cross(v, &g->a, &g->b);
-}
-
 #if 0
 
 static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t *u, const vec3x_t *v, double a, double b)
@@ -188,6 +180,25 @@ void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s)
     mpz_set_si(g->c, 0);
 }
 
+void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g)
+{
+    vec3x_cross(p, &g->k, &g->l);
+    vec3x_sub(q, &g->a, &g->b);
+    vec3x_sub(u, &g->k, &g->l);
+    vec3x_cross(v, &g->a, &g->b);
+}
+
+const char *predgtype3x_str(predgtype3x_t t)
+{
+    switch (t)
+    {
+    case predgtype3x_inproper: return "inproper";
+    case predgtype3x_proper_ellipsoidal: return "proper_ellipsoidal";
+    case predgtype3x_proper_cylindrical: return "proper_cylindrical";
+    default: return 0;
+    }
+}
+
 predgtype3x_t predg3x_type(const predg3x_t *g)
 {
     vec3x_t p, q, u, v;
@@ -197,7 +208,7 @@ predgtype3x_t predg3x_type(const predg3x_t *g)
     vec3x_init(&q);
     vec3x_init(&u);
     vec3x_init(&v);
-    calc_pquv(&p, &q, &u, &v, g);
+    predg3x_pquv(&p, &q, &u, &v, g);
     pq = !vec3x_is_zero(&p) && !vec3x_is_zero(&q);
     uv = !vec3x_is_zero(&u) && !vec3x_is_zero(&v);
     if (pq && uv)
@@ -220,7 +231,7 @@ void predg3x_param(predgparam3x_t *pp, const predg3x_t *g)
     vec3x_t p, q, u, v;
     double pl, ql, ul, vl, su;
 
-    calc_pquv(&p, &q, &u, &v, g);
+    predg3x_pquv(&p, &q, &u, &v, g);
 
     pl = vec3x_len(&p);
     ql = vec3x_len(&q);
@@ -258,7 +269,7 @@ void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g)
     vec4f_t w1, w2, w3, w4;
     double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
 
-    calc_pquv(&p, &q, &u, &v, g);
+    predg3x_pquv(&p, &q, &u, &v, g);
 
     /* eigenvalues */
     if (e)

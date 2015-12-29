@@ -22,13 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_SPINQUAD3F_H
-#define LIBCS2_SPINQUAD3F_H
+#ifndef LIBCS2_SPINQUAD3X_H
+#define LIBCS2_SPINQUAD3X_H
 
-#include "predh3f.h"
-#include "preds3f.h"
-#include "predg3f.h"
-#include "spin3f.h"
+#include "predh3x.h"
+#include "preds3x.h"
+#include "predg3x.h"
+#include "pin3x.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,21 +52,24 @@ extern "C" {
  *
  *    s12^2 + s23^2 + s31^2 + s0^2 = 1
  */
-struct spinquad3f_s
+struct spinquad3x_s
 {
-    double a11, a22, a33, a44, a12, a13, a14, a23, a24, a34;
+    mpz_t a11, a22, a33, a44, a12, a13, a14, a23, a24, a34;
 };
 
-typedef struct spinquad3f_s spinquad3f_t;
+typedef struct spinquad3x_s spinquad3x_t;
 
-void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph);
-void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps);
-void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg);
+void spinquad3x_init(spinquad3x_t *sq);
+void spinquad3x_clear(spinquad3x_t *sq);
 
-double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s);
+void spinquad3x_from_predh3x(spinquad3x_t *sq, const predh3x_t *ph);
+void spinquad3x_from_preds3x(spinquad3x_t *sq, const preds3x_t *ps);
+void spinquad3x_from_predg3x(spinquad3x_t *sq, const predg3x_t *pg);
+
+void spinquad3x_eval(mpz_t v, const spinquad3x_t *sq, const pin3x_t *p);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* LIBCS2_SPINQUAD3F_H */
+#endif /* LIBCS2_SPINQUAD3X_H */

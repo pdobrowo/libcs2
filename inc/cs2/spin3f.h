@@ -36,6 +36,8 @@ struct spin3f_s
 
 typedef struct spin3f_s spin3f_t;
 
+void spin3f_set(spin3f_t *s, double s12, double s23, double s31, double s0);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

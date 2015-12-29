@@ -55,6 +55,7 @@ void predg3x_clear(predg3x_t *g);
 
 void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h);
 void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s);
+void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g);
 
 /* type */
 enum predgtype3x_e
@@ -65,6 +66,8 @@ enum predgtype3x_e
 };
 
 typedef enum predgtype3x_e predgtype3x_t;
+
+const char *predgtype3x_str(predgtype3x_t t);
 
 predgtype3x_t predg3x_type(const predg3x_t *g);
 

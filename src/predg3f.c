@@ -46,14 +46,6 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
         vec3f_set(r, v->z, v->y, -v->x); /* take z-x plane */
 }
 
-static void calc_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g)
-{
-    vec3f_cross(p, &g->k, &g->l);
-    vec3f_sub(q, &g->a, &g->b);
-    vec3f_sub(u, &g->k, &g->l);
-    vec3f_cross(v, &g->a, &g->b);
-}
-
 static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
     double pp = vec3f_sqlen(p);
@@ -167,12 +159,31 @@ void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s)
     g->c = 0;
 }
 
+void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g)
+{
+    vec3f_cross(p, &g->k, &g->l);
+    vec3f_sub(q, &g->a, &g->b);
+    vec3f_sub(u, &g->k, &g->l);
+    vec3f_cross(v, &g->a, &g->b);
+}
+
+const char *predgtype3f_str(predgtype3f_t t)
+{
+    switch (t)
+    {
+    case predgtype3f_inproper: return "inproper";
+    case predgtype3f_proper_ellipsoidal: return "proper_ellipsoidal";
+    case predgtype3f_proper_cylindrical: return "proper_cylindrical";
+    default: return 0;
+    }
+}
+
 predgtype3f_t predg3f_type(const predg3f_t *g)
 {
     vec3f_t p, q, u, v;
     int pqf, uvf;
 
-    calc_pquv(&p, &q, &u, &v, g);
+    predg3f_pquv(&p, &q, &u, &v, g);
 
     pqf = !almost_zero(&p) && !almost_zero(&q);
     uvf = !almost_zero(&u) && !almost_zero(&v);
@@ -190,7 +201,7 @@ void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
     vec3f_t p, q, u, v;
     double pl, ql, ul, vl, su;
 
-    calc_pquv(&p, &q, &u, &v, g);
+    predg3f_pquv(&p, &q, &u, &v, g);
 
     pl = vec3f_len(&p);
     ql = vec3f_len(&q);
@@ -228,7 +239,7 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     vec4f_t w1, w2, w3, w4;
     double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
 
-    calc_pquv(&p, &q, &u, &v, g);
+    predg3f_pquv(&p, &q, &u, &v, g);
 
     /* eigenvalues */
     if (e)

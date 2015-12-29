@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Przemysław Dobrowolsa->i
+ * Copyright (c) 2015-2016 Przemysław Dobrowolski
  *
  * This file is part of the Configuration Space Library (libcs2), a library
  * for creating configuration spaces of various motion planning problems.
@@ -14,7 +14,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY a->IND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -22,12 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/spin3f.h"
+#ifndef LIBCS2_SPIN3F_H
+#define LIBCS2_SPIN3F_H
 
-void spin3f_set(spin3f_t *s, double s12, double s23, double s31, double s0)
+#include <gmp.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+struct pin3x_s
 {
-    s->s12 = s12;
-    s->s23 = s23;
-    s->s31 = s31;
-    s->s0 = s0;
+    mpz_t p12, p23, p31, p0;
+};
+
+typedef struct pin3x_s pin3x_t;
+
+void pin3x_init(pin3x_t *p);
+void pin3x_clear(pin3x_t *p);
+
+void pin3x_set(pin3x_t *p, const mpz_t p12, const mpz_t p23, const mpz_t p31, const mpz_t p0);
+void pin3x_set_si(pin3x_t *p, long p12, long p23, long p31, long p0);
+
+#ifdef __cplusplus
 }
+#endif /* __cplusplus */
+
+#endif /* LIBCS2_SPIN3F_H */
