@@ -23,7 +23,8 @@ add_definitions(
 )
 
 # optimizations
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fomit-frame-pointer -march=native")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -fomit-frame-pointer -march=native")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -O3 -march=native")
 
 # output directory
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
