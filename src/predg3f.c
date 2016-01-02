@@ -173,7 +173,7 @@ const char *predgtype3f_str(predgtype3f_t t)
     {
     case predgtype3f_inproper: return "inproper";
     case predgtype3f_proper_ellipsoidal: return "proper_ellipsoidal";
-    case predgtype3f_proper_cylindrical: return "proper_cylindrical";
+    case predgtype3f_proper_toroidal: return "proper_toroidal";
     default: return 0;
     }
 }
@@ -191,7 +191,7 @@ predgtype3f_t predg3f_type(const predg3f_t *g)
     if (pqf && uvf)
         return predgtype3f_proper_ellipsoidal;
     else if (pqf || uvf)
-        return predgtype3f_proper_cylindrical;
+        return predgtype3f_proper_toroidal;
     else
         return predgtype3f_inproper;
 }

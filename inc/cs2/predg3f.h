@@ -58,7 +58,7 @@ enum predgtype3f_e
 {
     predgtype3f_inproper,
     predgtype3f_proper_ellipsoidal,
-    predgtype3f_proper_cylindrical
+    predgtype3f_proper_toroidal
 };
 
 typedef enum predgtype3f_e predgtype3f_t;

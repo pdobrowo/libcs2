@@ -194,7 +194,7 @@ const char *predgtype3x_str(predgtype3x_t t)
     {
     case predgtype3x_inproper: return "inproper";
     case predgtype3x_proper_ellipsoidal: return "proper_ellipsoidal";
-    case predgtype3x_proper_cylindrical: return "proper_cylindrical";
+    case predgtype3x_proper_toroidal: return "proper_toroidal";
     default: return 0;
     }
 }
@@ -214,7 +214,7 @@ predgtype3x_t predg3x_type(const predg3x_t *g)
     if (pq && uv)
         t = predgtype3x_proper_ellipsoidal;
     else if (pq || uv)
-        t = predgtype3x_proper_cylindrical;
+        t = predgtype3x_proper_toroidal;
     else
         t = predgtype3x_inproper;
     vec3x_clear(&p);
