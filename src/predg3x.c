@@ -135,8 +135,6 @@ static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t
     vec3x_mad4(&t, p, trq, q, trp, u, trv, v, tru);
 
     w->w = - vec3x_dot(&r, &d) / (pq + uv + l);
-
-    /* foolish way: q->w = l * (vec3x_dot(&t, &r) - 2 * (a * sqrt(uu) * sqrt(vv) * vec3x_tr(&pxq) + b * sqrt(pp) * sqrt(qq) * vec3x_tr(&uxv))) */
 }
 
 #endif

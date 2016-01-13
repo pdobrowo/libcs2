@@ -61,6 +61,7 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
     double tru = vec3f_tr(u);
     double trv = vec3f_tr(v);
     double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
+    double dd = pq + uv + l;
 
     vec3f_t pxq, uxv, pxu, qxv, t, r, d;
     vec3f_t j = { 1, 1, 1 };
@@ -86,7 +87,7 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
      *     + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2) ( J (P.Q + U.V + L) - (P tr(Q) + Q tr(P) + U tr(V) + V tr(U)) )
      */
     vec3f_mad2(&d, &pxu, vec3f_tr(&qxv), &qxv, vec3f_tr(&pxu));
-    vec3f_mul(&d, &d, pq + uv + l);
+    vec3f_mul(&d, &d, dd);
 
     vec3f_mad2(&t, p, tru, u, trp);
     vec3f_mul(&t, &t, - pv * qq - qu * vv);
@@ -120,20 +121,18 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
     vec3f_mul(&t, &t, l);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad5(&t, &j, pq + uv + l, p, - trq, q, - trp, u, - trv, v, - tru);
+    vec3f_mad5(&t, &j, dd, p, - trq, q, - trp, u, - trv, v, - tru);
     vec3f_mul(&t, &t, l * l - pp * qq - uu * vv);
     vec3f_add(&d, &d, &t);
 
     /* calc w */
-    w->x = d.z;
-    w->y = d.x;
-    w->z = d.y;
+    w->x = dd * d.z;
+    w->y = dd * d.x;
+    w->z = dd * d.y;
 
     vec3f_mad4(&t, p, trq, q, trp, u, trv, v, tru);
 
-    w->w = - vec3f_dot(&r, &d) / (pq + uv + l);
-
-    /* foolish way: q->w = l * (vec3f_dot(&t, &r) - 2 * (a * sqrt(uu) * sqrt(vv) * vec3f_tr(&pxq) + b * sqrt(pp) * sqrt(qq) * vec3f_tr(&uxv))) */
+    w->w = -vec3f_dot(&r, &d);
 }
 
 void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
@@ -286,7 +285,6 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
 
             return;
         }
-
 
         calc_w(&w1, &p, &q, &u, &v, 1, 1);
         calc_w(&w2, &p, &q, &u, &v, 1, -1);
