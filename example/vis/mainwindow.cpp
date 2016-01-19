@@ -45,9 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->widgetView->layout()->addWidget(m_rv);
 
-    // set current toolbox page
-    ui->toolBox->setCurrentIndex(0);
-
     // update slider information
     updateSliderInformation();
 
@@ -113,21 +110,70 @@ void MainWindow::updatePredicateInformation()
     ui->labelVval->setText(formatVector(&v));
     ui->labelC2val->setText(QString::number(pred.c, 'f', 2));
 
+    // information -> type
+    predgtype3f_t type = predg3f_type(&pred);
 
+    ui->labelproperval->setText(type == predgtype3f_inproper ? "no" : "yes");
+    ui->labeltypeval->setText(predgtype3f_str(type));
 
-//    ui->labelParamTypeValue->setText(QString("%1").arg(par_type(&p, &q, &u, &v, pred.c)));
+    // information -> parametrization variables
+    double pl = vec3f_len(&p);
+    double ql = vec3f_len(&q);
+    double ul = vec3f_len(&u);
+    double vl = vec3f_len(&v);
 
+    double a = pl * ql;
+    double b = ul * vl;
+
+    double mi = std::min(a - b, b - a);
+    double ma = std::max(a - b, b - a);
+
+    ui->labelaval->setText(QString::number(a, 'f', 4));
+    ui->labelbval->setText(QString::number(b, 'f', 4));
+    ui->labelcval->setText(QString::number(pred.c, 'f', 4));
+    ui->labelminval->setText(QString::number(mi, 'f', 4));
+    ui->labelmaxval->setText(QString::number(ma, 'f', 4));
+
+    int cas = par_type(&p, &q, &u, &v, pred.c);
+
+    ui->labelcaseval->setText(QString::number(cas));
+
+    // information -> eigen decomposition
+    mat44f_t eigenvec;
+    vec4f_t eigenval;
+    predg3f_eigen(&eigenvec, &eigenval, &pred);
+
+    double l1 = eigenval.x;
+    double l2 = eigenval.y;
+    double l3 = eigenval.z;
+    double l4 = eigenval.w;
+
+    double det = l1 * l2 * l3 * l4;
+
+    vec4f_t w1 = { eigenvec.m[0][0], eigenvec.m[1][0], eigenvec.m[2][0], eigenvec.m[3][0] };
+    vec4f_t w2 = { eigenvec.m[0][1], eigenvec.m[1][1], eigenvec.m[2][1], eigenvec.m[3][1] };
+    vec4f_t w3 = { eigenvec.m[0][2], eigenvec.m[1][2], eigenvec.m[2][2], eigenvec.m[3][2] };
+    vec4f_t w4 = { eigenvec.m[0][3], eigenvec.m[1][3], eigenvec.m[2][3], eigenvec.m[3][3] };
+
+    ui->labeldetval->setText(QString::number(det, 'f', 8));
+
+    ui->labell1val->setText(QString::number(l1, 'f', 4));
+    ui->labell2val->setText(QString::number(l2, 'f', 4));
+    ui->labell3val->setText(QString::number(l3, 'f', 4));
+    ui->labell4val->setText(QString::number(l4, 'f', 4));
+
+    ui->labelw1val->setText(formatVector(&w1));
+    ui->labelw2val->setText(formatVector(&w2));
+    ui->labelw3val->setText(formatVector(&w3));
+    ui->labelw4val->setText(formatVector(&w4));
+
+    // visual
     m_rv->removeAllObjects();
 
     predgparam3f_t param;
     predg3f_param(&param, &pred);
 
-    QImage img(100, 100, QImage::Format_ARGB32);
-    QImage img2(100, 100, QImage::Format_ARGB32);
-
-    QImage *imgs[2] = { &img, &img2 };
-
-    const static double STEP = 0.005;
+    const static double STEP = 0.01;
 
     for (int sgni = 0; sgni < 2; ++sgni)
     {
@@ -173,17 +219,11 @@ void MainWindow::updatePredicateInformation()
 
             trianglesBack->push_back(Triangle(v00, v11, v01));
             trianglesBack->push_back(Triangle(v00, v10, v11));
-
-            /* param vis */
-            imgs[sgni]->setPixel(pu * 100, pv * 100, isnan(sp00.s0) ? 0xFFFF0000 : 0xFF00FF00);
         }
 
         m_rv->addTriangleList(trianglesFront, frontColor);
         m_rv->addTriangleList(trianglesBack, backColor);
     }
-
-//    ui->labelParam->setPixmap(QPixmap::fromImage(*imgs[0]));
-//    ui->labelParam2->setPixmap(QPixmap::fromImage(*imgs[1]));
 }
 
 double MainWindow::sliderToParamValue(QSlider *slider)
@@ -225,6 +265,11 @@ void MainWindow::updateSliderInformation()
 QString MainWindow::formatVector(const vec3f_t *v)
 {
     return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + "]";
+}
+
+QString MainWindow::formatVector(const vec4f_t *v)
+{
+    return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + ", " + QString::number(v->w, 'f', 2) + "]";
 }
 
 void MainWindow::on_actionArcballCamera_triggered()

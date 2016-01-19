@@ -58,6 +58,7 @@ private:
     void updateSliderInformation();
 
     QString formatVector(const vec3f_t *v);
+    QString formatVector(const vec4f_t *v);
 
 private slots:
     void on_actionArcballCamera_triggered();
