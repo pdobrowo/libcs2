@@ -31,6 +31,57 @@
 #include <QImage>
 #include <cmath>
 
+static int almost_zero(double x)
+{
+    static const double EPS = 10e-8;
+
+    return fabs(x) < EPS;
+}
+
+static int parametrization_case(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, double c)
+{
+    double a = vec3f_len(p) * vec3f_len(q);
+    double b = vec3f_len(u) * vec3f_len(v);
+
+    if (almost_zero(a) && almost_zero(b))
+        return 0;
+
+    if (almost_zero(b))
+    {
+        if (c >= -a && c <= a)
+            return 2;
+        else
+            return 1;
+    }
+
+    if (almost_zero(a))
+    {
+        if (c >= -b && c <= b)
+            return 2;
+        else
+            return 1;
+    }
+
+    if (a <= b)
+    {
+        if (c < - a - b) return 1;
+        if (c == - a - b) return 2;
+        if (c <= a - b) return 3;
+        if (c <= b - a) return 4;
+        if (c <= a + b) return 5;
+        return 6;
+    }
+    else
+    {
+        if (c < - a - b) return 1;
+        if (c == - a - b) return 2;
+        if (c <= b - a) return 3;
+        if (c <= a - b) return 4;
+        if (c <= a + b) return 5;
+        return 6;
+    }
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -57,30 +108,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-static int par_type(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, double c)
-{
-    double a = vec3f_len(p) * vec3f_len(q);
-    double b = vec3f_len(u) * vec3f_len(v);
-
-    if (a <= b)
-    {
-        if (c < - a - b) return 1;
-        if (c == - a - b) return 2;
-        if (c <= a - b) return 3;
-        if (c <= b - a) return 4;
-        if (c <= a + b) return 5;
-        return 6;
-    }
-    else
-    {
-        if (c < - a - b) return 1;
-        if (c == - a - b) return 2;
-        if (c <= b - a) return 3;
-        if (c <= a - b) return 4;
-        if (c <= a + b) return 5;
-        return 6;
-    }
-}
 
 void MainWindow::updatePredicateInformation()
 {
@@ -134,7 +161,7 @@ void MainWindow::updatePredicateInformation()
     ui->labelminval->setText(QString::number(mi, 'f', 4));
     ui->labelmaxval->setText(QString::number(ma, 'f', 4));
 
-    int cas = par_type(&p, &q, &u, &v, pred.c);
+    int cas = parametrization_case(&p, &q, &u, &v, pred.c);
 
     ui->labelcaseval->setText(QString::number(cas));
 
@@ -363,4 +390,47 @@ void MainWindow::on_verticalSliderC_valueChanged(int value)
 {
     formatSliderValue(ui->labelSliderC, value);
     updatePredicateInformation();
+}
+
+void MainWindow::on_labelZeroK_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+
+    ui->verticalSliderKX->setValue(300);
+    ui->verticalSliderKY->setValue(300);
+    ui->verticalSliderKZ->setValue(300);
+}
+
+void MainWindow::on_labelZeroL_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+
+    ui->verticalSliderLX->setValue(300);
+    ui->verticalSliderLY->setValue(300);
+    ui->verticalSliderLZ->setValue(300);
+}
+
+void MainWindow::on_labelZeroA_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+
+    ui->verticalSliderAX->setValue(300);
+    ui->verticalSliderAY->setValue(300);
+    ui->verticalSliderAZ->setValue(300);
+}
+
+void MainWindow::on_labelZeroB_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+
+    ui->verticalSliderBX->setValue(300);
+    ui->verticalSliderBY->setValue(300);
+    ui->verticalSliderBZ->setValue(300);
+}
+
+void MainWindow::on_labelZeroC_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+
+    ui->verticalSliderC->setValue(300);
 }

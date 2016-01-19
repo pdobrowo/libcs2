@@ -64,7 +64,6 @@ private slots:
     void on_actionArcballCamera_triggered();
     void on_actionFreeCamera_triggered();
     void on_actionAutoCamera_triggered();
-
     void on_verticalSliderKX_valueChanged(int value);
     void on_verticalSliderKY_valueChanged(int value);
     void on_verticalSliderKZ_valueChanged(int value);
@@ -78,6 +77,11 @@ private slots:
     void on_verticalSliderBY_valueChanged(int value);
     void on_verticalSliderBZ_valueChanged(int value);
     void on_verticalSliderC_valueChanged(int value);
+    void on_labelZeroK_linkActivated(const QString &link);
+    void on_labelZeroL_linkActivated(const QString &link);
+    void on_labelZeroA_linkActivated(const QString &link);
+    void on_labelZeroB_linkActivated(const QString &link);
+    void on_labelZeroC_linkActivated(const QString &link);
 
 private:
     Ui::MainWindow *ui;
