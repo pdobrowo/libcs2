@@ -28,9 +28,6 @@
 #include "renderviewarcballcamera.h"
 #include "renderviewflycamera.h"
 #include "renderviewautocamera.h"
-#include "cs2/predg3f.h"
-#include "cs2/spin3f.h"
-#include "cs2/vec3f.h"
 #include <QImage>
 #include <cmath>
 
@@ -43,26 +40,24 @@ MainWindow::MainWindow(QWidget *parent) :
     // setup
     m_rv = new RenderView();
 
-    m_rv->setCaption("S^4->(st.proj.)->R^3");
+    m_rv->setCaption("cspace");
     m_rv->setCullingEnabled(true);
 
     ui->widgetView->layout()->addWidget(m_rv);
 
-    // predicate
-    updatePredicate();
+    // set current toolbox page
+    ui->toolBox->setCurrentIndex(0);
+
+    // update slider information
+    updateSliderInformation();
+
+    // update predicate predicate
+    updatePredicateInformation();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-static void calc_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g)
-{
-    vec3f_cross(p, &g->k, &g->l);
-    vec3f_sub(q, &g->a, &g->b);
-    vec3f_sub(u, &g->k, &g->l);
-    vec3f_cross(v, &g->a, &g->b);
 }
 
 static int par_type(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, double c)
@@ -90,36 +85,37 @@ static int par_type(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, double c)
     }
 }
 
-void MainWindow::updatePredicate()
+void MainWindow::updatePredicateInformation()
 {
-    // note: tests
-    //predg3f_t pred = { { 1, 2, 3 }, { -1, 0, 2 }, { 4, 2, -2 }, { 0, -2, 3 }, 1 };
-    //predg3f_t pred = { { 1, 0, 0 }, { -1, 1, 1 }, { 0, 0, -1 }, { 1, 0, 1 }, 2 };
-    //predg3f_t pred = { { 1, -3, 0 }, { -1, 0, 2 }, { 0, 0, -1 }, { 1, 0, 1 }, 0 };
-
     // predicate g
     predg3f_t pred = {
-                        { sliderToValue(ui->verticalSliderKX), sliderToValue(ui->verticalSliderKY), sliderToValue(ui->verticalSliderKZ) },
-                        { sliderToValue(ui->verticalSliderLX), sliderToValue(ui->verticalSliderLY), sliderToValue(ui->verticalSliderLZ) },
-                        { sliderToValue(ui->verticalSliderAX), sliderToValue(ui->verticalSliderAY), sliderToValue(ui->verticalSliderAZ) },
-                        { sliderToValue(ui->verticalSliderBX), sliderToValue(ui->verticalSliderBY), sliderToValue(ui->verticalSliderBZ) },
-                        sliderToValue(ui->verticalSliderC) };
+                        { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
+                        { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
+                        { sliderToParamValue(ui->verticalSliderAX), sliderToParamValue(ui->verticalSliderAY), sliderToParamValue(ui->verticalSliderAZ) },
+                        { sliderToParamValue(ui->verticalSliderBX), sliderToParamValue(ui->verticalSliderBY), sliderToParamValue(ui->verticalSliderBZ) },
+                          sliderToParamValue(ui->verticalSliderC)
+                     };
 
-    ui->labelKval->setText(QString("(%1, %2, %3)").arg(pred.k.x).arg(pred.k.y).arg(pred.k.z));
-    ui->labelLval->setText(QString("(%1, %2, %3)").arg(pred.l.x).arg(pred.l.y).arg(pred.l.z));
-    ui->labelAval->setText(QString("(%1, %2, %3)").arg(pred.a.x).arg(pred.a.y).arg(pred.a.z));
-    ui->labelBval->setText(QString("(%1, %2, %3)").arg(pred.b.x).arg(pred.b.y).arg(pred.b.z));
-    ui->labelCval->setText(QString("%1").arg(pred.c));
+    // information -> parameters
+    ui->labelKval->setText(formatVector(&pred.k));
+    ui->labelLval->setText(formatVector(&pred.l));
+    ui->labelAval->setText(formatVector(&pred.a));
+    ui->labelBval->setText(formatVector(&pred.b));
+    ui->labelCval->setText(QString::number(pred.c, 'f', 2));
 
+    // information -> base variables
     vec3f_t p, q, u, v;
-    calc_pquv(&p, &q, &u, &v, &pred);
+    predg3f_pquv(&p, &q, &u, &v, &pred);
 
-    ui->labelPQval->setText(QString("%1").arg(vec3f_len(&p) * vec3f_len(&q)));
-    ui->labelUVval->setText(QString("%1").arg(vec3f_len(&u) * vec3f_len(&v)));
+    ui->labelPval->setText(formatVector(&p));
+    ui->labelQval->setText(formatVector(&q));
+    ui->labelUval->setText(formatVector(&u));
+    ui->labelVval->setText(formatVector(&v));
+    ui->labelC2val->setText(QString::number(pred.c, 'f', 2));
 
-    ui->labelABval->setText(QString("%1").arg(vec3f_len(&p) * vec3f_len(&q) + vec3f_len(&u) * vec3f_len(&v)));
 
-    ui->labelParamTypeValue->setText(QString("%1").arg(par_type(&p, &q, &u, &v, pred.c)));
+
+//    ui->labelParamTypeValue->setText(QString("%1").arg(par_type(&p, &q, &u, &v, pred.c)));
 
     m_rv->removeAllObjects();
 
@@ -186,13 +182,49 @@ void MainWindow::updatePredicate()
         m_rv->addTriangleList(trianglesBack, backColor);
     }
 
-    ui->labelParam->setPixmap(QPixmap::fromImage(*imgs[0]));
-    ui->labelParam2->setPixmap(QPixmap::fromImage(*imgs[1]));
+//    ui->labelParam->setPixmap(QPixmap::fromImage(*imgs[0]));
+//    ui->labelParam2->setPixmap(QPixmap::fromImage(*imgs[1]));
 }
 
-double MainWindow::sliderToValue(QSlider *slider)
+double MainWindow::sliderToParamValue(QSlider *slider)
 {
-    return 0.01 * (slider->value() - 300) / 3.0;
+    return sliderValueToParamValue(slider->value());
+}
+
+double MainWindow::sliderValueToParamValue(double value)
+{
+    return 0.01 * (value - 300) / 3.0;
+}
+
+void MainWindow::formatSliderValue(QLabel *label, double value)
+{
+    label->setText(QString::number(sliderValueToParamValue(value), 'f', 2));
+}
+
+void MainWindow::updateSliderInformation()
+{
+    formatSliderValue(ui->labelSliderKX, ui->verticalSliderKX->value());
+    formatSliderValue(ui->labelSliderKY, ui->verticalSliderKY->value());
+    formatSliderValue(ui->labelSliderKZ, ui->verticalSliderKZ->value());
+
+    formatSliderValue(ui->labelSliderLX, ui->verticalSliderLX->value());
+    formatSliderValue(ui->labelSliderLY, ui->verticalSliderLY->value());
+    formatSliderValue(ui->labelSliderLZ, ui->verticalSliderLZ->value());
+
+    formatSliderValue(ui->labelSliderAX, ui->verticalSliderAX->value());
+    formatSliderValue(ui->labelSliderAY, ui->verticalSliderAY->value());
+    formatSliderValue(ui->labelSliderAZ, ui->verticalSliderAZ->value());
+
+    formatSliderValue(ui->labelSliderBX, ui->verticalSliderBX->value());
+    formatSliderValue(ui->labelSliderBY, ui->verticalSliderBY->value());
+    formatSliderValue(ui->labelSliderBZ, ui->verticalSliderBZ->value());
+
+    formatSliderValue(ui->labelSliderC, ui->verticalSliderC->value());
+}
+
+QString MainWindow::formatVector(const vec3f_t *v)
+{
+    return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + "]";
 }
 
 void MainWindow::on_actionArcballCamera_triggered()
@@ -210,21 +242,80 @@ void MainWindow::on_actionAutoCamera_triggered()
     m_rv->setRenderViewCamera(new RenderViewAutoCamera());
 }
 
-void MainWindow::on_verticalSliderKX_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderKY_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderKZ_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderKX_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderKX, value);
+    updatePredicateInformation();
+}
 
-void MainWindow::on_verticalSliderLX_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderLY_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderLZ_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderKY_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderKY, value);
+    updatePredicateInformation();
+}
 
-void MainWindow::on_verticalSliderAX_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderAY_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderAZ_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderKZ_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderKZ, value);
+    updatePredicateInformation();
+}
 
-void MainWindow::on_verticalSliderBX_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderBY_valueChanged(int value) { (void)value; updatePredicate(); }
-void MainWindow::on_verticalSliderBZ_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderLX_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderLX, value);
+    updatePredicateInformation();
+}
 
-void MainWindow::on_verticalSliderC_valueChanged(int value) { (void)value; updatePredicate(); }
+void MainWindow::on_verticalSliderLY_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderLY, value);
+    updatePredicateInformation();
+}
 
+void MainWindow::on_verticalSliderLZ_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderLZ, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderAX_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderAX, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderAY_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderAY, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderAZ_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderAZ, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderBX_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderBX, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderBY_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderBY, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderBZ_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderBZ, value);
+    updatePredicateInformation();
+}
+
+void MainWindow::on_verticalSliderC_valueChanged(int value)
+{
+    formatSliderValue(ui->labelSliderC, value);
+    updatePredicateInformation();
+}

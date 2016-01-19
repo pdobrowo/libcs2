@@ -25,8 +25,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "cs2/predg3f.h"
+#include "cs2/spin3f.h"
+#include "cs2/vec3f.h"
 #include <QMainWindow>
 #include <QSlider>
+#include <QLabel>
 
 namespace Ui {
 class MainWindow;
@@ -45,8 +49,15 @@ public:
 private:
     RenderView *m_rv;
 
-    void updatePredicate();
-    double sliderToValue(QSlider *slider);
+    void updatePredicateInformation();
+
+    double sliderToParamValue(QSlider *slider);
+    double sliderValueToParamValue(double value);
+
+    void formatSliderValue(QLabel *label, double value);
+    void updateSliderInformation();
+
+    QString formatVector(const vec3f_t *v);
 
 private slots:
     void on_actionArcballCamera_triggered();
