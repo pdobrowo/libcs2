@@ -23,3 +23,18 @@
  * SOFTWARE.
  */
 #include "cs2/mat44f.h"
+#include <stddef.h>
+
+void mat44f_zero(mat44f_t *m)
+{
+    for (size_t i = 0; i < 4; ++i)
+        for (size_t j = 0; j < 4; ++j)
+            m->m[i][j] = 0;
+}
+
+void mat44f_identity(mat44f_t *m)
+{
+    for (size_t i = 0; i < 4; ++i)
+        for (size_t j = 0; j < 4; ++j)
+            m->m[i][j] = (i == j);
+}

@@ -191,8 +191,8 @@ const char *predgtype3x_str(predgtype3x_t t)
     switch (t)
     {
     case predgtype3x_inproper: return "inproper";
-    case predgtype3x_proper_ellipsoidal: return "proper_ellipsoidal";
-    case predgtype3x_proper_toroidal: return "proper_toroidal";
+    case predgtype3x_ellipsoidal: return "ellipsoidal";
+    case predgtype3x_toroidal: return "toroidal";
     default: return 0;
     }
 }
@@ -210,9 +210,9 @@ predgtype3x_t predg3x_type(const predg3x_t *g)
     pq = !vec3x_is_zero(&p) && !vec3x_is_zero(&q);
     uv = !vec3x_is_zero(&u) && !vec3x_is_zero(&v);
     if (pq && uv)
-        t = predgtype3x_proper_ellipsoidal;
+        t = predgtype3x_ellipsoidal;
     else if (pq || uv)
-        t = predgtype3x_proper_toroidal;
+        t = predgtype3x_toroidal;
     else
         t = predgtype3x_inproper;
     vec3x_clear(&p);
@@ -287,9 +287,9 @@ void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g)
     if (m)
     {
         /* only ellipsoidal param for now */
-        /*assert(predg3x_type(g) == predgtype3x_proper_ellipsoidal);*/
+        /*assert(predg3x_type(g) == predgtype3x_ellipsoidal);*/
 
-        if (predg3x_type(g) != predgtype3x_proper_ellipsoidal)
+        if (predg3x_type(g) != predgtype3x_ellipsoidal)
         {
             /* note: debug code */
             m->m[0][0] = 0;

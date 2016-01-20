@@ -61,8 +61,8 @@ void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_
 enum predgtype3x_e
 {
     predgtype3x_inproper,
-    predgtype3x_proper_ellipsoidal,
-    predgtype3x_proper_toroidal
+    predgtype3x_ellipsoidal,
+    predgtype3x_toroidal
 };
 
 typedef enum predgtype3x_e predgtype3x_t;

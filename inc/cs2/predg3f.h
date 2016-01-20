@@ -57,8 +57,8 @@ void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_
 enum predgtype3f_e
 {
     predgtype3f_inproper,
-    predgtype3f_proper_ellipsoidal,
-    predgtype3f_proper_toroidal
+    predgtype3f_ellipsoidal,
+    predgtype3f_toroidal
 };
 
 typedef enum predgtype3f_e predgtype3f_t;
@@ -68,16 +68,34 @@ const char *predgtype3f_str(predgtype3f_t t);
 predgtype3f_t predg3f_type(const predg3f_t *g);
 
 /* parametrization */
+enum predgparamtype3f_e
+{
+    predgparamtype3f_empty,         /* ellipsoidal: 1, 6; toroidal: 1 */
+    predgparamtype3f_two_points,    /* ellipsoidal: 2;    toroidal: - */
+    predgparamtype3f_ellipsoid,     /* ellipsoidal: 3;    toroidal: - */
+    predgparamtype3f_barrel,        /* ellipsoidal: 4;    toroidal: - */
+    predgparamtype3f_two_caps,      /* ellipsoidal: 5;    toroidal: - */
+    predgparamtype3f_torus          /* ellipsoidal: -;    toroidal: 2 */
+};
+
+typedef enum predgparamtype3f_e predgparamtype3f_t;
+
+const char *predgparamtype3f_str(predgparamtype3f_t pt);
+
+int predgparamtype3f_dim(predgparamtype3f_t pt);
+int predgparamtype3f_components(predgparamtype3f_t pt);
+
 struct predgparam3f_s
 {
+    predgparamtype3f_t t;
     mat44f_t q;
-    double r12, r23, r31;
+    double a, b, c;
 };
 
 typedef struct predgparam3f_s predgparam3f_t;
 
 void predg3f_param(predgparam3f_t *pp, const predg3f_t *g);
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, double sgn);
+void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, int component);
 
 /* special */
 void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g);

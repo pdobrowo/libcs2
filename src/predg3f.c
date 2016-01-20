@@ -28,19 +28,18 @@
 #include <assert.h>
 
 #define PI (3.1415926535897932385)
+#define EPS (10e-8)
 
-static int almost_zero(const vec3f_t *v)
+static int almost_zero(double x)
 {
-    static const double EPS = 10e-8;
-
-    return fabs(v->x) < EPS && fabs(v->y) < EPS && fabs(v->z) < EPS;
+    return fabs(x) < EPS;
 }
 
 static void calc_r(vec3f_t *r, const vec3f_t *v)
 {
-    if (v->x != 0)
+    if (!almost_zero(v->x))
         vec3f_set(r, -v->y, v->x, v->z); /* take x-y plane */
-    else if (v->y != 0)
+    else if (!almost_zero(v->y))
         vec3f_set(r, v->x, -v->z, v->y); /* take y-z plane */
     else
         vec3f_set(r, v->z, v->y, -v->x); /* take z-x plane */
@@ -135,6 +134,60 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
     w->w = -vec3f_dot(&r, &d);
 }
 
+static predgparamtype3f_t inproper_param_case()
+{
+    return predgparamtype3f_empty;
+}
+
+static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
+{
+    if (almost_zero(c + a + b))
+        return predgparamtype3f_two_points;
+
+    if (c < - a - b)
+        return predgparamtype3f_empty;
+
+    if (a <= b)
+    {
+        if (c <= a - b)
+            return predgparamtype3f_ellipsoid;
+
+        if (c <= b - a)
+            return predgparamtype3f_barrel;
+    }
+    else
+    {
+        if (c <= b - a)
+            return predgparamtype3f_ellipsoid;
+
+        if (c <= a - b)
+            return predgparamtype3f_barrel;
+    }
+
+    if (c <= a + b)
+        return predgparamtype3f_two_caps;
+
+    return predgparamtype3f_empty;
+}
+
+static predgparamtype3f_t toroidal_param_case(double a, double b, double c)
+{
+    if (almost_zero(a))
+    {
+        if (c >= -b && c <= b)
+            return predgparamtype3f_torus;
+        else
+            return predgparamtype3f_empty;
+    }
+    else
+    {
+        if (c >= -a && c <= a)
+            return predgparamtype3f_torus;
+        else
+            return predgparamtype3f_empty;
+    }
+}
+
 void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
 {
     vec3f_t r, nr;
@@ -171,8 +224,8 @@ const char *predgtype3f_str(predgtype3f_t t)
     switch (t)
     {
     case predgtype3f_inproper: return "inproper";
-    case predgtype3f_proper_ellipsoidal: return "proper_ellipsoidal";
-    case predgtype3f_proper_toroidal: return "proper_toroidal";
+    case predgtype3f_ellipsoidal: return "ellipsoidal";
+    case predgtype3f_toroidal: return "toroidal";
     default: return 0;
     }
 }
@@ -180,51 +233,188 @@ const char *predgtype3f_str(predgtype3f_t t)
 predgtype3f_t predg3f_type(const predg3f_t *g)
 {
     vec3f_t p, q, u, v;
-    int pqf, uvf;
+    double a, b;
+    int za, zb;
 
     predg3f_pquv(&p, &q, &u, &v, g);
 
-    pqf = !almost_zero(&p) && !almost_zero(&q);
-    uvf = !almost_zero(&u) && !almost_zero(&v);
+    a = vec3f_len(&p) * vec3f_len(&q);
+    b = vec3f_len(&u) * vec3f_len(&v);
+    za = almost_zero(a);
+    zb = almost_zero(b);
 
-    if (pqf && uvf)
-        return predgtype3f_proper_ellipsoidal;
-    else if (pqf || uvf)
-        return predgtype3f_proper_toroidal;
+    if (!za && !zb)
+        return predgtype3f_ellipsoidal;
+    else if (!za || !zb)
+        return predgtype3f_toroidal;
     else
         return predgtype3f_inproper;
+}
+
+const char *predgparamtype3f_str(predgparamtype3f_t pt)
+{
+    switch (pt)
+    {
+    case predgparamtype3f_empty: return "empty";
+    case predgparamtype3f_two_points: return "two_points";
+    case predgparamtype3f_ellipsoid: return "ellipsoid";
+    case predgparamtype3f_barrel: return "barrel";
+    case predgparamtype3f_two_caps: return "two_caps";
+    case predgparamtype3f_torus: return "torus";
+    default: return 0;
+    }
+}
+
+int predgparamtype3f_dim(predgparamtype3f_t pt)
+{
+    switch (pt)
+    {
+    case predgparamtype3f_empty: return -1;
+    case predgparamtype3f_two_points: return 0;
+    case predgparamtype3f_ellipsoid: return 2;
+    case predgparamtype3f_barrel: return 2;
+    case predgparamtype3f_two_caps: return 2;
+    case predgparamtype3f_torus: return 2;
+    default: assert(0);
+    }
+}
+
+int predgparamtype3f_components(predgparamtype3f_t pt)
+{
+    switch (pt)
+    {
+    case predgparamtype3f_empty: return 0;
+    case predgparamtype3f_two_points: return 2;
+    case predgparamtype3f_ellipsoid: return 2;
+    case predgparamtype3f_barrel: return 0; // ?
+    case predgparamtype3f_two_caps: return 0; // ?
+    case predgparamtype3f_torus: return 1;
+    default: assert(0);
+    }
 }
 
 void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
 {
     vec3f_t p, q, u, v;
-    double pl, ql, ul, vl, su;
+    int za, zb;
 
     predg3f_pquv(&p, &q, &u, &v, g);
 
-    pl = vec3f_len(&p);
-    ql = vec3f_len(&q);
-    ul = vec3f_len(&u);
-    vl = vec3f_len(&v);
-    su = pl * ql + ul * vl;
+    pp->a = vec3f_len(&p) * vec3f_len(&q);
+    pp->b = vec3f_len(&u) * vec3f_len(&v);
+    pp->c = g->c;
 
-    /* radii */
-    pp->r12 = sqrt((g->c + su) / (2 * su));
-    pp->r23 = sqrt((g->c + su) / (2 * pl * ql));
-    pp->r31 = sqrt((g->c + su) / (2 * ul * vl));
+    za = almost_zero(pp->a);
+    zb = almost_zero(pp->b);
 
-    /* matrix q */
-    predg3f_eigen(&pp->q, 0, g);
+    if (!za || !zb)
+        predg3f_eigen(&pp->q, 0, g);
+    else
+        mat44f_zero(&pp->q);
+
+    if (!za && !zb)
+        pp->t = ellipsoidal_param_case(pp->a, pp->b, pp->c);
+    else if (!za || !zb)
+        pp->t = toroidal_param_case(pp->a, pp->b, pp->c);
+    else
+        pp->t = inproper_param_case();
 }
 
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, double sgn)
+void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, int component)
 {
-    double a = u * PI;
-    double b = v * 2 * PI;
-    double t12 = pp->r12 * sin(a) * cos(b);
-    double t23 = pp->r23 * sin(a) * sin(b);
-    double t31 = pp->r31 * cos(a);
-    double t0 = sgn * sqrt(1 - t12 * t12 - t23 * t23 - t31 * t31);
+    double t12 = 0.0, t23 = 0.0, t31 = 0.0, t0 = 0.0;
+
+    switch (pp->t)
+    {
+        case predgparamtype3f_empty:
+        {
+            /* -1-dimensional case, no parametrization */
+            assert(0);
+        }
+        break;
+
+        case predgparamtype3f_two_points:
+        {
+            switch (component)
+            {
+                case 0:
+                    t12 = 0;
+                    t23 = 0;
+                    t31 = 0;
+                    t0 = 1;
+                    break;
+
+                case 1:
+                    t12 = 0;
+                    t23 = 0;
+                    t31 = 0;
+                    t0 = -1;
+                    break;
+
+                default:
+                    assert(0);
+                    break;
+            }
+        }
+        break;
+
+        case predgparamtype3f_ellipsoid:
+        {
+            double sgn = 0.0;
+            double r = 0.5 * (pp->a + pp->b + pp->c);
+            double alpha, beta;
+            double sin_alpha, cos_alpha, sin_beta, cos_beta;
+
+            switch (component)
+            {
+                case 0:
+                    sgn = 1.0;
+                    break;
+
+                case 1:
+                    sgn = -1.0;
+                    v = 1 - v;
+                    break;
+
+                default:
+                    assert(0);
+                    break;
+            }
+
+            alpha = u * 2 * PI;
+            beta = v * PI;
+            sin_alpha = sin(alpha);
+            cos_alpha = cos(alpha);
+            sin_beta = sin(beta);
+            cos_beta = cos(beta);
+
+            t12 = sqrt(r / (pp->a + pp->b)) * sin_beta * cos_alpha;
+            t23 = sqrt(r / pp->a) * sin_beta * sin_alpha;
+            t31 = sqrt(r / pp->b) * cos_beta;
+            t0 = sgn * sqrt(1.0 - t12 * t12 - t23 * t23 - t31 * t31);
+        }
+        break;
+
+        case predgparamtype3f_barrel:
+        {
+
+        }
+        break;
+
+        case predgparamtype3f_two_caps:
+        {
+
+        }
+        break;
+
+        case predgparamtype3f_torus:
+        {
+
+        }
+        break;
+
+        default: assert(0);
+    }
 
     s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
     s->s23 = pp->q.m[1][0] * t12 + pp->q.m[1][1] * t23 + pp->q.m[1][2] * t31 + pp->q.m[1][3] * t0;
@@ -238,6 +428,7 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     vec4f_t w1, w2, w3, w4;
     double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
 
+    /* base */
     predg3f_pquv(&p, &q, &u, &v, g);
 
     /* eigenvalues */
@@ -258,9 +449,9 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     if (m)
     {
         /* only ellipsoidal param for now */
-        /*assert(predg3f_type(g) == predgtype3f_proper_ellipsoidal);*/
+        /*assert(predg3f_type(g) == predgtype3f_ellipsoidal);*/
 
-        if (predg3f_type(g) != predgtype3f_proper_ellipsoidal)
+        if (predg3f_type(g) != predgtype3f_ellipsoidal)
         {
             /* note: debug code */
             m->m[0][0] = 0;

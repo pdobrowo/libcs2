@@ -36,6 +36,9 @@ struct mat44f_s
 
 typedef struct mat44f_s mat44f_t;
 
+void mat44f_zero(mat44f_t *m);
+void mat44f_identity(mat44f_t *m);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

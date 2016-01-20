@@ -31,57 +31,6 @@
 #include <QImage>
 #include <cmath>
 
-static int almost_zero(double x)
-{
-    static const double EPS = 10e-8;
-
-    return fabs(x) < EPS;
-}
-
-static int parametrization_case(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, double c)
-{
-    double a = vec3f_len(p) * vec3f_len(q);
-    double b = vec3f_len(u) * vec3f_len(v);
-
-    if (almost_zero(a) && almost_zero(b))
-        return 0;
-
-    if (almost_zero(b))
-    {
-        if (c >= -a && c <= a)
-            return 2;
-        else
-            return 1;
-    }
-
-    if (almost_zero(a))
-    {
-        if (c >= -b && c <= b)
-            return 2;
-        else
-            return 1;
-    }
-
-    if (a <= b)
-    {
-        if (c < - a - b) return 1;
-        if (c == - a - b) return 2;
-        if (c <= a - b) return 3;
-        if (c <= b - a) return 4;
-        if (c <= a + b) return 5;
-        return 6;
-    }
-    else
-    {
-        if (c < - a - b) return 1;
-        if (c == - a - b) return 2;
-        if (c <= b - a) return 3;
-        if (c <= a - b) return 4;
-        if (c <= a + b) return 5;
-        return 6;
-    }
-}
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -120,12 +69,23 @@ void MainWindow::updatePredicateInformation()
                           sliderToParamValue(ui->verticalSliderC)
                      };
 
+    // param g
+    predgparam3f_t param;
+    predg3f_param(&param, &pred);
+
+    double a = param.a;
+    double b = param.b;
+    double c = param.c;
+
+    double mi = std::min(a - b, b - a);
+    double ma = std::max(a - b, b - a);
+
     // information -> parameters
     ui->labelKval->setText(formatVector(&pred.k));
     ui->labelLval->setText(formatVector(&pred.l));
     ui->labelAval->setText(formatVector(&pred.a));
     ui->labelBval->setText(formatVector(&pred.b));
-    ui->labelCval->setText(QString::number(pred.c, 'f', 2));
+    ui->labelCval->setText(QString::number(c, 'f', 2));
 
     // information -> base variables
     vec3f_t p, q, u, v;
@@ -135,7 +95,7 @@ void MainWindow::updatePredicateInformation()
     ui->labelQval->setText(formatVector(&q));
     ui->labelUval->setText(formatVector(&u));
     ui->labelVval->setText(formatVector(&v));
-    ui->labelC2val->setText(QString::number(pred.c, 'f', 2));
+    ui->labelC2val->setText(QString::number(c, 'f', 2));
 
     // information -> type
     predgtype3f_t type = predg3f_type(&pred);
@@ -144,26 +104,14 @@ void MainWindow::updatePredicateInformation()
     ui->labeltypeval->setText(predgtype3f_str(type));
 
     // information -> parametrization variables
-    double pl = vec3f_len(&p);
-    double ql = vec3f_len(&q);
-    double ul = vec3f_len(&u);
-    double vl = vec3f_len(&v);
-
-    double a = pl * ql;
-    double b = ul * vl;
-
-    double mi = std::min(a - b, b - a);
-    double ma = std::max(a - b, b - a);
-
     ui->labelaval->setText(QString::number(a, 'f', 4));
     ui->labelbval->setText(QString::number(b, 'f', 4));
-    ui->labelcval->setText(QString::number(pred.c, 'f', 4));
+    ui->labelcval->setText(QString::number(c, 'f', 4));
     ui->labelminval->setText(QString::number(mi, 'f', 4));
     ui->labelmaxval->setText(QString::number(ma, 'f', 4));
 
-    int cas = parametrization_case(&p, &q, &u, &v, pred.c);
-
-    ui->labelcaseval->setText(QString::number(cas));
+    ui->labelcaseval->setText(predgparamtype3f_str(param.t));
+    ui->labeldimval->setText(QString::number(predgparamtype3f_dim(param.t)));
 
     // information -> eigen decomposition
     mat44f_t eigenvec;
@@ -197,59 +145,43 @@ void MainWindow::updatePredicateInformation()
     // visual
     m_rv->removeAllObjects();
 
-    predgparam3f_t param;
-    predg3f_param(&param, &pred);
-
-    const static double STEP = 0.01;
-
-    for (int sgni = 0; sgni < 2; ++sgni)
+    // only 2-dimensional
+    if (predgparamtype3f_dim(param.t) == 2)
     {
-        // triangle list
+        const static double STEP = 0.01;
+
         TriangleListPtr trianglesFront(new TriangleList());
         TriangleListPtr trianglesBack(new TriangleList());
 
-        // sgn
-        double sgn;
-        QColor frontColor, backColor;
+        // each component
+        int ncomps = predgparamtype3f_components(param.t);
 
-        if (!sgni)
+        for (int c = 0; c < ncomps; ++c)
         {
-            sgn = -1.0;
+            for (double pu = 0; pu < 1; pu += STEP) for (double pv = 0; pv < 1; pv += STEP)
+            {
+                spin3f_t sp00, sp01, sp10, sp11;
 
-            frontColor = Qt::red;
-            backColor = Qt::green;
+                predgparam3f_eval(&sp00, &param, pu, pv, c);
+                predgparam3f_eval(&sp01, &param, pu, pv + STEP, c);
+                predgparam3f_eval(&sp10, &param, pu + STEP, pv, c);
+                predgparam3f_eval(&sp11, &param, pu + STEP, pv + STEP, c);
+
+                QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
+                QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
+                QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
+                QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+
+                trianglesFront->push_back(Triangle(v00, v01, v11));
+                trianglesFront->push_back(Triangle(v00, v11, v10));
+
+                trianglesBack->push_back(Triangle(v00, v11, v01));
+                trianglesBack->push_back(Triangle(v00, v10, v11));
+            }
+
+            m_rv->addTriangleList(trianglesFront, Qt::green);
+            m_rv->addTriangleList(trianglesBack, Qt::red);
         }
-        else
-        {
-            sgn = 1.0;
-
-            frontColor = Qt::green;
-            backColor = Qt::red;
-        }
-
-        for (double pu = 0; pu < 1; pu += STEP) for (double pv = 0; pv < 1; pv += STEP)
-        {
-            spin3f_t sp00, sp01, sp10, sp11;
-
-            predgparam3f_eval(&sp00, &param, pu, pv, sgn);
-            predgparam3f_eval(&sp01, &param, pu, pv + STEP, sgn);
-            predgparam3f_eval(&sp10, &param, pu + STEP, pv, sgn);
-            predgparam3f_eval(&sp11, &param, pu + STEP, pv + STEP, sgn);
-
-            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
-            trianglesFront->push_back(Triangle(v00, v01, v11));
-            trianglesFront->push_back(Triangle(v00, v11, v10));
-
-            trianglesBack->push_back(Triangle(v00, v11, v01));
-            trianglesBack->push_back(Triangle(v00, v10, v11));
-        }
-
-        m_rv->addTriangleList(trianglesFront, frontColor);
-        m_rv->addTriangleList(trianglesBack, backColor);
     }
 }
 
