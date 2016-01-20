@@ -275,7 +275,9 @@ int predgparamtype3f_dim(predgparamtype3f_t pt)
     case predgparamtype3f_barrel: return 2;
     case predgparamtype3f_two_caps: return 2;
     case predgparamtype3f_torus: return 2;
-    default: assert(0);
+    default:
+        assert(0);
+        return -2;
     }
 }
 
@@ -286,10 +288,12 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
     case predgparamtype3f_empty: return 0;
     case predgparamtype3f_two_points: return 2;
     case predgparamtype3f_ellipsoid: return 2;
-    case predgparamtype3f_barrel: return 0; // ?
-    case predgparamtype3f_two_caps: return 0; // ?
+    case predgparamtype3f_barrel: return 0; /* ? */
+    case predgparamtype3f_two_caps: return 0; /* ? */
     case predgparamtype3f_torus: return 1;
-    default: assert(0);
+    default:
+        assert(0);
+        return -1;
     }
 }
 
