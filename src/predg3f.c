@@ -409,11 +409,41 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
 
         case predgparamtype3f_torus:
         {
+            double alpha = u * 2 * PI;
+            double beta = v * 2 * PI;
 
+            if (almost_zero(pp->b))
+            {
+                double rp = sqrt((pp->a + pp->c) / (2 * pp->a));
+                double rm = sqrt((pp->a - pp->c) / (2 * pp->a));
+
+                t12 = rp * cos(alpha);
+                t23 = rp * sin(alpha);
+                t31 = rm * cos(beta);
+                t0 = rm * sin(beta);
+            }
+            else
+            {
+                double rp = sqrt((pp->b + pp->c) / (2 * pp->b));
+                double rm = sqrt((pp->b - pp->c) / (2 * pp->b));
+
+                t12 = rp * cos(alpha);
+                t23 = rm * sin(alpha);
+                t31 = rp * cos(beta);
+                t0 = rm * sin(beta);
+            }
+
+            /* debug, currently Q is unknown for toroidal case */
+            s->s12 = t12;
+            s->s23 = t23;
+            s->s31 = t31;
+            s->s0 = t0;
+            return;
         }
         break;
 
-        default: assert(0);
+        default:
+            assert(0);
     }
 
     s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
@@ -449,6 +479,7 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     if (m)
     {
         /* only ellipsoidal param for now */
+
         /*assert(predg3f_type(g) == predgtype3f_ellipsoidal);*/
 
         if (predg3f_type(g) != predgtype3f_ellipsoidal)
