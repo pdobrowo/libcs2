@@ -366,3 +366,8 @@ void MainWindow::on_labelZeroC_linkActivated(const QString &link)
 
     ui->verticalSliderC->setValue(300);
 }
+
+void MainWindow::on_actionWireframe_triggered()
+{
+    m_rv->setWireframe(ui->actionWireframe->isChecked());
+}

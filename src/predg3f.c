@@ -288,7 +288,7 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
     case predgparamtype3f_empty: return 0;
     case predgparamtype3f_two_points: return 2;
     case predgparamtype3f_ellipsoid: return 2;
-    case predgparamtype3f_barrel: return 0; /* ? */
+    case predgparamtype3f_barrel: return 1; ////////////////////////////
     case predgparamtype3f_two_caps: return 0; /* ? */
     case predgparamtype3f_torus: return 1;
     default:
@@ -401,13 +401,58 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
 
         case predgparamtype3f_barrel:
         {
+            double sgn = 0.0;
+            double r = 0.5 * (pp->a + pp->b + pp->c);
+            double alpha, h;
+            double sin_alpha, cos_alpha;
 
+            switch (component)
+            {
+                case 0:
+                    sgn = 1.0;
+                    break;
+
+                case 1:
+                    sgn = -1.0;
+                    v = 1 - v;
+                    break;
+
+                default:
+                    assert(0);
+                    break;
+            }
+
+            alpha = u * 2 * PI;
+            h = 2.0 * v - 1.0;
+            sin_alpha = sin(alpha);
+            cos_alpha = cos(alpha);
+
+            if (pp->c > pp->a - pp->b && pp->c <= pp->b - pp->a)
+            {
+                // y-barrel
+                //double aa = sqrt(r / pp->a) * sqrt(1 - b^2 / (a^2 - b^2));
+
+                t12 = sqrt(r / (pp->a + pp->b)) * cos_alpha;
+                t23 = sqrt(r / pp->a) * 0;
+                t31 = sqrt(r / pp->b) * sin_alpha;
+                t0 = sgn * sqrt(1.0 - t12 * t12 - t23 * t23 - t31 * t31);
+            }
+            else if (pp->c > pp->b - pp->a && pp->c <= pp->a - pp->b)
+            {
+                 // z-barrel
+
+            }
+            else
+            {
+                // fail
+                assert(0);
+            }
         }
         break;
 
         case predgparamtype3f_two_caps:
         {
-
+            // yz-caps
         }
         break;
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1152</width>
-    <height>648</height>
+    <height>659</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,14 @@
     <addaction name="actionFreeCamera"/>
     <addaction name="actionAutoCamera"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionWireframe"/>
+   </widget>
    <addaction name="menuCamera"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
@@ -1098,6 +1105,14 @@
   <action name="actionAutoCamera">
    <property name="text">
     <string>A&amp;uto</string>
+   </property>
+  </action>
+  <action name="actionWireframe">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Wireframe</string>
    </property>
   </action>
  </widget>

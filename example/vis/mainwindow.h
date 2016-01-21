@@ -83,6 +83,8 @@ private slots:
     void on_labelZeroB_linkActivated(const QString &link);
     void on_labelZeroC_linkActivated(const QString &link);
 
+    void on_actionWireframe_triggered();
+
 private:
     Ui::MainWindow *ui;
 };
