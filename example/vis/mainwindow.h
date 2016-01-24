@@ -28,6 +28,7 @@
 #include "cs2/predg3f.h"
 #include "cs2/spin3f.h"
 #include "cs2/vec3f.h"
+#include "trianglelistmesh.h"
 #include <QCloseEvent>
 #include <QMainWindow>
 #include <QSlider>
@@ -71,6 +72,11 @@ private:
 
     void updateWindowTitle();
 
+    void autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions);
+    void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
+
+    void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double radius);
+
     virtual void closeEvent(QCloseEvent *event);
 
 private slots:
@@ -100,6 +106,8 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionSaveAs_triggered();
+
+    void on_actionAutoMesh_triggered();
 
 private:
     Ui::MainWindow *ui;

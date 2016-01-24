@@ -73,6 +73,7 @@
      <string>&amp;View</string>
     </property>
     <addaction name="actionWireframe"/>
+    <addaction name="actionAutoMesh"/>
    </widget>
    <widget class="QMenu" name="menu_File">
     <property name="title">
@@ -1142,6 +1143,7 @@
    <addaction name="actionAutoCamera"/>
    <addaction name="separator"/>
    <addaction name="actionWireframe"/>
+   <addaction name="actionAutoMesh"/>
   </widget>
   <action name="actionArcballCamera">
    <property name="text">
@@ -1184,6 +1186,14 @@
   <action name="actionQuit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionAutoMesh">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto mesh</string>
    </property>
   </action>
  </widget>

@@ -452,7 +452,15 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
             else if (pp->c > pp->b - pp->a && pp->c <= pp->a - pp->b)
             {
                  /* z-barrel */
+                double x = sqrt((pp->a - pp->b + pp->c) / (2.0 * pp->a)) * ca;
+                double y = sqrt((pp->a - pp->b + pp->c) / (2.0 * (pp->a - pp->b))) * sa;
+                double z = h * sqrt(pclamp(1.0 - x * x - y * y));
+                double d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
 
+                t12 = x * d;
+                t23 = y * d;
+                t31 = z * d;
+                t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
             }
             else
             {

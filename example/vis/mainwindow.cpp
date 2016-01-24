@@ -37,6 +37,26 @@
 #include <cassert>
 #include <cmath>
 
+namespace // anonymous
+{
+double projectedDistance(const spin3f_t *a, const spin3f_t *b)
+{
+    vec3f_t pa, pb, pc;
+
+    pa.x = a->s12 / (1.0 - a->s0);
+    pa.y = a->s23 / (1.0 - a->s0);
+    pa.z = a->s31 / (1.0 - a->s0);
+
+    pb.x = b->s12 / (1.0 - b->s0);
+    pb.y = b->s23 / (1.0 - b->s0);
+    pb.z = b->s31 / (1.0 - b->s0);
+
+    vec3f_sub(&pc, &pa, &pb);
+
+    return vec3f_len(&pc);
+}
+} // namespace anonymous
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_currentChanged(false),
@@ -166,40 +186,16 @@ void MainWindow::updatePredicateInformation()
     // only 2-dimensional
     if (predgparamtype3f_dim(param.t) == 2)
     {
-        const static double STEP = 0.01;
-
         TriangleListPtr trianglesFront(new TriangleList());
         TriangleListPtr trianglesBack(new TriangleList());
 
-        // each component
-        int ncomps = predgparamtype3f_components(param.t);
+        if (ui->actionAutoMesh->isChecked())
+            autoMesh(trianglesFront, trianglesBack, &param, 0.1, 0.5, 10);
+        else
+            simpleMesh(trianglesFront, trianglesBack, &param, 0.01);
 
-        for (int c = 0; c < ncomps; ++c)
-        {
-            for (double pu = 0; pu <= 1 - STEP; pu += STEP) for (double pv = 0; pv <= 1 - STEP; pv += STEP)
-            {
-                spin3f_t sp00, sp01, sp10, sp11;
-
-                predgparam3f_eval(&sp00, &param, pu, pv, c);
-                predgparam3f_eval(&sp01, &param, pu, pv + STEP, c);
-                predgparam3f_eval(&sp10, &param, pu + STEP, pv, c);
-                predgparam3f_eval(&sp11, &param, pu + STEP, pv + STEP, c);
-
-                QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-                QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-                QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-                QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
-                trianglesFront->push_back(Triangle(v00, v01, v11));
-                trianglesFront->push_back(Triangle(v00, v11, v10));
-
-                trianglesBack->push_back(Triangle(v00, v11, v01));
-                trianglesBack->push_back(Triangle(v00, v10, v11));
-            }
-
-            m_rv->addTriangleList(trianglesFront, Qt::green);
-            m_rv->addTriangleList(trianglesBack, Qt::red);
-        }
+        m_rv->addTriangleList(trianglesFront, Qt::green);
+        m_rv->addTriangleList(trianglesBack, Qt::red);
     }
 }
 
@@ -343,6 +339,77 @@ void MainWindow::updateWindowTitle()
     }
 
     setWindowTitle(fileName + ": vis" + (m_currentChanged ? " *" : ""));
+}
+
+void MainWindow::autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions)
+{
+    int number_of_components = predgparamtype3f_components(param->t);
+
+    for (int component = 0; component < number_of_components; ++component)
+        for (double u = 0; u <= 1 - initialRadius; u += initialRadius)
+            for (double v = 0; v <= 1 - initialRadius; v += initialRadius)
+                autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
+}
+
+void MainWindow::autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
+{
+    spin3f_t sp00, sp01, sp10, sp11;
+
+    predgparam3f_eval(&sp00, param, minU, minV, component);
+    predgparam3f_eval(&sp01, param, minU, maxV, component);
+    predgparam3f_eval(&sp10, param, maxU, minV, component);
+    predgparam3f_eval(&sp11, param, maxU, maxV, component);
+
+    if (subdivision == maxSubdivisions || (projectedDistance(&sp00, &sp01) <= targetRadius && projectedDistance(&sp00, &sp10) <= targetRadius && projectedDistance(&sp00, &sp11) <= targetRadius &&
+                                           projectedDistance(&sp01, &sp10) <= targetRadius && projectedDistance(&sp01, &sp11) <= targetRadius && projectedDistance(&sp10, &sp11) <= targetRadius))
+    {
+        QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
+        QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
+        QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
+        QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+
+        trianglesFront->push_back(Triangle(v00, v01, v11));
+        trianglesFront->push_back(Triangle(v00, v11, v10));
+
+        trianglesBack->push_back(Triangle(v00, v11, v01));
+        trianglesBack->push_back(Triangle(v00, v10, v11));
+    }
+    else
+    {
+        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
+        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
+        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
+        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
+    }
+}
+
+void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double radius)
+{
+    int number_of_components = predgparamtype3f_components(param->t);
+
+    for (int c = 0; c < number_of_components; ++c)
+    {
+        for (double pu = 0; pu <= 1 - radius; pu += radius) for (double pv = 0; pv <= 1 - radius; pv += radius)
+        {
+            spin3f_t sp00, sp01, sp10, sp11;
+
+            predgparam3f_eval(&sp00, param, pu, pv, c);
+            predgparam3f_eval(&sp01, param, pu, pv + radius, c);
+            predgparam3f_eval(&sp10, param, pu + radius, pv, c);
+            predgparam3f_eval(&sp11, param, pu + radius, pv + radius, c);
+
+            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
+            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
+            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
+            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+
+            trianglesFront->push_back(Triangle(v00, v01, v11));
+            trianglesFront->push_back(Triangle(v00, v11, v10));
+
+            trianglesBack->push_back(Triangle(v00, v11, v01));
+            trianglesBack->push_back(Triangle(v00, v10, v11));
+        }
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -597,4 +664,9 @@ void MainWindow::on_actionSave_triggered()
 void MainWindow::on_actionSaveAs_triggered()
 {
     (void)saveNewFile();
+}
+
+void MainWindow::on_actionAutoMesh_triggered()
+{
+    updatePredicateInformation();
 }
