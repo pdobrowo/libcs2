@@ -35,6 +35,17 @@ static int almost_zero(double x)
     return fabs(x) < EPS;
 }
 
+static double pclamp(double x)
+{
+    if (x < 0.0)
+    {
+        assert(x >= -EPS); /* guard nonsense */
+        x = 0.0;
+    }
+
+    return x;
+}
+
 static void calc_r(vec3f_t *r, const vec3f_t *v)
 {
     if (!almost_zero(v->x))
@@ -288,7 +299,7 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
     case predgparamtype3f_empty: return 0;
     case predgparamtype3f_two_points: return 2;
     case predgparamtype3f_ellipsoid: return 2;
-    case predgparamtype3f_barrel: return 1; ////////////////////////////
+    case predgparamtype3f_barrel: return 1;
     case predgparamtype3f_two_caps: return 0; /* ? */
     case predgparamtype3f_torus: return 1;
     default:
@@ -328,6 +339,8 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
 {
     double t12 = 0.0, t23 = 0.0, t31 = 0.0, t0 = 0.0;
 
+    assert(u >= 0.0 && u <= 1.0 && v >= 0.0 && v <= 1.0);
+
     switch (pp->t)
     {
         case predgparamtype3f_empty:
@@ -342,17 +355,17 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
             switch (component)
             {
                 case 0:
-                    t12 = 0;
-                    t23 = 0;
-                    t31 = 0;
-                    t0 = 1;
+                    t12 = 0.0;
+                    t23 = 0.0;
+                    t31 = 0.0;
+                    t0 = 1.0;
                     break;
 
                 case 1:
-                    t12 = 0;
-                    t23 = 0;
-                    t31 = 0;
-                    t0 = -1;
+                    t12 = 0.0;
+                    t23 = 0.0;
+                    t31 = 0.0;
+                    t0 = -1.0;
                     break;
 
                 default:
@@ -366,8 +379,8 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
         {
             double sgn = 0.0;
             double r = 0.5 * (pp->a + pp->b + pp->c);
-            double alpha, beta;
-            double sin_alpha, cos_alpha, sin_beta, cos_beta;
+            double a, b;
+            double sa, ca, sb, cb;
 
             switch (component)
             {
@@ -385,66 +398,65 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
                     break;
             }
 
-            alpha = u * 2 * PI;
-            beta = v * PI;
-            sin_alpha = sin(alpha);
-            cos_alpha = cos(alpha);
-            sin_beta = sin(beta);
-            cos_beta = cos(beta);
+            a = u * 2.0 * PI;
+            b = v * PI;
 
-            t12 = sqrt(r / (pp->a + pp->b)) * sin_beta * cos_alpha;
-            t23 = sqrt(r / pp->a) * sin_beta * sin_alpha;
-            t31 = sqrt(r / pp->b) * cos_beta;
-            t0 = sgn * sqrt(1.0 - t12 * t12 - t23 * t23 - t31 * t31);
+            sa = sin(a);
+            ca = cos(a);
+            sb = sin(b);
+            cb = cos(b);
+
+            t12 = sqrt(r / (pp->a + pp->b)) * sb * ca;
+            t23 = sqrt(r / pp->a) * sb * sa;
+            t31 = sqrt(r / pp->b) * cb;
+            t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
         }
         break;
 
         case predgparamtype3f_barrel:
         {
-            double sgn = 0.0;
-            double r = 0.5 * (pp->a + pp->b + pp->c);
-            double alpha, h;
-            double sin_alpha, cos_alpha;
+            /* note: branch cut*/
+            double a, h;
+            double sa, ca;
+            double sgn;
 
-            switch (component)
+            if (v >= 0.5)
             {
-                case 0:
-                    sgn = 1.0;
-                    break;
-
-                case 1:
-                    sgn = -1.0;
-                    v = 1 - v;
-                    break;
-
-                default:
-                    assert(0);
-                    break;
+                sgn = 1.0;
+                v = (v - 0.5) * 2.0;
+            }
+            else
+            {
+                sgn = -1.0;
+                v = (0.5 - v) * 2.0;
             }
 
-            alpha = u * 2 * PI;
+            a = u * 2 * PI;
             h = 2.0 * v - 1.0;
-            sin_alpha = sin(alpha);
-            cos_alpha = cos(alpha);
+            sa = sin(a);
+            ca = cos(a);
 
             if (pp->c > pp->a - pp->b && pp->c <= pp->b - pp->a)
             {
-                // y-barrel
-                //double aa = sqrt(r / pp->a) * sqrt(1 - b^2 / (a^2 - b^2));
+                /* y-barrel*/
+                double x = sqrt((pp->b - pp->a + pp->c) / (2.0 * pp->b)) * ca;
+                double z = sqrt((pp->b - pp->a + pp->c) / (2.0 * (pp->b - pp->a))) * sa;
+                double y = h * sqrt(pclamp(1.0 - x * x - z * z));
+                double d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
 
-                t12 = sqrt(r / (pp->a + pp->b)) * cos_alpha;
-                t23 = sqrt(r / pp->a) * 0;
-                t31 = sqrt(r / pp->b) * sin_alpha;
-                t0 = sgn * sqrt(1.0 - t12 * t12 - t23 * t23 - t31 * t31);
+                t12 = x * d;
+                t23 = y * d;
+                t31 = z * d;
+                t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
             }
             else if (pp->c > pp->b - pp->a && pp->c <= pp->a - pp->b)
             {
-                 // z-barrel
+                 /* z-barrel */
 
             }
             else
             {
-                // fail
+                /* fail */
                 assert(0);
             }
         }
@@ -452,7 +464,7 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
 
         case predgparamtype3f_two_caps:
         {
-            // yz-caps
+            /* yz-caps */
         }
         break;
 

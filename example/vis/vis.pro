@@ -44,3 +44,6 @@ FORMS += mainwindow.ui
 OTHER_FILES += \
     perpixel.frag \
     perpixel.vert
+
+RESOURCES += \
+    res.qrc

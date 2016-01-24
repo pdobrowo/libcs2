@@ -28,6 +28,7 @@
 #include "cs2/predg3f.h"
 #include "cs2/spin3f.h"
 #include "cs2/vec3f.h"
+#include <QCloseEvent>
 #include <QMainWindow>
 #include <QSlider>
 #include <QLabel>
@@ -60,6 +61,18 @@ private:
     QString formatVector(const vec3f_t *v);
     QString formatVector(const vec4f_t *v);
 
+    // file
+    QString m_currentFile;
+    bool m_currentChanged;
+
+    bool handleUnsavedChanges();
+    bool saveCurrentFile();
+    bool saveNewFile();
+
+    void updateWindowTitle();
+
+    virtual void closeEvent(QCloseEvent *event);
+
 private slots:
     void on_actionArcballCamera_triggered();
     void on_actionFreeCamera_triggered();
@@ -82,8 +95,11 @@ private slots:
     void on_labelZeroA_linkActivated(const QString &link);
     void on_labelZeroB_linkActivated(const QString &link);
     void on_labelZeroC_linkActivated(const QString &link);
-
     void on_actionWireframe_triggered();
+    void on_actionQuit_triggered();
+    void on_actionOpen_triggered();
+    void on_actionSave_triggered();
+    void on_actionSaveAs_triggered();
 
 private:
     Ui::MainWindow *ui;

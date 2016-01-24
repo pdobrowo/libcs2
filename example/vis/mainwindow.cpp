@@ -28,11 +28,18 @@
 #include "renderviewarcballcamera.h"
 #include "renderviewflycamera.h"
 #include "renderviewautocamera.h"
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QFile>
 #include <QImage>
+#include <cassert>
 #include <cmath>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    m_currentChanged(false),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -50,6 +57,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // update predicate predicate
     updatePredicateInformation();
+
+    // window title
+    updateWindowTitle();
+
+    // force no-changes
+    m_currentChanged = false;
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +73,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::updatePredicateInformation()
 {
+    // changed
+    m_currentChanged = true;
+    updateWindowTitle();
+
     // predicate g
     predg3f_t pred = {
                         { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
@@ -112,6 +129,7 @@ void MainWindow::updatePredicateInformation()
 
     ui->labelcaseval->setText(predgparamtype3f_str(param.t));
     ui->labeldimval->setText(QString::number(predgparamtype3f_dim(param.t)));
+    ui->labelcompval->setText(QString::number(predgparamtype3f_components(param.t)));
 
     // information -> eigen decomposition
     mat44f_t eigenvec;
@@ -158,7 +176,7 @@ void MainWindow::updatePredicateInformation()
 
         for (int c = 0; c < ncomps; ++c)
         {
-            for (double pu = 0; pu < 1; pu += STEP) for (double pv = 0; pv < 1; pv += STEP)
+            for (double pu = 0; pu <= 1 - STEP; pu += STEP) for (double pv = 0; pv <= 1 - STEP; pv += STEP)
             {
                 spin3f_t sp00, sp01, sp10, sp11;
 
@@ -229,6 +247,114 @@ QString MainWindow::formatVector(const vec3f_t *v)
 QString MainWindow::formatVector(const vec4f_t *v)
 {
     return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + ", " + QString::number(v->w, 'f', 2) + "]";
+}
+
+bool MainWindow::handleUnsavedChanges()
+{
+    switch (QMessageBox::question(this, tr("Unsaved changes"), tr("Save changes to file?"), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel))
+    {
+        case QMessageBox::Yes:
+            if (!m_currentFile.isEmpty())
+                return saveCurrentFile();
+            else
+                return saveNewFile();
+
+        case QMessageBox::No:
+            return true;
+
+        case QMessageBox::Cancel:
+            return false;
+
+    default:
+        assert(0);
+    }
+}
+
+bool MainWindow::saveCurrentFile()
+{
+    // changes
+    m_currentChanged = false;
+    updateWindowTitle();
+
+    // save
+    QFile out(m_currentFile);
+
+    if (out.open(QFile::WriteOnly))
+    {
+        //writer
+        {
+            QTextStream stream(&out);
+
+            stream << ui->verticalSliderKX->value() << " ";
+            stream << ui->verticalSliderKY->value() << " ";
+            stream << ui->verticalSliderKZ->value();
+            stream << "\r\n";
+            stream << ui->verticalSliderLX->value() << " ";
+            stream << ui->verticalSliderLY->value() << " ";
+            stream << ui->verticalSliderLZ->value();
+            stream << "\r\n";
+            stream << ui->verticalSliderAX->value() << " ";
+            stream << ui->verticalSliderAY->value() << " ";
+            stream << ui->verticalSliderAZ->value();
+            stream << "\r\n";
+            stream << ui->verticalSliderBX->value() << " ";
+            stream << ui->verticalSliderBY->value() << " ";
+            stream << ui->verticalSliderBZ->value();
+            stream << "\r\n";
+            stream << ui->verticalSliderC->value();
+            stream << "\r\n";
+        }
+
+        out.close();
+    }
+    else
+    {
+        (void)QMessageBox::warning(this, tr("Save file"), tr("Failed to write: ") + m_currentFile, QMessageBox::Ok);
+        return false;
+    }
+
+    return true;
+}
+
+bool MainWindow::saveNewFile()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save as"), QString(), QString("*.vis"));
+
+    if (fileName.isEmpty())
+        return false;
+
+    if (!fileName.endsWith(".vis"))
+        fileName += ".vis";
+
+    m_currentFile = fileName;
+    return saveCurrentFile();
+}
+
+void MainWindow::updateWindowTitle()
+{
+    QString fileName;
+
+    if (m_currentFile.isEmpty())
+        fileName = "unnamed.vis";
+    else
+    {
+        QFileInfo fileInfo(m_currentFile);
+        fileName = fileInfo.fileName();
+    }
+
+    setWindowTitle(fileName + ": vis" + (m_currentChanged ? " *" : ""));
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (!m_currentChanged)
+        return;
+
+    if (!handleUnsavedChanges())
+    {
+        event->ignore();
+        return;
+    }
 }
 
 void MainWindow::on_actionArcballCamera_triggered()
@@ -370,4 +496,105 @@ void MainWindow::on_labelZeroC_linkActivated(const QString &link)
 void MainWindow::on_actionWireframe_triggered()
 {
     m_rv->setWireframe(ui->actionWireframe->isChecked());
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    if (!m_currentChanged)
+    {
+        emit close();
+        return;
+    }
+
+    if (!handleUnsavedChanges())
+        return;
+
+    emit close();
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    if (m_currentChanged && !handleUnsavedChanges())
+        return;
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open file"), QString(), tr("*.vis"));
+
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+
+    if (file.open(QFile::ReadOnly))
+    {
+        // reader
+        {
+            QTextStream stream(&file);
+
+            int kx, ky, kz;
+            stream >> kx >> ky >> kz;
+
+            int lx, ly, lz;
+            stream >> lx >> ly >> lz;
+
+            int ax, ay, az;
+            stream >> ax >> ay >> az;
+
+            int bx, by, bz;
+            stream >> bx >> by >> bz;
+
+            int c;
+            stream >> c;
+
+            if (stream.status() != QTextStream::Ok)
+            {
+                (void)QMessageBox::warning(this, tr("Open file"), tr("Failed to parse: ") + m_currentFile, QMessageBox::Ok);
+                return;
+            }
+
+            ui->verticalSliderKX->setValue(kx);
+            ui->verticalSliderKY->setValue(ky);
+            ui->verticalSliderKZ->setValue(kz);
+
+            ui->verticalSliderLX->setValue(lx);
+            ui->verticalSliderLY->setValue(ly);
+            ui->verticalSliderLZ->setValue(lz);
+
+            ui->verticalSliderAX->setValue(ax);
+            ui->verticalSliderAY->setValue(ay);
+            ui->verticalSliderAZ->setValue(az);
+
+            ui->verticalSliderBX->setValue(bx);
+            ui->verticalSliderBY->setValue(by);
+            ui->verticalSliderBZ->setValue(bz);
+
+            ui->verticalSliderC->setValue(c);
+        }
+
+        file.close();
+    }
+    else
+    {
+        (void)QMessageBox::warning(this, tr("Open file"), tr("Failed to open: ") + m_currentFile, QMessageBox::Ok);
+        return;
+    }
+
+    m_currentFile = fileName;
+    m_currentChanged = false;
+    updateWindowTitle();
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    if (m_currentChanged)
+    {
+        if (!m_currentFile.isEmpty())
+            (void)saveCurrentFile();
+        else
+            (void)saveNewFile();
+    }
+}
+
+void MainWindow::on_actionSaveAs_triggered()
+{
+    (void)saveNewFile();
 }
