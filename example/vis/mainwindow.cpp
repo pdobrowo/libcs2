@@ -389,7 +389,7 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
 
     for (int c = 0; c < number_of_components; ++c)
     {
-        for (double pu = 0; pu <= 1 - radius; pu += radius) for (double pv = 0; pv <= 1 - radius; pv += radius)
+        for (double pu = 0; pu < 1 - radius; pu += radius) for (double pv = 0; pv < 1 - radius; pv += radius)
         {
             spin3f_t sp00, sp01, sp10, sp11;
 
@@ -397,6 +397,71 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
             predgparam3f_eval(&sp01, param, pu, pv + radius, c);
             predgparam3f_eval(&sp10, param, pu + radius, pv, c);
             predgparam3f_eval(&sp11, param, pu + radius, pv + radius, c);
+
+            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
+            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
+            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
+            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+
+            trianglesFront->push_back(Triangle(v00, v01, v11));
+            trianglesFront->push_back(Triangle(v00, v11, v10));
+
+            trianglesBack->push_back(Triangle(v00, v11, v01));
+            trianglesBack->push_back(Triangle(v00, v10, v11));
+        }
+
+        // last u
+        for (double pu = 0; pu < 1 - radius; pu += radius)
+        {
+            spin3f_t sp00, sp01, sp10, sp11;
+
+            predgparam3f_eval(&sp00, param, pu, 1.0 - radius, c);
+            predgparam3f_eval(&sp01, param, pu, 1.0, c);
+            predgparam3f_eval(&sp10, param, pu + radius, 1.0 - radius, c);
+            predgparam3f_eval(&sp11, param, pu + radius, 1.0, c);
+
+            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
+            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
+            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
+            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+
+            trianglesFront->push_back(Triangle(v00, v01, v11));
+            trianglesFront->push_back(Triangle(v00, v11, v10));
+
+            trianglesBack->push_back(Triangle(v00, v11, v01));
+            trianglesBack->push_back(Triangle(v00, v10, v11));
+        }
+
+        // last v
+        for (double pv = 0; pv < 1 - radius; pv += radius)
+        {
+            spin3f_t sp00, sp01, sp10, sp11;
+
+            predgparam3f_eval(&sp00, param, 1.0 - radius, pv, c);
+            predgparam3f_eval(&sp01, param, 1.0 - radius, pv + radius, c);
+            predgparam3f_eval(&sp10, param, 1.0, pv, c);
+            predgparam3f_eval(&sp11, param, 1.0, pv + radius, c);
+
+            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
+            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
+            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
+            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+
+            trianglesFront->push_back(Triangle(v00, v01, v11));
+            trianglesFront->push_back(Triangle(v00, v11, v10));
+
+            trianglesBack->push_back(Triangle(v00, v11, v01));
+            trianglesBack->push_back(Triangle(v00, v10, v11));
+        }
+
+        // last uv
+        {
+            spin3f_t sp00, sp01, sp10, sp11;
+
+            predgparam3f_eval(&sp00, param, 1.0 - radius, 1.0 - radius, c);
+            predgparam3f_eval(&sp01, param, 1.0 - radius, 1.0, c);
+            predgparam3f_eval(&sp10, param, 1.0, 1.0 - radius, c);
+            predgparam3f_eval(&sp11, param, 1.0, 1.0, c);
 
             QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
             QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
