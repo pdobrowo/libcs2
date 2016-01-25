@@ -473,7 +473,7 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
         case predgparamtype3f_two_caps:
         {
             /* yz-caps */
-            double a;
+            double a, x, y, z, d;
             double sa, ca;
             double sgn, side;
 
@@ -508,10 +508,9 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
             sa = sin(a);
             ca = cos(a);
 
-            double y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
-            double z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
-            double x = side * sqrt(pclamp(1.0 - y * y - z * z));
-            double d;
+            y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
+            z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
+            x = side * sqrt(pclamp(1.0 - y * y - z * z));
 
             x = x * (1 - v) + side * v;
             y = y * (1 - v);
