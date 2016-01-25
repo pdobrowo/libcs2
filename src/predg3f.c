@@ -300,7 +300,7 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
     case predgparamtype3f_two_points: return 2;
     case predgparamtype3f_ellipsoid: return 2;
     case predgparamtype3f_barrel: return 1;
-    case predgparamtype3f_two_caps: return 0; /* ? */
+    case predgparamtype3f_two_caps: return 2;
     case predgparamtype3f_torus: return 1;
     default:
         assert(0);
@@ -473,6 +473,56 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
         case predgparamtype3f_two_caps:
         {
             /* yz-caps */
+            double a;
+            double sa, ca;
+            double sgn, side;
+
+            switch (component)
+            {
+                case 0:
+                    side = 1.0;
+                    break;
+
+                case 1:
+                    side = -1.0;
+                    v = 1 - v;
+                    break;
+
+                default:
+                    assert(0);
+                    break;
+            }
+
+            if (v >= 0.5)
+            {
+                sgn = 1.0;
+                v = (v - 0.5) * 2.0;
+            }
+            else
+            {
+                sgn = -1.0;
+                v = (0.5 - v) * 2.0;
+            }
+
+            a = u * 2 * PI;
+            sa = sin(a);
+            ca = cos(a);
+
+            double y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
+            double z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
+            double x = side * sqrt(pclamp(1.0 - y * y - z * z));
+            double d;
+
+            x = x * (1 - v) + side * v;
+            y = y * (1 - v);
+            z = z * (1 - v);
+
+            d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+
+            t12 = x * d;
+            t23 = y * d;
+            t31 = z * d;
+            t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
         }
         break;
 
