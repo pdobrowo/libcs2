@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>720</height>
+    <height>732</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,6 +74,8 @@
     </property>
     <addaction name="actionWireframe"/>
     <addaction name="actionAutoMesh"/>
+    <addaction name="separator"/>
+    <addaction name="actionTakeScreenshot"/>
    </widget>
    <widget class="QMenu" name="menu_File">
     <property name="title">
@@ -1127,6 +1129,9 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -1144,18 +1149,44 @@
    <addaction name="separator"/>
    <addaction name="actionWireframe"/>
    <addaction name="actionAutoMesh"/>
+   <addaction name="separator"/>
+   <addaction name="actionTakeScreenshot"/>
   </widget>
   <action name="actionArcballCamera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/viewarcball.png</normaloff>:/res/viewarcball.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Arcball</string>
    </property>
   </action>
   <action name="actionFreeCamera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/viewfree.png</normaloff>:/res/viewfree.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Free</string>
    </property>
   </action>
   <action name="actionAutoCamera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/viewauto.png</normaloff>:/res/viewauto.png</iconset>
+   </property>
    <property name="text">
     <string>A&amp;uto</string>
    </property>
@@ -1164,21 +1195,37 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/wireframe.png</normaloff>:/res/wireframe.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Wireframe</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/open.png</normaloff>:/res/open.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Open...</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/save.png</normaloff>:/res/save.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Save</string>
    </property>
   </action>
   <action name="actionSaveAs">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/saveas.png</normaloff>:/res/saveas.png</iconset>
+   </property>
    <property name="text">
     <string>S&amp;ave as...</string>
    </property>
@@ -1192,8 +1239,24 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/automesh.png</normaloff>:/res/automesh.png</iconset>
+   </property>
    <property name="text">
     <string>Auto mesh</string>
+   </property>
+  </action>
+  <action name="actionTakeScreenshot">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/screenshot.png</normaloff>:/res/screenshot.png</iconset>
+   </property>
+   <property name="text">
+    <string>Take screenshot...</string>
+   </property>
+   <property name="toolTip">
+    <string>Take screenshot</string>
    </property>
   </action>
  </widget>

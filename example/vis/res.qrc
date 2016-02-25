@@ -1,5 +1,14 @@
 <RCC>
     <qresource prefix="/">
         <file>res/app.png</file>
+        <file>res/wireframe.png</file>
+        <file>res/open.png</file>
+        <file>res/save.png</file>
+        <file>res/saveas.png</file>
+        <file>res/viewarcball.png</file>
+        <file>res/viewauto.png</file>
+        <file>res/viewfree.png</file>
+        <file>res/automesh.png</file>
+        <file>res/screenshot.png</file>
     </qresource>
 </RCC>

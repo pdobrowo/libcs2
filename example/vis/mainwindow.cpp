@@ -90,7 +90,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::updatePredicateInformation()
 {
     // changed
@@ -492,16 +491,28 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_actionArcballCamera_triggered()
 {
     m_rv->setRenderViewCamera(new RenderViewArcBallCamera());
+
+    ui->actionArcballCamera->setChecked(true);
+    ui->actionFreeCamera->setChecked(false);
+    ui->actionAutoCamera->setChecked(false);
 }
 
 void MainWindow::on_actionFreeCamera_triggered()
 {
     m_rv->setRenderViewCamera(new RenderViewFlyCamera());
+
+    ui->actionArcballCamera->setChecked(false);
+    ui->actionFreeCamera->setChecked(true);
+    ui->actionAutoCamera->setChecked(false);
 }
 
 void MainWindow::on_actionAutoCamera_triggered()
 {
     m_rv->setRenderViewCamera(new RenderViewAutoCamera());
+
+    ui->actionArcballCamera->setChecked(false);
+    ui->actionFreeCamera->setChecked(false);
+    ui->actionAutoCamera->setChecked(true);
 }
 
 void MainWindow::on_verticalSliderKX_valueChanged(int value)
@@ -734,4 +745,23 @@ void MainWindow::on_actionSaveAs_triggered()
 void MainWindow::on_actionAutoMesh_triggered()
 {
     updatePredicateInformation();
+}
+
+void MainWindow::on_actionTakeScreenshot_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save current frame buffer as"), QString(), QString("*.png"));
+
+    if (fileName.isEmpty())
+        return;
+
+    if (!fileName.endsWith(".png"))
+        fileName += ".png";
+
+    QImage img = m_rv->grabFrameBuffer();
+
+    if (!img.save(fileName, 0, 100))
+    {
+        (void)QMessageBox::warning(this, tr("Save current frame buffer file"), tr("Failed to save frame buffer"), QMessageBox::Ok);
+        return;
+    }
 }

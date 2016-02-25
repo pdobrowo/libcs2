@@ -74,19 +74,19 @@ void applyRotationGL(const QQuaternion &quaternion)
 }
 } // namespace anonymous
 
-RenderView::RenderView(QWidget *parent, const RenderView::QGLWidget *shareWidget, Qt::WindowFlags f)
+RenderView::RenderView(QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
     : QGLWidget(parent, shareWidget, f)
 {
     ctor();
 }
 
-RenderView::RenderView(QGLContext *context, QWidget *parent, const RenderView::QGLWidget *shareWidget, Qt::WindowFlags f)
+RenderView::RenderView(QGLContext *context, QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
     : QGLWidget(context, parent, shareWidget, f)
 {
     ctor();
 }
 
-RenderView::RenderView(const QGLFormat &format, QWidget *parent, const RenderView::QGLWidget *shareWidget, Qt::WindowFlags f)
+RenderView::RenderView(const QGLFormat &format, QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
     : QGLWidget(format, parent, shareWidget, f)
 {
     ctor();
