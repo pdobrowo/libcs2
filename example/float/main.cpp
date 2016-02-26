@@ -37,11 +37,11 @@ int main()
     predg3f_t g;
 
     /* pred */
-    vec3f_set(&g.k, 1, 2, 3);
-    vec3f_set(&g.l, -1, 0, 2);
-    vec3f_set(&g.a, 4, 2, -2);
-    vec3f_set(&g.b, 0, -2, 3);
-    g.c = 1;
+    vec3f_set(&g.k, 1.0, 2.0, 3.0);
+    vec3f_set(&g.l, -1.0, 0.0, 2.0);
+    vec3f_set(&g.a, 4.0, 2.0, -2.0);
+    vec3f_set(&g.b, 0.0, -2.0, 3.0);
+    g.c = 1.0;
 
     printf("predg3f: k={%.2f, %.2f, %.2f}, l={%.2f, %.2f, %.2f}, a={%.2f, %.2f, %.2f}, b={%.2f, %.2f, %.2f}, c=%.2f\n",
            g.k.x, g.k.y, g.k.z, g.l.x, g.l.y, g.l.z, g.a.x, g.a.y, g.a.z, g.b.x, g.b.y, g.b.z, g.c);
@@ -61,7 +61,10 @@ int main()
 
     /* spinquad eval */
     spin3f_t s;
-    spin3f_set(&s, 1 / sqrt(1 + 2 + 3 + 4), 2 / sqrt(1 + 2 + 3 + 4), 3 / sqrt(1 + 2 + 3 + 4), 4 / sqrt(1 + 2 + 3 + 4));
+    spin3f_set(&s, 1.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0),
+                   2.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0),
+                   3.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0),
+                   4.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0));
 
     double v = spinquad3f_eval(&gsq, &s);
 
@@ -74,3 +77,4 @@ int main()
 
     return 0;
 }
+
