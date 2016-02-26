@@ -129,6 +129,7 @@ private:
     // view options
     bool                        m_wireframe;
     bool                        m_cullingEnabled;
+    bool                        m_modelOnly;
 
     boost::scoped_ptr<Shader>   m_perPixelLightingShader;
 
@@ -152,6 +153,8 @@ public:
     explicit                    RenderView(QGLContext *context, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
     explicit                    RenderView(const QGLFormat &format, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
     virtual                     ~RenderView();
+
+    void                        setModelOnlyView(bool flag);
 
     void                        setCaption(const QString& value);
     QString                     caption() const;

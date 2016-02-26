@@ -765,3 +765,8 @@ void MainWindow::on_actionTakeScreenshot_triggered()
         return;
     }
 }
+
+void MainWindow::on_actionModelOnlyView_triggered()
+{
+    m_rv->setModelOnlyView(ui->actionModelOnlyView->isChecked());
+}

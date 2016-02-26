@@ -76,6 +76,7 @@
     <addaction name="actionAutoMesh"/>
     <addaction name="separator"/>
     <addaction name="actionTakeScreenshot"/>
+    <addaction name="actionModelOnlyView"/>
    </widget>
    <widget class="QMenu" name="menu_File">
     <property name="title">
@@ -1151,6 +1152,7 @@
    <addaction name="actionAutoMesh"/>
    <addaction name="separator"/>
    <addaction name="actionTakeScreenshot"/>
+   <addaction name="actionModelOnlyView"/>
   </widget>
   <action name="actionArcballCamera">
    <property name="checkable">
@@ -1257,6 +1259,18 @@
    </property>
    <property name="toolTip">
     <string>Take screenshot</string>
+   </property>
+  </action>
+  <action name="actionModelOnlyView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/res/modelonly.png</normaloff>:/res/modelonly.png</iconset>
+   </property>
+   <property name="text">
+    <string>Model-only view</string>
    </property>
   </action>
  </widget>

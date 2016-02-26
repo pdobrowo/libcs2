@@ -10,5 +10,6 @@
         <file>res/viewfree.png</file>
         <file>res/automesh.png</file>
         <file>res/screenshot.png</file>
+        <file>res/modelonly.png</file>
     </qresource>
 </RCC>

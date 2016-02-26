@@ -97,6 +97,7 @@ void RenderView::ctor()
     m_nextSuggestedColor = 0;
     m_wireframe = false;
     m_cullingEnabled = false;
+    m_modelOnly = false;
 
     setMouseTracking(true);
 
@@ -117,6 +118,11 @@ void RenderView::ctor()
 
 RenderView::~RenderView()
 {
+}
+
+void RenderView::setModelOnlyView(bool flag)
+{
+    m_modelOnly = flag;
 }
 
 void RenderView::mousePressEvent(QMouseEvent *event)
@@ -217,7 +223,7 @@ void RenderView::initializeGL()
     glShadeModel(GL_SMOOTH);
 
     // Clear mode
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClearDepth(1.0f);
 
     // Depth buffer
@@ -277,18 +283,20 @@ void RenderView::resizeGL(int, int)
 
 void RenderView::paintGL()
 {
-    // Clear view
+    // clear view
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
     // draw gradient background
-    drawGradientBackground();
+    if (!m_modelOnly)
+        drawGradientBackground();
 
-    // Setup camera
+    // setup camera
     m_camera->applyTransformGL();
 
     // draw axies
-    drawAxies();
+    if (!m_modelOnly)
+        drawAxies();
 
     // culling enabled for conf-spaces, but not for scenes
     if (m_cullingEnabled)
@@ -300,12 +308,15 @@ void RenderView::paintGL()
     renderMeshes();
 
     // Draw panel name
-    qglColor(m_textColor);
-    renderText(5, 15, m_caption, m_textFont);
+    if (!m_modelOnly)
+    {
+        qglColor(m_textColor);
+        renderText(5, 15, m_caption, m_textFont);
 
-    QString percent;
-    percent.sprintf("%.0f%%", m_camera->zoom() * 100);
-    renderText(width() - 45, 15, percent, m_textFont);
+        QString percent;
+        percent.sprintf("%.0f%%", m_camera->zoom() * 100);
+        renderText(width() - 45, 15, percent, m_textFont);
+    }
 }
 
 void RenderView::drawGradientBackground()
