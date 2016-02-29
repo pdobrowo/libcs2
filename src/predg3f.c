@@ -24,6 +24,7 @@
  */
 #include "cs2/predg3f.h"
 #include "cs2/vec4f.h"
+#include "cs2/spinquad3f.h"
 #include <math.h>
 #include <assert.h>
 
@@ -58,6 +59,24 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 
 static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
+    /*
+     * D = (P.Q + U.V + L) ((Q x V) tr(P x U) + (P x U) tr(Q x V))
+     *   - (P tr(U) + U tr(P)) (P.V [Q]^2 + Q.U [V]^2)
+     *   - (Q tr(V) + V tr(Q)) (P.V [U]^2 + Q.U [P]^2)
+     *   - (P tr(Q) + Q tr(P)) ([U]^2 [V]^2 + (P x U).(Q x V))
+     *   - (U tr(V) + V tr(U)) ([P]^2 [Q]^2 + (P x U).(Q x V))
+     *   + 2 U.V (P tr(P) [Q]^2 + Q tr(Q) [P]^2)
+     *   + 2 P.Q (U tr(U) [V]^2 + V tr(V) [U]^2)
+     *   - L (P.Q (U tr(V) + V tr(U)) + U.V (P tr(Q) + Q tr(P)))
+     *   + L (P.V (Q tr(U) + U tr(Q)) + Q.U (P tr(V) + V tr(P)))
+     *   + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2) (J (P.Q + U.V + L) - (P tr(Q) + Q tr(P) + U tr(V) + V tr(U)))
+     *
+     * E = 2 ((Q x V) tr(P x U) + (P x U) tr(Q x V))
+     *   + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2 - 2 (P x U).(Q x V)) J
+     *   + (P.Q + U.V - L) (P tr(Q) + Q tr(P) + U tr(V) + V tr(U))
+     *
+     * W = [D3, D1, D2, E]^T
+     */
     double pp = vec3f_sqlen(p);
     double qq = vec3f_sqlen(q);
     double uu = vec3f_sqlen(u);
@@ -66,83 +85,78 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
     double pv = vec3f_dot(p, v);
     double qu = vec3f_dot(q, u);
     double uv = vec3f_dot(u, v);
-    double trp = vec3f_tr(p);
-    double trq = vec3f_tr(q);
-    double tru = vec3f_tr(u);
-    double trv = vec3f_tr(v);
+    double tp = vec3f_tr(p);
+    double tq = vec3f_tr(q);
+    double tu = vec3f_tr(u);
+    double tv = vec3f_tr(v);
     double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
-    double dd = pq + uv + l;
+    double pq_uv_l = pq + uv + l;
+    double ll_ppqq_uuvv = l * l - pp * qq - uu * vv;
+    double pxuqxv;
+    vec3f_t pxq, uxv, pxu, qxv;
+    vec3f_t pxu_tqxv_qxv_tpxu, ptq_qtp_utv_vtu;
+    vec3f_t t, r, d, e;
+    const vec3f_t j = { 1.0, 1.0, 1.0 };
 
-    vec3f_t pxq, uxv, pxu, qxv, t, r, d;
-    vec3f_t j = { 1, 1, 1 };
-
+    /* common */
     vec3f_cross(&pxq, p, q);
     vec3f_cross(&uxv, u, v);
     vec3f_cross(&pxu, p, u);
     vec3f_cross(&qxv, q, v);
 
     vec3f_add(&r, &pxq, &uxv);
+    pxuqxv = vec3f_dot(&pxu, &qxv);
 
-    /* calc d:
-     *
-     * d = + (P.Q + U.V + L) ((Q x V) tr(P x U) + (P x U) tr(Q x V))
-     *     - (P tr(U) + U tr(P)) (P.V [Q]^2 + Q.U [V]^2)
-     *     - (Q tr(V) + V tr(Q)) (P.V [U]^2 + Q.U [P]^2)
-     *     - (P tr(Q) + Q tr(P)) ([U]^2 [V]^2 + (P x U).(Q x V))
-     *     - (U tr(V) + V tr(U)) ([P]^2 [Q]^2 + (P x U).(Q x V))
-     *     + 2 U.V (P tr(P) [Q]^2 + Q tr(Q) [P]^2)
-     *     + 2 P.Q (U tr(U) [V]^2 + V tr(V) [U]^2)
-     *     - L (P.Q (U tr(V) + V tr(U)) + U.V (P tr(Q) + Q tr(P)))
-     *     + L (P.V (Q tr(U) + U tr(Q)) + Q.U (P tr(V) + V tr(P)))
-     *     + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2) ( J (P.Q + U.V + L) - (P tr(Q) + Q tr(P) + U tr(V) + V tr(U)) )
-     */
-    vec3f_mad2(&d, &pxu, vec3f_tr(&qxv), &qxv, vec3f_tr(&pxu));
-    vec3f_mul(&d, &d, dd);
+    vec3f_mad2(&pxu_tqxv_qxv_tpxu, &pxu, vec3f_tr(&qxv), &qxv, vec3f_tr(&pxu));
+    vec3f_mad4(&ptq_qtp_utv_vtu, p, tq, q, tp, u, tv, v, tu);
 
-    vec3f_mad2(&t, p, tru, u, trp);
+    /* D */
+    vec3f_mul(&d, &pxu_tqxv_qxv_tpxu, pq_uv_l);
+
+    vec3f_mad2(&t, p, tu, u, tp);
     vec3f_mul(&t, &t, - pv * qq - qu * vv);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad2(&t, q, trv, v, trq);
+    vec3f_mad2(&t, q, tv, v, tq);
     vec3f_mul(&t, &t, - pv * uu - qu * pp);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad2(&t, p, trq, q, trp);
-    vec3f_mul(&t, &t, - uu * vv - vec3f_dot(&pxu, &qxv));
+    vec3f_mad2(&t, p, tq, q, tp);
+    vec3f_mul(&t, &t, - uu * vv - pxuqxv);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad2(&t, u, trv, v, tru);
-    vec3f_mul(&t, &t, - pp * qq - vec3f_dot(&pxu, &qxv));
+    vec3f_mad2(&t, u, tv, v, tu);
+    vec3f_mul(&t, &t, - pp * qq - pxuqxv);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad2(&t, p, trp * qq, q, trq * pp);
-    vec3f_mul(&t, &t, 2 * uv);
+    vec3f_mad2(&t, p, tp * qq, q, tq * pp);
+    vec3f_mul(&t, &t, 2.0 * uv);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad2(&t, u, tru * vv, v, trv * uu);
-    vec3f_mul(&t, &t, 2 * pq);
+    vec3f_mad2(&t, u, tu * vv, v, tv * uu);
+    vec3f_mul(&t, &t, 2.0 * pq);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad4(&t, u, trv * pq, v, tru * pq, p, trq * uv, q, trp * uv);
+    vec3f_mad4(&t, u, tv * pq, v, tu * pq, p, tq * uv, q, tp * uv);
     vec3f_mul(&t, &t, -l);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad4(&t, q, tru * pv, u, trq * pv, p, trv * qu, v, trp * qu);
+    vec3f_mad4(&t, q, tu * pv, u, tq * pv, p, tv * qu, v, tp * qu);
     vec3f_mul(&t, &t, l);
     vec3f_add(&d, &d, &t);
 
-    vec3f_mad5(&t, &j, dd, p, - trq, q, - trp, u, - trv, v, - tru);
-    vec3f_mul(&t, &t, l * l - pp * qq - uu * vv);
+    vec3f_mad2(&t, &j, pq_uv_l, &ptq_qtp_utv_vtu, -1.0);
+    vec3f_mul(&t, &t, ll_ppqq_uuvv);
     vec3f_add(&d, &d, &t);
 
-    /* calc w */
-    w->x = dd * d.z;
-    w->y = dd * d.x;
-    w->z = dd * d.y;
+    /* E */
+    vec3f_mad3(&e, &pxu_tqxv_qxv_tpxu, 2.0, &j, ll_ppqq_uuvv - 2.0 * pxuqxv, &ptq_qtp_utv_vtu, pq + uv - l);
 
-    vec3f_mad4(&t, p, trq, q, trp, u, trv, v, tru);
-
-    w->w = -vec3f_dot(&r, &d);
+    /* W */
+    w->x = d.z;
+    w->y = d.x;
+    w->z = d.y;
+    w->w = -vec3f_dot(&r, &e);
 }
 
 static predgparamtype3f_t inproper_param_case()
@@ -196,6 +210,38 @@ static predgparamtype3f_t toroidal_param_case(double a, double b, double c)
             return predgparamtype3f_torus;
         else
             return predgparamtype3f_empty;
+    }
+}
+
+static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
+{
+    spinquad3f_t sp;
+    spinquad3f_from_predg3f(&sp, g);
+
+    for (int i = 0; i < 4; ++i)
+    {
+        double x = sp.a11 * m->m[0][i] + sp.a12 * m->m[1][i] + sp.a13 * m->m[2][i] + sp.a14 * m->m[3][i];
+        double y = sp.a12 * m->m[0][i] + sp.a22 * m->m[1][i] + sp.a23 * m->m[2][i] + sp.a24 * m->m[3][i];
+        double z = sp.a13 * m->m[0][i] + sp.a23 * m->m[1][i] + sp.a33 * m->m[2][i] + sp.a34 * m->m[3][i];
+        double w = sp.a14 * m->m[0][i] + sp.a24 * m->m[1][i] + sp.a34 * m->m[2][i] + sp.a44 * m->m[3][i];
+        double l = sqrt(x * x + y * y  + z * z + w * w);
+
+        /* normalize */
+        x /= l;
+        y /= l;
+        z /= l;
+        w /= l;
+
+        /* adjust sign */
+        if ((x >= 0 && m->m[0][i] <= 0) || (x <= 0 && m->m[0][i] >= 0))
+        {
+            x = -x;
+            y = -y;
+            z = -z;
+            w = -w;
+        }
+
+        assert(fabs(x - m->m[0][i]) + fabs(y - m->m[1][i]) + fabs(z - m->m[2][i]) + fabs(w - m->m[3][i]) < 10e-10);
     }
 }
 
@@ -596,64 +642,90 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
     /* eigenvectors */
     if (m)
     {
-        /* only ellipsoidal param for now */
-
-        /*assert(predg3f_type(g) == predgtype3f_ellipsoidal);*/
-
-        if (predg3f_type(g) != predgtype3f_ellipsoidal)
+        switch (predg3f_type(g))
         {
-            /* note: debug code */
-            m->m[0][0] = 0;
-            m->m[1][0] = 0;
-            m->m[2][0] = 0;
-            m->m[3][0] = 0;
+            case predgtype3f_inproper:
+                m->m[0][0] = 0;
+                m->m[1][0] = 0;
+                m->m[2][0] = 0;
+                m->m[3][0] = 0;
 
-            m->m[0][1] = 0;
-            m->m[1][1] = 0;
-            m->m[2][1] = 0;
-            m->m[3][1] = 0;
+                m->m[0][1] = 0;
+                m->m[1][1] = 0;
+                m->m[2][1] = 0;
+                m->m[3][1] = 0;
 
-            m->m[0][2] = 0;
-            m->m[1][2] = 0;
-            m->m[2][2] = 0;
-            m->m[3][2] = 0;
+                m->m[0][2] = 0;
+                m->m[1][2] = 0;
+                m->m[2][2] = 0;
+                m->m[3][2] = 0;
 
-            m->m[0][3] = 0;
-            m->m[1][3] = 0;
-            m->m[2][3] = 0;
-            m->m[3][3] = 0;
+                m->m[0][3] = 0;
+                m->m[1][3] = 0;
+                m->m[2][3] = 0;
+                m->m[3][3] = 0;
 
-            return;
+                break;
+
+            case predgtype3f_ellipsoidal:
+                calc_w(&w1, &p, &q, &u, &v, 1, 1);
+                calc_w(&w2, &p, &q, &u, &v, 1, -1);
+                calc_w(&w3, &p, &q, &u, &v, -1, 1);
+                calc_w(&w4, &p, &q, &u, &v, -1, -1);
+
+                w1l = vec4f_len(&w1);
+                w2l = vec4f_len(&w2);
+                w3l = vec4f_len(&w3);
+                w4l = vec4f_len(&w4);
+
+                m->m[0][0] = w1.x / w1l;
+                m->m[1][0] = w1.y / w1l;
+                m->m[2][0] = w1.z / w1l;
+                m->m[3][0] = w1.w / w1l;
+
+                m->m[0][1] = w2.x / w2l;
+                m->m[1][1] = w2.y / w2l;
+                m->m[2][1] = w2.z / w2l;
+                m->m[3][1] = w2.w / w2l;
+
+                m->m[0][2] = w3.x / w3l;
+                m->m[1][2] = w3.y / w3l;
+                m->m[2][2] = w3.z / w3l;
+                m->m[3][2] = w3.w / w3l;
+
+                m->m[0][3] = w4.x / w4l;
+                m->m[1][3] = w4.y / w4l;
+                m->m[2][3] = w4.z / w4l;
+                m->m[3][3] = w4.w / w4l;
+
+                break;
+
+        case predgtype3f_toroidal:
+                /* note: debug code */
+                m->m[0][0] = 0;
+                m->m[1][0] = 0;
+                m->m[2][0] = 0;
+                m->m[3][0] = 0;
+
+                m->m[0][1] = 0;
+                m->m[1][1] = 0;
+                m->m[2][1] = 0;
+                m->m[3][1] = 0;
+
+                m->m[0][2] = 0;
+                m->m[1][2] = 0;
+                m->m[2][2] = 0;
+                m->m[3][2] = 0;
+
+                m->m[0][3] = 0;
+                m->m[1][3] = 0;
+                m->m[2][3] = 0;
+                m->m[3][3] = 0;
+
+            break;
         }
 
-        calc_w(&w1, &p, &q, &u, &v, 1, 1);
-        calc_w(&w2, &p, &q, &u, &v, 1, -1);
-        calc_w(&w3, &p, &q, &u, &v, -1, 1);
-        calc_w(&w4, &p, &q, &u, &v, -1, -1);
-
-        w1l = vec4f_len(&w1);
-        w2l = vec4f_len(&w2);
-        w3l = vec4f_len(&w3);
-        w4l = vec4f_len(&w4);
-
-        m->m[0][0] = w1.x / w1l;
-        m->m[1][0] = w1.y / w1l;
-        m->m[2][0] = w1.z / w1l;
-        m->m[3][0] = w1.w / w1l;
-
-        m->m[0][1] = w2.x / w2l;
-        m->m[1][1] = w2.y / w2l;
-        m->m[2][1] = w2.z / w2l;
-        m->m[3][1] = w2.w / w2l;
-
-        m->m[0][2] = w3.x / w3l;
-        m->m[1][2] = w3.y / w3l;
-        m->m[2][2] = w3.z / w3l;
-        m->m[3][2] = w3.w / w3l;
-
-        m->m[0][3] = w4.x / w4l;
-        m->m[1][3] = w4.y / w4l;
-        m->m[2][3] = w4.z / w4l;
-        m->m[3][3] = w4.w / w4l;
+        /* debug */
+        debug_verify_polar_decomposition(m, g);
     }
 }
