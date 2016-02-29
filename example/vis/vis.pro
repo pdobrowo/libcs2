@@ -5,6 +5,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = vis
 TEMPLATE = app
 
+QMAKE_CXXFLAGS_RELEASE += -Ofast -fomit-frame-pointer -march=native
+
 freebsd*:{
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib
@@ -17,8 +19,9 @@ LIBS += -lGLU
 
 LIBS += ../../lib/libcs2.a
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += \
+    main.cpp\
+    mainwindow.cpp \
     gridmesh.cpp \
     renderview.cpp \
     mesh.cpp \
@@ -28,7 +31,8 @@ SOURCES += main.cpp\
     shader.cpp \
     trianglelistmesh.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS += \
+    mainwindow.h \
     gridmesh.h \
     renderview.h \
     mesh.h \
@@ -39,7 +43,8 @@ HEADERS  += mainwindow.h \
     shader.h \
     trianglelistmesh.h
 
-FORMS += mainwindow.ui
+FORMS += \
+    mainwindow.ui
 
 OTHER_FILES += \
     perpixel.frag \

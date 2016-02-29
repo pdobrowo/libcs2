@@ -475,7 +475,7 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
             /* yz-caps */
             double a, x, y, z, d;
             double sa, ca;
-            double sgn, side;
+            double sgn, side = 0.0;
 
             switch (component)
             {
