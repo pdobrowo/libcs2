@@ -216,9 +216,11 @@ static predgparamtype3f_t toroidal_param_case(double a, double b, double c)
 static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
 {
     spinquad3f_t sp;
+    int i;
+
     spinquad3f_from_predg3f(&sp, g);
 
-    for (int i = 0; i < 4; ++i)
+    for (i = 0; i < 4; ++i)
     {
         double x = sp.a11 * m->m[0][i] + sp.a12 * m->m[1][i] + sp.a13 * m->m[2][i] + sp.a14 * m->m[3][i];
         double y = sp.a12 * m->m[0][i] + sp.a22 * m->m[1][i] + sp.a23 * m->m[2][i] + sp.a24 * m->m[3][i];
