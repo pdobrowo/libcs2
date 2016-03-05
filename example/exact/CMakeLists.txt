@@ -1,5 +1,13 @@
+###
+ # CS2 library
+ #
+ # Copyright 2015 Przemyslaw Dobrowolski <przemyslaw.dobrowolski@xtb.com>
+ #
+ ##
 project(exact)
 cmake_minimum_required(VERSION 2.6)
+
+include(CheckCXXCompilerFlag)
 
 # modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/../../cmake)
@@ -22,7 +30,15 @@ add_definitions(
 )
 
 # optimizations
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -fomit-frame-pointer -march=native")
+check_cxx_compiler_flag(-Ofast COMPILER_SUPPORT_OFAST)
+
+if(COMPILER_SUPPORT_OFAST)
+    set(COMPILER_RELEASE_OPTIMIZATION -Ofast)
+else(COMPILER_SUPPORT_OFAST)
+    set(COMPILER_RELEASE_OPTIMIZATION -O3)
+endif(COMPILER_SUPPORT_OFAST)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_RELEASE_OPTIMIZATION} -fomit-frame-pointer -march=native")
 
 set(exact_HEADERS
 )

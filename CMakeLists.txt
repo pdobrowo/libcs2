@@ -7,6 +7,8 @@
 project(cs2)
 cmake_minimum_required(VERSION 2.6)
 
+include(CheckCCompilerFlag)
+
 # modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
@@ -23,7 +25,15 @@ add_definitions(
 )
 
 # optimizations
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast -fomit-frame-pointer -march=native")
+check_c_compiler_flag(-Ofast COMPILER_SUPPORT_OFAST)
+
+if(COMPILER_SUPPORT_OFAST)
+    set(COMPILER_RELEASE_OPTIMIZATION -Ofast)
+else(COMPILER_SUPPORT_OFAST)
+    set(COMPILER_RELEASE_OPTIMIZATION -O3)
+endif(COMPILER_SUPPORT_OFAST)
+
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${COMPILER_RELEASE_OPTIMIZATION} -fomit-frame-pointer -march=native")
 
 # output directory
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)

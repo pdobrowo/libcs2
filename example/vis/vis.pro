@@ -5,7 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = vis
 TEMPLATE = app
 
-QMAKE_CXXFLAGS_RELEASE += -Ofast -fomit-frame-pointer -march=native
+QMAKE_CXXFLAGS_RELEASE += -O3 -fomit-frame-pointer -march=native
 
 freebsd*:{
     INCLUDEPATH += /usr/local/include
