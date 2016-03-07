@@ -70,12 +70,23 @@ predgtype3f_t predg3f_type(const predg3f_t *g);
 /* parametrization */
 enum predgparamtype3f_e
 {
-    predgparamtype3f_empty,         /* ellipsoidal: 1, 6; toroidal: 1 */
-    predgparamtype3f_two_points,    /* ellipsoidal: 2;    toroidal: - */
-    predgparamtype3f_ellipsoid,     /* ellipsoidal: 3;    toroidal: - */
-    predgparamtype3f_barrel,        /* ellipsoidal: 4;    toroidal: - */
-    predgparamtype3f_two_caps,      /* ellipsoidal: 5;    toroidal: - */
-    predgparamtype3f_torus          /* ellipsoidal: -;    toroidal: 2 */
+    /* common */
+    predgparamtype3f_an_empty_set,
+
+    /* ellipsoidal */
+    predgparamtype3f_a_pair_of_points,
+    predgparamtype3f_a_pair_of_separate_ellipsoids,
+    predgparamtype3f_a_pair_of_y_touching_ellipsoids,
+    predgparamtype3f_a_pair_of_crossed_ellipsoids,
+    predgparamtype3f_a_pair_of_z_touching_ellipsoids,
+    predgparamtype3f_a_y_barrel,
+    predgparamtype3f_a_z_barrel,
+    predgparamtype3f_a_notched_y_barrel,
+    predgparamtype3f_a_notched_z_barrel,
+    predgparamtype3f_a_pair_of_separate_yz_caps,
+
+    /* toroidal */
+    predgparamtype3f_a_torus
 };
 
 typedef enum predgparamtype3f_e predgparamtype3f_t;

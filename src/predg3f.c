@@ -36,6 +36,11 @@ static int almost_zero(double x)
     return fabs(x) < EPS;
 }
 
+static int almost_equal(double x, double y)
+{
+    return almost_zero(x - y);
+}
+
 static double pclamp(double x)
 {
     if (x < 0.0)
@@ -161,56 +166,150 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
 
 static predgparamtype3f_t inproper_param_case()
 {
-    return predgparamtype3f_empty;
+    return predgparamtype3f_an_empty_set;
 }
 
 static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
 {
-    if (almost_zero(c + a + b))
-        return predgparamtype3f_two_points;
+    /*
+     * parametrization type
+     *
+     *  -----------------------------------------------------------------------
+     *  | type     | a < b               | a = b = t/2  | a > b               |
+     *  -----------------------------------------------------------------------
+     *  | 1/1/1    | c ∈ (−∞, −a − b)    | c ∈ (−∞, −t) | c ∈ (−∞, −a − b)    |
+     *  | 2/2/2    | c = −a − b          | c = −t       | c = −a − b          |
+     *  | 3/3/3    | c ∈ (−a − b, a − b) | c ∈ (−t, 0)  | c ∈ (−a − b, b − a) |
+     *  | 4/5/6    | c = a − b           | c = 0        | c = b − a           |
+     *  | 7/1/8    | c ∈ (a − b, b − a)  | c ∈ ∅        | c ∈ (b − a, a − b)  |
+     *  | 9/1/10   | c = b − a           | c ∈ ∅        | c = a − b           |
+     *  | 11/11/11 | c ∈ (b − a, a + b]  | c ∈ (0, t]   | c ∈ (a − b, a + b]  |
+     *  | 1/1/1    | c ∈ (a + b, +∞)     | c ∈ (t, +∞)  | c ∈ (a + b, +∞)     |
+     *  -----------------------------------------------------------------------
+     *
+     *  (1) an empty case
+     *  (2) a pair of points
+     *  (3) a pair of separate ellipsoids
+     *  (4) a pair of y-touching ellipsoids
+     *  (5) a pair of crossed ellipsoids
+     *  (6) a pair of z-touching ellipsoids
+     *  (7) a y-barrel
+     *  (8) a z-barrel
+     *  (9) a notched y-barrel
+     *  (10) a notched z-barrel
+     *  (11) a pair of separate yz-caps
+     *
+     *  a general rule: always approximate towards the exact cases
+     */
 
-    if (c < - a - b)
-        return predgparamtype3f_empty;
-
-    if (a <= b)
+    /* a = b = t/2 */
+    if (almost_equal(a, b))
     {
-        if (c <= a - b)
-            return predgparamtype3f_ellipsoid;
+        double t = a + b;
 
-        if (c <= b - a)
-            return predgparamtype3f_barrel;
+        if (almost_equal(c, -t))
+            return predgparamtype3f_a_pair_of_points;
+
+        if (almost_equal(c, 0))
+            return predgparamtype3f_a_pair_of_crossed_ellipsoids;
+
+        if (c < -t)
+            return predgparamtype3f_an_empty_set;
+
+        if (c > -t && c < 0)
+            return predgparamtype3f_a_pair_of_separate_ellipsoids;
+
+        if (c > 0 && c <= t)
+            return predgparamtype3f_a_pair_of_separate_yz_caps;
+
+        if (c > t)
+            return predgparamtype3f_an_empty_set;
+
+        /* fall through */
     }
-    else
+    /* a < b */
+    else if (a < b)
     {
-        if (c <= b - a)
-            return predgparamtype3f_ellipsoid;
+        if (almost_equal(c, - a - b))
+            return predgparamtype3f_a_pair_of_points;
 
-        if (c <= a - b)
-            return predgparamtype3f_barrel;
+        if (almost_equal(c, a - b))
+            return predgparamtype3f_a_pair_of_y_touching_ellipsoids;
+
+        if (almost_equal(c, b - a))
+            return predgparamtype3f_a_notched_y_barrel;
+
+        if (c < - a - b)
+            return predgparamtype3f_an_empty_set;
+
+        if (c > - a - b && c < a - b)
+            return predgparamtype3f_a_pair_of_separate_ellipsoids;
+
+        if (c > a - b && c < b - a)
+            return predgparamtype3f_a_y_barrel;
+
+        if (c > b - a && c <= a + b)
+            return predgparamtype3f_a_pair_of_separate_yz_caps;
+
+        if (c > a + b)
+            return predgparamtype3f_an_empty_set;
+
+        /* fall through */
+    }
+    /* a > b */
+    else if (a > b)
+    {
+        if (almost_equal(c, - a - b))
+            return predgparamtype3f_a_pair_of_points;
+
+        if (almost_equal(c, b - a))
+            return predgparamtype3f_a_pair_of_z_touching_ellipsoids;
+
+        if (almost_equal(c, a - b))
+            return predgparamtype3f_a_notched_z_barrel;
+
+        if (c < - a - b)
+            return predgparamtype3f_an_empty_set;
+
+        if (c > - a - b && c < b - a)
+            return predgparamtype3f_a_pair_of_separate_ellipsoids;
+
+        if (c > b - a && c < a - b)
+            return predgparamtype3f_a_z_barrel;
+
+        if (c > a - b && c <= a + b)
+            return predgparamtype3f_a_pair_of_separate_yz_caps;
+
+        if (c > a + b)
+            return predgparamtype3f_an_empty_set;
+
+        /* fall through */
     }
 
-    if (c <= a + b)
-        return predgparamtype3f_two_caps;
-
-    return predgparamtype3f_empty;
+    assert(0);
+    return predgparamtype3f_an_empty_set;
 }
 
 static predgparamtype3f_t toroidal_param_case(double a, double b, double c)
 {
-    if (almost_zero(a))
+    if (almost_zero(a) && !almost_zero(b))
     {
         if (c >= -b && c <= b)
-            return predgparamtype3f_torus;
+            return predgparamtype3f_a_torus;
         else
-            return predgparamtype3f_empty;
+            return predgparamtype3f_an_empty_set;
     }
-    else
+
+    if (!almost_zero(a) && almost_zero(b))
     {
         if (c >= -a && c <= a)
-            return predgparamtype3f_torus;
+            return predgparamtype3f_a_torus;
         else
-            return predgparamtype3f_empty;
+            return predgparamtype3f_an_empty_set;
     }
+
+    assert(0);
+    return predgparamtype3f_an_empty_set;
 }
 
 static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
@@ -244,6 +343,335 @@ static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
         }
 
         assert(fabs(x - m->m[0][i]) + fabs(y - m->m[1][i]) + fabs(z - m->m[2][i]) + fabs(w - m->m[3][i]) < 10e-10);
+    }
+}
+
+static void predgparam3f_eval_an_empty_set(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)t12;
+    (void)t23;
+    (void)t31;
+    (void)t0;
+
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    (void)component;
+
+    /* no parametrization */
+    assert(0);
+}
+
+static void predgparam3f_eval_a_pair_of_points(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    switch (component)
+    {
+        case 0:
+            *t12 = 0.0;
+            *t23 = 0.0;
+            *t31 = 0.0;
+            *t0 = 1.0;
+            break;
+
+        case 1:
+            *t12 = 0.0;
+            *t23 = 0.0;
+            *t31 = 0.0;
+            *t0 = -1.0;
+            break;
+
+        default:
+            assert(0);
+            break;
+    }
+}
+
+static void predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    double sgn = 0.0;
+    double r = 0.5 * (pp->a + pp->b + pp->c);
+    double a, b;
+    double sa, ca, sb, cb;
+
+    switch (component)
+    {
+        case 0:
+            sgn = 1.0;
+            break;
+
+        case 1:
+            sgn = -1.0;
+            v = 1 - v;
+            break;
+
+        default:
+            assert(0);
+            break;
+    }
+
+    a = u * 2.0 * PI;
+    b = v * PI;
+
+    sa = sin(a);
+    ca = cos(a);
+    sb = sin(b);
+    cb = cos(b);
+
+    *t12 = sqrt(r / (pp->a + pp->b)) * sb * ca;
+    *t23 = sqrt(r / pp->a) * sb * sa;
+    *t31 = sqrt(r / pp->b) * cb;
+    *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+}
+
+static void predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)t12;
+    (void)t23;
+    (void)t31;
+    (void)t0;
+
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    (void)component;
+
+    /* no parametrization */
+    assert(0);
+}
+
+static void predgparam3f_eval_a_pair_of_crossed_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)t12;
+    (void)t23;
+    (void)t31;
+    (void)t0;
+
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    (void)component;
+
+    /* no parametrization */
+    assert(0);
+}
+
+static void predgparam3f_eval_a_pair_of_z_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)t12;
+    (void)t23;
+    (void)t31;
+    (void)t0;
+
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    (void)component;
+
+    /* no parametrization */
+    assert(0);
+}
+
+static void predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    double a, h;
+    double sa, ca;
+    double sgn;
+    double x, y, z, d;
+
+    assert(component == 0);
+
+    if (v >= 0.5)
+    {
+        sgn = 1.0;
+        v = (v - 0.5) * 2.0;
+    }
+    else
+    {
+        sgn = -1.0;
+        v = (0.5 - v) * 2.0;
+    }
+
+    a = u * 2 * PI;
+    h = 2.0 * v - 1.0;
+    sa = sin(a);
+    ca = cos(a);
+
+    x = sqrt((pp->b - pp->a + pp->c) / (2.0 * pp->b)) * ca;
+    z = sqrt((pp->b - pp->a + pp->c) / (2.0 * (pp->b - pp->a))) * sa;
+    y = h * sqrt(pclamp(1.0 - x * x - z * z));
+    d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+
+    *t12 = x * d;
+    *t23 = y * d;
+    *t31 = z * d;
+    *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+}
+
+static void predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    double a, h;
+    double sa, ca;
+    double sgn;
+    double x, y, z, d;
+
+    assert(component == 0);
+
+    if (v >= 0.5)
+    {
+        sgn = 1.0;
+        v = (v - 0.5) * 2.0;
+    }
+    else
+    {
+        sgn = -1.0;
+        v = (0.5 - v) * 2.0;
+    }
+
+    a = u * 2 * PI;
+    h = 2.0 * v - 1.0;
+    sa = sin(a);
+    ca = cos(a);
+
+    x = sqrt((pp->a - pp->b + pp->c) / (2.0 * pp->a)) * ca;
+    y = sqrt((pp->a - pp->b + pp->c) / (2.0 * (pp->a - pp->b))) * sa;
+    z = h * sqrt(pclamp(1.0 - x * x - y * y));
+    d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+
+    *t12 = x * d;
+    *t23 = y * d;
+    *t31 = z * d;
+    *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+}
+
+static void predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)t12;
+    (void)t23;
+    (void)t31;
+    (void)t0;
+
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    (void)component;
+
+    /* no parametrization */
+    assert(0);
+}
+
+static void predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    (void)t12;
+    (void)t23;
+    (void)t31;
+    (void)t0;
+
+    (void)pp;
+
+    (void)u;
+    (void)v;
+
+    (void)component;
+
+    /* no parametrization */
+    assert(0);
+}
+
+static void predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    /* yz-caps */
+    double a, x, y, z, d;
+    double sa, ca;
+    double sgn, side = 0.0;
+
+    switch (component)
+    {
+        case 0:
+            side = 1.0;
+            break;
+
+        case 1:
+            side = -1.0;
+            v = 1 - v;
+            break;
+
+        default:
+            assert(0);
+            break;
+    }
+
+    if (v >= 0.5)
+    {
+        sgn = 1.0;
+        v = (v - 0.5) * 2.0;
+    }
+    else
+    {
+        sgn = -1.0;
+        v = (0.5 - v) * 2.0;
+    }
+
+    a = u * 2 * PI;
+    sa = sin(a);
+    ca = cos(a);
+
+    y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
+    z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
+    x = side * sqrt(pclamp(1.0 - y * y - z * z));
+
+    x = x * (1 - v) + side * v;
+    y = y * (1 - v);
+    z = z * (1 - v);
+
+    d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+
+    *t12 = x * d;
+    *t23 = y * d;
+    *t31 = z * d;
+    *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+}
+
+static void predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+{
+    double alpha = u * 2 * PI;
+    double beta = v * 2 * PI;
+
+    assert(component == 0);
+
+    if (almost_zero(pp->b))
+    {
+        double rp = sqrt((pp->a + pp->c) / (2 * pp->a));
+        double rm = sqrt((pp->a - pp->c) / (2 * pp->a));
+
+        *t12 = rp * cos(alpha);
+        *t23 = rp * sin(alpha);
+        *t31 = rm * cos(beta);
+        *t0 = rm * sin(beta);
+    }
+    else
+    {
+        double rp = sqrt((pp->b + pp->c) / (2 * pp->b));
+        double rm = sqrt((pp->b - pp->c) / (2 * pp->b));
+
+        *t12 = rp * cos(alpha);
+        *t23 = rm * sin(alpha);
+        *t31 = rp * cos(beta);
+        *t0 = rm * sin(beta);
     }
 }
 
@@ -314,12 +742,24 @@ const char *predgparamtype3f_str(predgparamtype3f_t pt)
 {
     switch (pt)
     {
-    case predgparamtype3f_empty: return "empty";
-    case predgparamtype3f_two_points: return "two_points";
-    case predgparamtype3f_ellipsoid: return "ellipsoid";
-    case predgparamtype3f_barrel: return "barrel";
-    case predgparamtype3f_two_caps: return "two_caps";
-    case predgparamtype3f_torus: return "torus";
+    /* common */
+    case predgparamtype3f_an_empty_set: return "an empty case";
+
+    /* ellipsoidal */
+    case predgparamtype3f_a_pair_of_points: return "a pair of points";
+    case predgparamtype3f_a_pair_of_separate_ellipsoids: return "a pair of separate ellipsoids";
+    case predgparamtype3f_a_pair_of_y_touching_ellipsoids: return "a pair of y-touching ellipsoids";
+    case predgparamtype3f_a_pair_of_crossed_ellipsoids: return "a pair of crossed ellipsoids";
+    case predgparamtype3f_a_pair_of_z_touching_ellipsoids: return "a pair of z-touching ellipsoids";
+    case predgparamtype3f_a_y_barrel: return "a y-barrel";
+    case predgparamtype3f_a_z_barrel: return "a z-barrel";
+    case predgparamtype3f_a_notched_y_barrel: return "a notched y-barrel";
+    case predgparamtype3f_a_notched_z_barrel: return "a notched z-barrel";
+    case predgparamtype3f_a_pair_of_separate_yz_caps: return "a pair of separate yz-caps";
+
+    /* toroidal */
+    case predgparamtype3f_a_torus: return "a torus";
+
     default: return 0;
     }
 }
@@ -328,12 +768,24 @@ int predgparamtype3f_dim(predgparamtype3f_t pt)
 {
     switch (pt)
     {
-    case predgparamtype3f_empty: return -1;
-    case predgparamtype3f_two_points: return 0;
-    case predgparamtype3f_ellipsoid: return 2;
-    case predgparamtype3f_barrel: return 2;
-    case predgparamtype3f_two_caps: return 2;
-    case predgparamtype3f_torus: return 2;
+    /* common */
+    case predgparamtype3f_an_empty_set: return -1;
+
+    /* ellipsoidal */
+    case predgparamtype3f_a_pair_of_points: return 0;
+    case predgparamtype3f_a_pair_of_separate_ellipsoids: return 2;
+    case predgparamtype3f_a_pair_of_y_touching_ellipsoids: return 2; /* note: not a 2-manifold */
+    case predgparamtype3f_a_pair_of_crossed_ellipsoids: return 2; /* note: not a 2-manifold */
+    case predgparamtype3f_a_pair_of_z_touching_ellipsoids: return 2; /* note: not a 2-manifold */
+    case predgparamtype3f_a_y_barrel: return 2;
+    case predgparamtype3f_a_z_barrel: return 2;
+    case predgparamtype3f_a_notched_y_barrel: return 2;
+    case predgparamtype3f_a_notched_z_barrel: return 2;
+    case predgparamtype3f_a_pair_of_separate_yz_caps: return 2;
+
+    /* toroidal */
+    case predgparamtype3f_a_torus: return 2;
+
     default:
         assert(0);
         return -2;
@@ -344,12 +796,24 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
 {
     switch (pt)
     {
-    case predgparamtype3f_empty: return 0;
-    case predgparamtype3f_two_points: return 2;
-    case predgparamtype3f_ellipsoid: return 2;
-    case predgparamtype3f_barrel: return 1;
-    case predgparamtype3f_two_caps: return 2;
-    case predgparamtype3f_torus: return 1;
+    /* common */
+    case predgparamtype3f_an_empty_set: return 0;
+
+    /* ellipsoidal */
+    case predgparamtype3f_a_pair_of_points: return 2;
+    case predgparamtype3f_a_pair_of_separate_ellipsoids: return 2;
+    case predgparamtype3f_a_pair_of_y_touching_ellipsoids: return 1;
+    case predgparamtype3f_a_pair_of_crossed_ellipsoids: return 1;
+    case predgparamtype3f_a_pair_of_z_touching_ellipsoids: return 1;
+    case predgparamtype3f_a_y_barrel: return 1;
+    case predgparamtype3f_a_z_barrel: return 1;
+    case predgparamtype3f_a_notched_y_barrel: return 1;
+    case predgparamtype3f_a_notched_z_barrel: return 1;
+    case predgparamtype3f_a_pair_of_separate_yz_caps: return 2;
+
+    /* toroidal */
+    case predgparamtype3f_a_torus: return 1;
+
     default:
         assert(0);
         return -1;
@@ -391,227 +855,63 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
 
     switch (pp->t)
     {
-        case predgparamtype3f_empty:
-        {
-            /* -1-dimensional case, no parametrization */
-            assert(0);
-        }
+    /* common */
+    case predgparamtype3f_an_empty_set:
+        predgparam3f_eval_an_empty_set(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-        case predgparamtype3f_two_points:
-        {
-            switch (component)
-            {
-                case 0:
-                    t12 = 0.0;
-                    t23 = 0.0;
-                    t31 = 0.0;
-                    t0 = 1.0;
-                    break;
-
-                case 1:
-                    t12 = 0.0;
-                    t23 = 0.0;
-                    t31 = 0.0;
-                    t0 = -1.0;
-                    break;
-
-                default:
-                    assert(0);
-                    break;
-            }
-        }
+    /* ellipsoidal */
+    case predgparamtype3f_a_pair_of_points:
+        predgparam3f_eval_a_pair_of_points(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-        case predgparamtype3f_ellipsoid:
-        {
-            double sgn = 0.0;
-            double r = 0.5 * (pp->a + pp->b + pp->c);
-            double a, b;
-            double sa, ca, sb, cb;
-
-            switch (component)
-            {
-                case 0:
-                    sgn = 1.0;
-                    break;
-
-                case 1:
-                    sgn = -1.0;
-                    v = 1 - v;
-                    break;
-
-                default:
-                    assert(0);
-                    break;
-            }
-
-            a = u * 2.0 * PI;
-            b = v * PI;
-
-            sa = sin(a);
-            ca = cos(a);
-            sb = sin(b);
-            cb = cos(b);
-
-            t12 = sqrt(r / (pp->a + pp->b)) * sb * ca;
-            t23 = sqrt(r / pp->a) * sb * sa;
-            t31 = sqrt(r / pp->b) * cb;
-            t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
-        }
+    case predgparamtype3f_a_pair_of_separate_ellipsoids:
+        predgparam3f_eval_a_pair_of_separate_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-        case predgparamtype3f_barrel:
-        {
-            /* note: branch cut*/
-            double a, h;
-            double sa, ca;
-            double sgn;
-
-            if (v >= 0.5)
-            {
-                sgn = 1.0;
-                v = (v - 0.5) * 2.0;
-            }
-            else
-            {
-                sgn = -1.0;
-                v = (0.5 - v) * 2.0;
-            }
-
-            a = u * 2 * PI;
-            h = 2.0 * v - 1.0;
-            sa = sin(a);
-            ca = cos(a);
-
-            if (pp->c > pp->a - pp->b && pp->c <= pp->b - pp->a)
-            {
-                /* y-barrel*/
-                double x = sqrt((pp->b - pp->a + pp->c) / (2.0 * pp->b)) * ca;
-                double z = sqrt((pp->b - pp->a + pp->c) / (2.0 * (pp->b - pp->a))) * sa;
-                double y = h * sqrt(pclamp(1.0 - x * x - z * z));
-                double d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
-
-                t12 = x * d;
-                t23 = y * d;
-                t31 = z * d;
-                t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
-            }
-            else if (pp->c > pp->b - pp->a && pp->c <= pp->a - pp->b)
-            {
-                 /* z-barrel */
-                double x = sqrt((pp->a - pp->b + pp->c) / (2.0 * pp->a)) * ca;
-                double y = sqrt((pp->a - pp->b + pp->c) / (2.0 * (pp->a - pp->b))) * sa;
-                double z = h * sqrt(pclamp(1.0 - x * x - y * y));
-                double d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
-
-                t12 = x * d;
-                t23 = y * d;
-                t31 = z * d;
-                t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
-            }
-            else
-            {
-                /* fail */
-                assert(0);
-            }
-        }
+    case predgparamtype3f_a_pair_of_y_touching_ellipsoids:
+        predgparam3f_eval_a_pair_of_y_touching_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-        case predgparamtype3f_two_caps:
-        {
-            /* yz-caps */
-            double a, x, y, z, d;
-            double sa, ca;
-            double sgn, side = 0.0;
-
-            switch (component)
-            {
-                case 0:
-                    side = 1.0;
-                    break;
-
-                case 1:
-                    side = -1.0;
-                    v = 1 - v;
-                    break;
-
-                default:
-                    assert(0);
-                    break;
-            }
-
-            if (v >= 0.5)
-            {
-                sgn = 1.0;
-                v = (v - 0.5) * 2.0;
-            }
-            else
-            {
-                sgn = -1.0;
-                v = (0.5 - v) * 2.0;
-            }
-
-            a = u * 2 * PI;
-            sa = sin(a);
-            ca = cos(a);
-
-            y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
-            z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
-            x = side * sqrt(pclamp(1.0 - y * y - z * z));
-
-            x = x * (1 - v) + side * v;
-            y = y * (1 - v);
-            z = z * (1 - v);
-
-            d = sqrt(pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
-
-            t12 = x * d;
-            t23 = y * d;
-            t31 = z * d;
-            t0 = sgn * sqrt(pclamp(1.0 - t12 * t12 - t23 * t23 - t31 * t31));
-        }
+    case predgparamtype3f_a_pair_of_crossed_ellipsoids:
+        predgparam3f_eval_a_pair_of_crossed_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-        case predgparamtype3f_torus:
-        {
-            double alpha = u * 2 * PI;
-            double beta = v * 2 * PI;
-
-            if (almost_zero(pp->b))
-            {
-                double rp = sqrt((pp->a + pp->c) / (2 * pp->a));
-                double rm = sqrt((pp->a - pp->c) / (2 * pp->a));
-
-                t12 = rp * cos(alpha);
-                t23 = rp * sin(alpha);
-                t31 = rm * cos(beta);
-                t0 = rm * sin(beta);
-            }
-            else
-            {
-                double rp = sqrt((pp->b + pp->c) / (2 * pp->b));
-                double rm = sqrt((pp->b - pp->c) / (2 * pp->b));
-
-                t12 = rp * cos(alpha);
-                t23 = rm * sin(alpha);
-                t31 = rp * cos(beta);
-                t0 = rm * sin(beta);
-            }
-
-            /* debug, currently Q is unknown for toroidal case */
-            s->s12 = t12;
-            s->s23 = t23;
-            s->s31 = t31;
-            s->s0 = t0;
-            return;
-        }
+    case predgparamtype3f_a_pair_of_z_touching_ellipsoids:
+        predgparam3f_eval_a_pair_of_z_touching_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-        default:
-            assert(0);
+    case predgparamtype3f_a_y_barrel:
+        predgparam3f_eval_a_y_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
+        break;
+
+    case predgparamtype3f_a_z_barrel:
+        predgparam3f_eval_a_z_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
+        break;
+
+    case predgparamtype3f_a_notched_y_barrel:
+        predgparam3f_eval_a_notched_y_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
+        break;
+
+    case predgparamtype3f_a_notched_z_barrel:
+        predgparam3f_eval_a_notched_z_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
+        break;
+
+    case predgparamtype3f_a_pair_of_separate_yz_caps:
+        predgparam3f_eval_a_pair_of_separate_yz_caps(&t12, &t23, &t31, &t0, pp, u, v, component);
+        break;
+
+    /* toroidal */
+    case predgparamtype3f_a_torus:
+        predgparam3f_eval_a_torus(&t12, &t23, &t31, &t0, pp, u, v, component);
+        break;
+
+    default:
+        assert(0);
+        break;
     }
 
+    /* eigenmatrix rotation */
     s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
     s->s23 = pp->q.m[1][0] * t12 + pp->q.m[1][1] * t23 + pp->q.m[1][2] * t31 + pp->q.m[1][3] * t0;
     s->s31 = pp->q.m[2][0] * t12 + pp->q.m[2][1] * t23 + pp->q.m[2][2] * t31 + pp->q.m[2][3] * t0;
