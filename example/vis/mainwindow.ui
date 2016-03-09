@@ -1280,6 +1280,21 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>verticalSliderKX</tabstop>
+  <tabstop>verticalSliderKY</tabstop>
+  <tabstop>verticalSliderKZ</tabstop>
+  <tabstop>verticalSliderLY</tabstop>
+  <tabstop>verticalSliderLX</tabstop>
+  <tabstop>verticalSliderLZ</tabstop>
+  <tabstop>verticalSliderAX</tabstop>
+  <tabstop>verticalSliderAY</tabstop>
+  <tabstop>verticalSliderAZ</tabstop>
+  <tabstop>verticalSliderBX</tabstop>
+  <tabstop>verticalSliderBY</tabstop>
+  <tabstop>verticalSliderBZ</tabstop>
+  <tabstop>verticalSliderC</tabstop>
+ </tabstops>
  <resources>
   <include location="res.qrc"/>
  </resources>
