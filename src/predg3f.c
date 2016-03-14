@@ -172,7 +172,7 @@ static predgparamtype3f_t inproper_param_case()
 static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
 {
     /*
-     * parametrization type
+     * ellipsoidal parametrization type
      *
      *  -----------------------------------------------------------------------
      *  | type     | a < b               | a = b = t/2  | a > b               |
@@ -183,7 +183,8 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
      *  | 4/5/6    | c = a − b           | c = 0        | c = b − a           |
      *  | 7/1/8    | c ∈ (a − b, b − a)  | c ∈ ∅        | c ∈ (b − a, a − b)  |
      *  | 9/1/10   | c = b − a           | c ∈ ∅        | c = a − b           |
-     *  | 11/11/11 | c ∈ (b − a, a + b]  | c ∈ (0, t]   | c ∈ (a − b, a + b]  |
+     *  | 11/11/11 | c ∈ (b − a, a + b)  | c ∈ (0, t)   | c ∈ (a − b, a + b)  |
+     *  | 11/11/11 | c = a + b           | c = t        | c = a + b           |
      *  | 1/1/1    | c ∈ (a + b, +∞)     | c ∈ (t, +∞)  | c ∈ (a + b, +∞)     |
      *  -----------------------------------------------------------------------
      *
@@ -191,7 +192,7 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
      *  (2) a pair of points
      *  (3) a pair of separate ellipsoids
      *  (4) a pair of y-touching ellipsoids
-     *  (5) a pair of crossed ellipsoids
+     *  (5) a pair of yz-crossed ellipsoids
      *  (6) a pair of z-touching ellipsoids
      *  (7) a y-barrel
      *  (8) a z-barrel
@@ -211,7 +212,10 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
             return predgparamtype3f_a_pair_of_points;
 
         if (almost_equal(c, 0))
-            return predgparamtype3f_a_pair_of_crossed_ellipsoids;
+            return predgparamtype3f_a_pair_of_yz_crossed_ellipsoids;
+
+        if (almost_equal(c, t))
+            return predgparamtype3f_a_pair_of_separate_yz_caps;
 
         if (c < -t)
             return predgparamtype3f_an_empty_set;
@@ -219,7 +223,7 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
         if (c > -t && c < 0)
             return predgparamtype3f_a_pair_of_separate_ellipsoids;
 
-        if (c > 0 && c <= t)
+        if (c > 0 && c < t)
             return predgparamtype3f_a_pair_of_separate_yz_caps;
 
         if (c > t)
@@ -239,6 +243,9 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
         if (almost_equal(c, b - a))
             return predgparamtype3f_a_notched_y_barrel;
 
+        if (almost_equal(c, a + b))
+            return predgparamtype3f_a_pair_of_separate_yz_caps;
+
         if (c < - a - b)
             return predgparamtype3f_an_empty_set;
 
@@ -248,7 +255,7 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
         if (c > a - b && c < b - a)
             return predgparamtype3f_a_y_barrel;
 
-        if (c > b - a && c <= a + b)
+        if (c > b - a && c < a + b)
             return predgparamtype3f_a_pair_of_separate_yz_caps;
 
         if (c > a + b)
@@ -268,6 +275,9 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
         if (almost_equal(c, a - b))
             return predgparamtype3f_a_notched_z_barrel;
 
+        if (almost_equal(c, a + b))
+            return predgparamtype3f_a_pair_of_separate_yz_caps;
+
         if (c < - a - b)
             return predgparamtype3f_an_empty_set;
 
@@ -277,7 +287,7 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
         if (c > b - a && c < a - b)
             return predgparamtype3f_a_z_barrel;
 
-        if (c > a - b && c <= a + b)
+        if (c > a - b && c < a + b)
             return predgparamtype3f_a_pair_of_separate_yz_caps;
 
         if (c > a + b)
@@ -448,7 +458,7 @@ static void predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, doubl
     assert(0);
 }
 
-static void predgparam3f_eval_a_pair_of_crossed_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -749,7 +759,7 @@ const char *predgparamtype3f_str(predgparamtype3f_t pt)
     case predgparamtype3f_a_pair_of_points: return "a pair of points";
     case predgparamtype3f_a_pair_of_separate_ellipsoids: return "a pair of separate ellipsoids";
     case predgparamtype3f_a_pair_of_y_touching_ellipsoids: return "a pair of y-touching ellipsoids";
-    case predgparamtype3f_a_pair_of_crossed_ellipsoids: return "a pair of crossed ellipsoids";
+    case predgparamtype3f_a_pair_of_yz_crossed_ellipsoids: return "a pair of yz-crossed ellipsoids";
     case predgparamtype3f_a_pair_of_z_touching_ellipsoids: return "a pair of z-touching ellipsoids";
     case predgparamtype3f_a_y_barrel: return "a y-barrel";
     case predgparamtype3f_a_z_barrel: return "a z-barrel";
@@ -775,7 +785,7 @@ int predgparamtype3f_dim(predgparamtype3f_t pt)
     case predgparamtype3f_a_pair_of_points: return 0;
     case predgparamtype3f_a_pair_of_separate_ellipsoids: return 2;
     case predgparamtype3f_a_pair_of_y_touching_ellipsoids: return 2; /* note: not a 2-manifold */
-    case predgparamtype3f_a_pair_of_crossed_ellipsoids: return 2; /* note: not a 2-manifold */
+    case predgparamtype3f_a_pair_of_yz_crossed_ellipsoids: return 2; /* note: not a 2-manifold */
     case predgparamtype3f_a_pair_of_z_touching_ellipsoids: return 2; /* note: not a 2-manifold */
     case predgparamtype3f_a_y_barrel: return 2;
     case predgparamtype3f_a_z_barrel: return 2;
@@ -803,7 +813,7 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
     case predgparamtype3f_a_pair_of_points: return 2;
     case predgparamtype3f_a_pair_of_separate_ellipsoids: return 2;
     case predgparamtype3f_a_pair_of_y_touching_ellipsoids: return 1;
-    case predgparamtype3f_a_pair_of_crossed_ellipsoids: return 1;
+    case predgparamtype3f_a_pair_of_yz_crossed_ellipsoids: return 1;
     case predgparamtype3f_a_pair_of_z_touching_ellipsoids: return 1;
     case predgparamtype3f_a_y_barrel: return 1;
     case predgparamtype3f_a_z_barrel: return 1;
@@ -873,8 +883,8 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
         predgparam3f_eval_a_pair_of_y_touching_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
-    case predgparamtype3f_a_pair_of_crossed_ellipsoids:
-        predgparam3f_eval_a_pair_of_crossed_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
+    case predgparamtype3f_a_pair_of_yz_crossed_ellipsoids:
+        predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
         break;
 
     case predgparamtype3f_a_pair_of_z_touching_ellipsoids:

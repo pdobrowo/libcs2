@@ -77,7 +77,7 @@ enum predgparamtype3f_e
     predgparamtype3f_a_pair_of_points,
     predgparamtype3f_a_pair_of_separate_ellipsoids,
     predgparamtype3f_a_pair_of_y_touching_ellipsoids,
-    predgparamtype3f_a_pair_of_crossed_ellipsoids,
+    predgparamtype3f_a_pair_of_yz_crossed_ellipsoids,
     predgparamtype3f_a_pair_of_z_touching_ellipsoids,
     predgparamtype3f_a_y_barrel,
     predgparamtype3f_a_z_barrel,
