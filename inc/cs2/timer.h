@@ -35,7 +35,6 @@ uint64_t timer_sec();
 uint64_t timer_msec();
 uint64_t timer_usec();
 uint64_t timer_nsec();
-uint64_t timer_rdtsc();
 
 #ifdef __cplusplus
 }

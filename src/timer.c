@@ -52,16 +52,3 @@ uint64_t timer_nsec()
     (void)clock_gettime(CLOCK_REALTIME, &ts);
     return (uint64_t)ts.tv_sec * 1000000000 + (uint64_t)ts.tv_nsec;
 }
-
-uint64_t timer_rdtsc()
-{
-    uint32_t hi, lo;
-
-    __asm__ volatile
-    (
-        "rdtsc"
-        : "=a"(lo), "=d"(hi)
-    );
-
-    return lo + ((uint64_t)hi << 32);
-}
