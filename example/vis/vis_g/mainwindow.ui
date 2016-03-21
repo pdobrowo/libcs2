@@ -14,7 +14,7 @@
    <string>vis</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="res.qrc">
+   <iconset resource="../res.qrc">
     <normaloff>:/res/app.png</normaloff>:/res/app.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -1167,7 +1167,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/viewarcball.png</normaloff>:/res/viewarcball.png</iconset>
    </property>
    <property name="text">
@@ -1179,7 +1179,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/viewfree.png</normaloff>:/res/viewfree.png</iconset>
    </property>
    <property name="text">
@@ -1191,7 +1191,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/viewauto.png</normaloff>:/res/viewauto.png</iconset>
    </property>
    <property name="text">
@@ -1203,7 +1203,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/wireframe.png</normaloff>:/res/wireframe.png</iconset>
    </property>
    <property name="text">
@@ -1212,7 +1212,7 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/open.png</normaloff>:/res/open.png</iconset>
    </property>
    <property name="text">
@@ -1221,7 +1221,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/save.png</normaloff>:/res/save.png</iconset>
    </property>
    <property name="text">
@@ -1230,7 +1230,7 @@
   </action>
   <action name="actionSaveAs">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/saveas.png</normaloff>:/res/saveas.png</iconset>
    </property>
    <property name="text">
@@ -1247,7 +1247,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/automesh.png</normaloff>:/res/automesh.png</iconset>
    </property>
    <property name="text">
@@ -1256,7 +1256,7 @@
   </action>
   <action name="actionTakeScreenshot">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/screenshot.png</normaloff>:/res/screenshot.png</iconset>
    </property>
    <property name="text">
@@ -1271,7 +1271,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/modelonly.png</normaloff>:/res/modelonly.png</iconset>
    </property>
    <property name="text">
@@ -1296,7 +1296,7 @@
   <tabstop>verticalSliderC</tabstop>
  </tabstops>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections/>
 </ui>
