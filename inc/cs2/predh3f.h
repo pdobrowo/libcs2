@@ -45,6 +45,9 @@ struct predh3f_s
 
 typedef struct predh3f_s predh3f_t;
 
+void predh3f_set(predh3f_t *g, const vec3f_t *b, const plane3f_t *p);
+void predh3f_copy(predh3f_t *r, const predh3f_t *h);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

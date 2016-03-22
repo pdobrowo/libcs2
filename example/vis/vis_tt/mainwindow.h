@@ -26,6 +26,8 @@
 #define MAINWINDOW_H
 
 #include "cs2/predg3f.h"
+#include "cs2/preds3f.h"
+#include "cs2/predtt3f.h"
 #include "cs2/spin3f.h"
 #include "cs2/vec3f.h"
 #include "trianglelistmesh.h"
@@ -72,10 +74,12 @@ private:
 
     void updateWindowTitle();
 
-    void autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions);
-    void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
+    void autoMesh(TriangleListPtr triangles, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions);
+    void autoMeshInternal(TriangleListPtr triangles, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
 
-    void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double radius);
+    void simpleMesh(TriangleListPtr triangles, predgparam3f_t *param, double radius);
+
+    void addTriangle(TriangleListPtr triangles, const Triangle &triangle);
 
     virtual void closeEvent(QCloseEvent *event);
 
@@ -114,7 +118,6 @@ private slots:
     void on_actionSaveAs_triggered();
     void on_actionAutoMesh_triggered();
     void on_actionTakeScreenshot_triggered();
-
     void on_actionModelOnlyView_triggered();
 
 private:

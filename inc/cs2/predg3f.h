@@ -49,6 +49,9 @@ struct predg3f_s
 
 typedef struct predg3f_s predg3f_t;
 
+void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b, double c);
+void predg3f_copy(predg3f_t *r, const predg3f_t *g);
+
 void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h);
 void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s);
 void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g);

@@ -39,6 +39,9 @@ struct plane3f_s
 
 typedef struct plane3f_s plane3f_t;
 
+void plane3f_set(plane3f_t *p, const vec3f_t *n, double d);
+void plane3f_copy(plane3f_t *r, const plane3f_t *p);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

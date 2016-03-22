@@ -39,6 +39,8 @@
 
 namespace // anonymous
 {
+static double CUTOFF_DISTANCE = 10;
+
 double projectedDistance(const spin3f_t *a, const spin3f_t *b)
 {
     vec3f_t pa, pb, pc;
@@ -68,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_rv = new RenderView();
 
     m_rv->setCaption("cspace");
-    m_rv->setCullingEnabled(true);
+    m_rv->setCullingEnabled(false);
 
     ui->widgetView->layout()->addWidget(m_rv);
 
@@ -95,108 +97,49 @@ void MainWindow::updatePredicateInformation()
     // changed
     m_currentChanged = true;
     updateWindowTitle();
-#if 0
-    // predicate g
-    predg3f_t pred = {
-                        { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
-                        { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
-                        { sliderToParamValue(ui->verticalSliderAX), sliderToParamValue(ui->verticalSliderAY), sliderToParamValue(ui->verticalSliderAZ) },
-                        { sliderToParamValue(ui->verticalSliderBX), sliderToParamValue(ui->verticalSliderBY), sliderToParamValue(ui->verticalSliderBZ) },
-                          sliderToParamValue(ui->verticalSliderC)
-                     };
 
-    // param g
-    predgparam3f_t param;
-    predg3f_param(&param, &pred);
+    // predicate tt
+    predtt3f_t tt = { { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
+                      { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
+                      { sliderToParamValue(ui->verticalSliderMX), sliderToParamValue(ui->verticalSliderMY), sliderToParamValue(ui->verticalSliderMZ) },
+                      { sliderToParamValue(ui->verticalSliderAX), sliderToParamValue(ui->verticalSliderAY), sliderToParamValue(ui->verticalSliderAZ) },
+                      { sliderToParamValue(ui->verticalSliderBX), sliderToParamValue(ui->verticalSliderBY), sliderToParamValue(ui->verticalSliderBZ) },
+                      { sliderToParamValue(ui->verticalSliderCX), sliderToParamValue(ui->verticalSliderCY), sliderToParamValue(ui->verticalSliderCZ) } };
 
-    double a = param.a;
-    double b = param.b;
-    double c = param.c;
-
-    double mi = std::min(a - b, b - a);
-    double ma = std::max(a - b, b - a);
-
-    // information -> parameters
-    ui->labelKval->setText(formatVector(&pred.k));
-    ui->labelLval->setText(formatVector(&pred.l));
-    ui->labelAval->setText(formatVector(&pred.a));
-    ui->labelBval->setText(formatVector(&pred.b));
-    ui->labelCval->setText(QString::number(c, 'f', 2));
-
-    // information -> base variables
-    vec3f_t p, q, u, v;
-    predg3f_pquv(&p, &q, &u, &v, &pred);
-
-    ui->labelPval->setText(formatVector(&p));
-    ui->labelQval->setText(formatVector(&q));
-    ui->labelUval->setText(formatVector(&u));
-    ui->labelVval->setText(formatVector(&v));
-    ui->labelC2val->setText(QString::number(c, 'f', 2));
-
-    // information -> type
-    predgtype3f_t type = predg3f_type(&pred);
-
-    ui->labelproperval->setText(type == predgtype3f_inproper ? "no" : "yes");
-    ui->labeltypeval->setText(predgtype3f_str(type));
-
-    // information -> parametrization variables
-    ui->labelaval->setText(QString::number(a, 'f', 4));
-    ui->labelbval->setText(QString::number(b, 'f', 4));
-    ui->labelcval->setText(QString::number(c, 'f', 4));
-    ui->labelminval->setText(QString::number(mi, 'f', 4));
-    ui->labelmaxval->setText(QString::number(ma, 'f', 4));
-
-    ui->labelcaseval->setText(predgparamtype3f_str(param.t));
-    ui->labeldimval->setText(QString::number(predgparamtype3f_dim(param.t)));
-    ui->labelcompval->setText(QString::number(predgparamtype3f_components(param.t)));
-
-    // information -> eigen decomposition
-    mat44f_t eigenvec;
-    vec4f_t eigenval;
-    predg3f_eigen(&eigenvec, &eigenval, &pred);
-
-    double l1 = eigenval.x;
-    double l2 = eigenval.y;
-    double l3 = eigenval.z;
-    double l4 = eigenval.w;
-
-    double det = l1 * l2 * l3 * l4;
-
-    vec4f_t w1 = { eigenvec.m[0][0], eigenvec.m[1][0], eigenvec.m[2][0], eigenvec.m[3][0] };
-    vec4f_t w2 = { eigenvec.m[0][1], eigenvec.m[1][1], eigenvec.m[2][1], eigenvec.m[3][1] };
-    vec4f_t w3 = { eigenvec.m[0][2], eigenvec.m[1][2], eigenvec.m[2][2], eigenvec.m[3][2] };
-    vec4f_t w4 = { eigenvec.m[0][3], eigenvec.m[1][3], eigenvec.m[2][3], eigenvec.m[3][3] };
-
-    ui->labeldetval->setText(QString::number(det, 'f', 8));
-
-    ui->labell1val->setText(QString::number(l1, 'f', 4));
-    ui->labell2val->setText(QString::number(l2, 'f', 4));
-    ui->labell3val->setText(QString::number(l3, 'f', 4));
-    ui->labell4val->setText(QString::number(l4, 'f', 4));
-
-    ui->labelw1val->setText(formatVector(&w1));
-    ui->labelw2val->setText(formatVector(&w2));
-    ui->labelw3val->setText(formatVector(&w3));
-    ui->labelw4val->setText(formatVector(&w4));
+    // decompose tt->s
+    predttdecomp3f_t ttd;
+    predtt3f_decomp(&ttd, &tt);
 
     // visual
     m_rv->removeAllObjects();
 
-    // only 2-dimensional
-    if (predgparamtype3f_dim(param.t) == 2)
+    for (int i = 0; i < 3; ++i)
     {
-        TriangleListPtr trianglesFront(new TriangleList());
-        TriangleListPtr trianglesBack(new TriangleList());
+        for (int j = 0; j < 3; ++j)
+        {
+            preds3f_t *s = &ttd.s[i][j];
+            predg3f_t g;
 
-        if (ui->actionAutoMesh->isChecked())
-            autoMesh(trianglesFront, trianglesBack, &param, 0.1, 0.5, 10);
-        else
-            simpleMesh(trianglesFront, trianglesBack, &param, 0.01);
+            predg3f_from_preds3f(&g, s);
 
-        m_rv->addTriangleList(trianglesFront, Qt::green);
-        m_rv->addTriangleList(trianglesBack, Qt::red);
+            // param g
+            predgparam3f_t param;
+            predg3f_param(&param, &g);
+
+            // only 2-dimensional
+            if (predgparamtype3f_dim(param.t) == 2)
+            {
+                TriangleListPtr triangles(new TriangleList());
+
+                if (ui->actionAutoMesh->isChecked())
+                    autoMesh(triangles, &param, 0.1, 0.5, 10);
+                else
+                    simpleMesh(triangles, &param, 0.01);
+
+                m_rv->addTriangleList(triangles, Qt::green);
+            }
+        }
     }
-#endif
 }
 
 double MainWindow::sliderToParamValue(QSlider *slider)
@@ -353,17 +296,17 @@ void MainWindow::updateWindowTitle()
     setWindowTitle(fileName + ": vis" + (m_currentChanged ? " *" : ""));
 }
 
-void MainWindow::autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions)
+void MainWindow::autoMesh(TriangleListPtr triangles, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions)
 {
     int number_of_components = predgparamtype3f_components(param->t);
 
     for (int component = 0; component < number_of_components; ++component)
         for (double u = 0; u <= 1 - initialRadius; u += initialRadius)
             for (double v = 0; v <= 1 - initialRadius; v += initialRadius)
-                autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
+                autoMeshInternal(triangles, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
 }
 
-void MainWindow::autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
+void MainWindow::autoMeshInternal(TriangleListPtr triangles, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
 {
     spin3f_t sp00, sp01, sp10, sp11;
 
@@ -380,22 +323,19 @@ void MainWindow::autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPt
         QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
         QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
 
-        trianglesFront->push_back(Triangle(v00, v01, v11));
-        trianglesFront->push_back(Triangle(v00, v11, v10));
-
-        trianglesBack->push_back(Triangle(v00, v11, v01));
-        trianglesBack->push_back(Triangle(v00, v10, v11));
+        addTriangle(triangles, Triangle(v00, v01, v11));
+        addTriangle(triangles, Triangle(v00, v11, v10));
     }
     else
     {
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
+        autoMeshInternal(triangles, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
+        autoMeshInternal(triangles, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
+        autoMeshInternal(triangles, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
+        autoMeshInternal(triangles, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
     }
 }
 
-void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double radius)
+void MainWindow::simpleMesh(TriangleListPtr triangles, predgparam3f_t *param, double radius)
 {
     int number_of_components = predgparamtype3f_components(param->t);
 
@@ -415,11 +355,8 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
             QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
             QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
 
-            trianglesFront->push_back(Triangle(v00, v01, v11));
-            trianglesFront->push_back(Triangle(v00, v11, v10));
-
-            trianglesBack->push_back(Triangle(v00, v11, v01));
-            trianglesBack->push_back(Triangle(v00, v10, v11));
+            addTriangle(triangles, Triangle(v00, v01, v11));
+            addTriangle(triangles, Triangle(v00, v11, v10));
         }
 
         // last u
@@ -437,11 +374,8 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
             QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
             QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
 
-            trianglesFront->push_back(Triangle(v00, v01, v11));
-            trianglesFront->push_back(Triangle(v00, v11, v10));
-
-            trianglesBack->push_back(Triangle(v00, v11, v01));
-            trianglesBack->push_back(Triangle(v00, v10, v11));
+            addTriangle(triangles, Triangle(v00, v01, v11));
+            addTriangle(triangles, Triangle(v00, v11, v10));
         }
 
         // last v
@@ -459,11 +393,8 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
             QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
             QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
 
-            trianglesFront->push_back(Triangle(v00, v01, v11));
-            trianglesFront->push_back(Triangle(v00, v11, v10));
-
-            trianglesBack->push_back(Triangle(v00, v11, v01));
-            trianglesBack->push_back(Triangle(v00, v10, v11));
+            addTriangle(triangles, Triangle(v00, v01, v11));
+            addTriangle(triangles, Triangle(v00, v11, v10));
         }
 
         // last uv
@@ -480,13 +411,16 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
             QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
             QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
 
-            trianglesFront->push_back(Triangle(v00, v01, v11));
-            trianglesFront->push_back(Triangle(v00, v11, v10));
-
-            trianglesBack->push_back(Triangle(v00, v11, v01));
-            trianglesBack->push_back(Triangle(v00, v10, v11));
+            addTriangle(triangles, Triangle(v00, v01, v11));
+            addTriangle(triangles, Triangle(v00, v11, v10));
         }
     }
+}
+
+void MainWindow::addTriangle(TriangleListPtr triangles, const Triangle &triangle)
+{
+    if (triangle.vertex(0).length() < CUTOFF_DISTANCE || triangle.vertex(1).length() < CUTOFF_DISTANCE || triangle.vertex(2).length() < CUTOFF_DISTANCE)
+        triangles->push_back(triangle);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

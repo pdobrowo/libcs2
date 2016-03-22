@@ -23,3 +23,19 @@
  * SOFTWARE.
  */
 #include "cs2/preds3f.h"
+
+void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b)
+{
+    vec3f_copy(&s->k, k);
+    vec3f_copy(&s->l, l);
+    vec3f_copy(&s->a, a);
+    vec3f_copy(&s->b, b);
+}
+
+void preds3f_copy(preds3f_t *r, const preds3f_t *s)
+{
+    vec3f_copy(&r->k, &s->k);
+    vec3f_copy(&r->l, &s->l);
+    vec3f_copy(&r->a, &s->a);
+    vec3f_copy(&r->b, &s->b);
+}

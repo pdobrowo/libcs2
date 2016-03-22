@@ -685,6 +685,24 @@ static void predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, dou
     }
 }
 
+void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b, double c)
+{
+    vec3f_copy(&g->k, k);
+    vec3f_copy(&g->l, l);
+    vec3f_copy(&g->a, a);
+    vec3f_copy(&g->b, b);
+    g->c = c;
+}
+
+void predg3f_copy(predg3f_t *r, const predg3f_t *g)
+{
+    vec3f_copy(&r->k, &g->k);
+    vec3f_copy(&r->l, &g->l);
+    vec3f_copy(&r->a, &g->a);
+    vec3f_copy(&r->b, &g->b);
+    r->c = g->c;
+}
+
 void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
 {
     vec3f_t r, nr;

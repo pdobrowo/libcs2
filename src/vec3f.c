@@ -37,6 +37,13 @@ void vec3f_zero(vec3f_t *r)
     vec3f_set(r, 0, 0, 0);
 }
 
+void vec3f_copy(vec3f_t *r, const vec3f_t *v)
+{
+    r->x = v->x;
+    r->y = v->y;
+    r->z = v->z;
+}
+
 void vec3f_add(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
 {
     r->x = a->x + b->x;

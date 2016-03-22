@@ -39,6 +39,8 @@ typedef struct vec3f_s vec3f_t;
 void vec3f_set(vec3f_t *r, double x, double y, double z);
 void vec3f_zero(vec3f_t *r);
 
+void vec3f_copy(vec3f_t *r, const vec3f_t *v);
+
 void vec3f_add(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
 void vec3f_sub(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
 void vec3f_neg(vec3f_t *r, const vec3f_t *v);

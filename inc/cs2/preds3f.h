@@ -43,6 +43,9 @@ struct preds3f_s
 
 typedef struct preds3f_s preds3f_t;
 
+void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b);
+void preds3f_copy(preds3f_t *r, const preds3f_t *s);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

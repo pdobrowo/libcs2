@@ -105,9 +105,6 @@
      <property name="topMargin">
       <number>0</number>
      </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
      <property name="verticalSpacing">
       <number>0</number>
      </property>
@@ -117,9 +114,44 @@
         <string>B</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_4">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>2</number>
         </property>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelSliderBY">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>0.00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="verticalSliderBY">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>500</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="labelSliderBZ">
           <property name="minimumSize">
@@ -142,7 +174,7 @@
            <number>600</number>
           </property>
           <property name="value">
-           <number>350</number>
+           <number>250</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -171,43 +203,14 @@
            <number>600</number>
           </property>
           <property name="value">
-           <number>400</number>
+           <number>150</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderBY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderBY">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>200</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
+        <item row="1" column="2">
          <widget class="QLabel" name="labelZeroB">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -223,6 +226,12 @@
         <string>C</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_11">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>2</number>
         </property>
@@ -248,7 +257,7 @@
            <number>600</number>
           </property>
           <property name="value">
-           <number>250</number>
+           <number>300</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -277,7 +286,20 @@
            <number>600</number>
           </property>
           <property name="value">
-           <number>300</number>
+           <number>200</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QSlider" name="verticalSliderCX">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>400</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -300,20 +322,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderCX">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>380</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
+        <item row="1" column="2">
          <widget class="QLabel" name="labelZeroC">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -329,9 +338,44 @@
         <string>L</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>2</number>
         </property>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelSliderLY">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>0.00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QSlider" name="verticalSliderLX">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>400</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="labelSliderLZ">
           <property name="minimumSize">
@@ -345,6 +389,19 @@
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QSlider" name="verticalSliderLY">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>200</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -377,49 +434,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderLX">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>400</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderLY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderLY">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>200</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
+        <item row="1" column="2">
          <widget class="QLabel" name="labelZeroL">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -435,9 +450,41 @@
         <string>M</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>2</number>
         </property>
+        <item row="1" column="0">
+         <widget class="QSlider" name="verticalSliderMY">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>250</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QSlider" name="verticalSliderMX">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>380</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="labelSliderMZ">
           <property name="minimumSize">
@@ -454,21 +501,24 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderMY">
-          <property name="maximum">
-           <number>600</number>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labelSliderMX">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
           </property>
-          <property name="value">
-           <number>250</number>
+          <property name="text">
+           <string>0.00</string>
           </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderMX">
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelSliderMY">
           <property name="minimumSize">
            <size>
             <width>40</width>
@@ -496,36 +546,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderMY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderMX">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>380</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
+        <item row="1" column="2">
          <widget class="QLabel" name="labelZeroM">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -541,16 +562,22 @@
         <string>A</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>2</number>
         </property>
-        <item row="2" column="0">
-         <widget class="QSlider" name="verticalSliderAZ">
+        <item row="0" column="0">
+         <widget class="QSlider" name="verticalSliderAX">
           <property name="maximum">
            <number>600</number>
           </property>
           <property name="value">
-           <number>450</number>
+           <number>300</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -573,37 +600,8 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderAX">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>150</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QLabel" name="labelSliderAY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderAX">
           <property name="minimumSize">
            <size>
             <width>40</width>
@@ -624,14 +622,43 @@
            <number>600</number>
           </property>
           <property name="value">
-           <number>300</number>
+           <number>250</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="0" column="1">
+         <widget class="QLabel" name="labelSliderAX">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>0.00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QSlider" name="verticalSliderAZ">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>380</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
          <widget class="QLabel" name="labelZeroA">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -647,9 +674,44 @@
         <string>K</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <property name="verticalSpacing">
          <number>2</number>
         </property>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelSliderKY">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>0.00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QSlider" name="verticalSliderKX">
+          <property name="maximum">
+           <number>600</number>
+          </property>
+          <property name="value">
+           <number>150</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="0">
          <widget class="QSlider" name="verticalSliderKZ">
           <property name="maximum">
@@ -679,32 +741,16 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderKX">
+        <item row="1" column="0">
+         <widget class="QSlider" name="verticalSliderKY">
           <property name="maximum">
            <number>600</number>
           </property>
           <property name="value">
-           <number>150</number>
+           <number>300</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderKY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -724,20 +770,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderKY">
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="value">
-           <number>300</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
+        <item row="1" column="2">
          <widget class="QLabel" name="labelZeroK">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

@@ -25,6 +25,7 @@
 #ifndef LIBCS2_PREDTT3F_H
 #define LIBCS2_PREDTT3F_H
 
+#include "preds3f.h"
 #include "vec3f.h"
 
 #ifdef __cplusplus
@@ -34,14 +35,37 @@ extern "C" {
 /**
  * triangle-triangle predicate:
  *
- *    .
+ *    klm - a stationary triangle
+ *    abc - a rotating triangle
  */
 struct predtt3f_s
 {
-    int a;
+    vec3f_t k, l, m;
+    vec3f_t a, b, c;
 };
 
 typedef struct predtt3f_s predtt3f_t;
+
+/**
+ * decomposition
+ *
+ * index:
+ * i = { 'kl', 'lm', 'mk' }
+ * j = { 'ab', 'bc', 'ca' }
+ *
+ * [kl/ab] [kl/bc] [kl/ca]
+ * [lm/ab] [lm/bc] [lm/ca]
+ * [mk/ab] [mk/bc] [mk/ca]
+ *
+ */
+struct predttdecomp3f_s
+{
+    preds3f_t s[3][3];
+};
+
+typedef struct predttdecomp3f_s predttdecomp3f_t;
+
+void predtt3f_decomp(predttdecomp3f_t *d, const predtt3f_t *tt);
 
 #ifdef __cplusplus
 }
