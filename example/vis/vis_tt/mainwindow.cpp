@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_rv = new RenderView();
 
     m_rv->setCaption("cspace");
-    m_rv->setCullingEnabled(false);
+    m_rv->setCullingEnabled(true);
 
     ui->widgetView->layout()->addWidget(m_rv);
 
@@ -137,6 +137,7 @@ void MainWindow::updatePredicateInformation()
                     simpleMesh(triangles, &param, 0.01);
 
                 m_rv->addTriangleList(triangles, Qt::green);
+                m_rv->addTriangleList(backface(triangles), Qt::green);
             }
         }
     }
@@ -421,6 +422,16 @@ void MainWindow::addTriangle(TriangleListPtr triangles, const Triangle &triangle
 {
     if (triangle.vertex(0).length() < CUTOFF_DISTANCE || triangle.vertex(1).length() < CUTOFF_DISTANCE || triangle.vertex(2).length() < CUTOFF_DISTANCE)
         triangles->push_back(triangle);
+}
+
+TriangleListPtr MainWindow::backface(const TriangleListPtr triangles) const
+{
+    TriangleListPtr result(new TriangleList());
+
+    for (TriangleList::const_iterator it = triangles->begin(); it != triangles->end(); ++it)
+        result->push_back(Triangle(it->vertex(2), it->vertex(1), it->vertex(0)));
+
+    return result;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

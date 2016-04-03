@@ -81,6 +81,8 @@ private:
 
     void addTriangle(TriangleListPtr triangles, const Triangle &triangle);
 
+    TriangleListPtr backface(const TriangleListPtr triangles) const;
+
     virtual void closeEvent(QCloseEvent *event);
 
 private slots:

@@ -235,17 +235,29 @@ void RenderView::initializeGL()
     glEnable(GL_LIGHT0);
 
     // Create light components
-    GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
     GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+    GLfloat light_position[] = { 5.0, 5.0, 5.0, 1.0 };
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    //glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+
+    // Material
+    GLfloat material_shininess[] = { 50 };
+
+    //GLfloat material_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+    GLfloat material_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat material_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material_ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material_specular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, material_shininess);
 
     // Nice perspective
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -573,7 +585,9 @@ void TriangleListData::render(bool wireframe)
         return;
 
     // setup material
-    glColor3ub(m_color.red(), m_color.green(), m_color.blue());
+    //glColor3ub(m_color.red(), m_color.green(), m_color.blue());
+    GLfloat material_diffuse[] = { static_cast<GLfloat>(m_color.redF()), static_cast<GLfloat>(m_color.greenF()), static_cast<GLfloat>(m_color.blueF()), 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
 
     if (wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
