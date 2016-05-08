@@ -64,6 +64,43 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 
 static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
+#if 1
+
+    /* new theorem */
+
+    /*
+     * D = - R L^2 + (P x Q - U x V) ([P]^2 [Q]^2 - [U]^2 [V]^2) + 2 L ((P x Q) * U * V + (Q x U) * V * P + (U x V) * P * Q + (V x P) * Q * U)
+     * e = - T L^2 + (P.Q - U.V) ([P]^2 [Q]^2 - [U]^2 [V]^2) + L^3 - L ([P]^2 [Q]^2 + [U]^2 [V]^2 - 2 P.Q U.V + P.V Q.U)
+     *
+     * W = [D3, D1, D2, e]^T
+     */
+    double pp = vec3f_sqlen(p);
+    double qq = vec3f_sqlen(q);
+    double uu = vec3f_sqlen(u);
+    double vv = vec3f_sqlen(v);
+    double pq = vec3f_dot(p, q);
+    double uv = vec3f_dot(u, v);
+    double pv = vec3f_dot(p, v);
+    double qu = vec3f_dot(q, u);
+    double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
+    double g = pp * qq - uu * vv;
+    vec3f_t pxq, qxu, uxv, vxp, r;
+
+    vec3f_cross(&pxq, p, q);
+    vec3f_cross(&qxu, q, u);
+    vec3f_cross(&uxv, u, v);
+    vec3f_cross(&vxp, v, p);
+    vec3f_add(&r, &pxq, &uxv);
+
+    w->x = - l * (l * r.z - 2.0 * (pxq.z * u->z * v->z + uxv.z * p->z * q->z + vxp.z * q->z * u->z + qxu.z * p->z * v->z)) + (pxq.z - uxv.z) * g;
+    w->y = - l * (l * r.x - 2.0 * (pxq.x * u->x * v->x + uxv.x * p->x * q->x + vxp.x * q->x * u->x + qxu.x * p->x * v->x)) + (pxq.x - uxv.x) * g;
+    w->z = - l * (l * r.y - 2.0 * (pxq.y * u->y * v->y + uxv.y * p->y * q->y + vxp.y * q->y * u->y + qxu.y * p->y * v->y)) + (pxq.y - uxv.y) * g;
+    w->w = l * (l * (l - pq - uv) - (pp * qq + uu * vv - 2.0 * (pq * uv - pv * qu))) + (pq - uv) * g;
+
+#else
+
+    /* previous theorem */
+
     /*
      * D = (P.Q + U.V + L) ((Q x V) tr(P x U) + (P x U) tr(Q x V))
      *   - (P tr(U) + U tr(P)) (P.V [Q]^2 + Q.U [V]^2)
@@ -162,6 +199,8 @@ static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t
     w->y = d.x;
     w->z = d.y;
     w->w = -vec3f_dot(&r, &e);
+
+#endif
 }
 
 static predgparamtype3f_t inproper_param_case()
