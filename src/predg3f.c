@@ -64,143 +64,54 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 
 static void calc_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
-#if 1
-
-    /* new theorem */
-
     /*
-     * D = - R L^2 + (P x Q - U x V) ([P]^2 [Q]^2 - [U]^2 [V]^2) + 2 L ((P x Q) * U * V + (Q x U) * V * P + (U x V) * P * Q + (V x P) * Q * U)
-     * e = - T L^2 + (P.Q - U.V) ([P]^2 [Q]^2 - [U]^2 [V]^2) + L^3 - L ([P]^2 [Q]^2 + [U]^2 [V]^2 - 2 P.Q U.V + P.V Q.U)
+     * d = -r l^2 + 2 h l + m f
+     *   = (2 h - r l) l + m f
      *
-     * W = [D3, D1, D2, e]^T
+     * e = l^3 - t l^2 - ([m]^2 + n^2) l + n f
+     *   = ((l - t) l - [m]^2 - n^2) l + n f
+     *
+     * r = p x q + u x v
+     * t = p.q + u.v
+     *
+     * m = p x q - u x v
+     * n = p.q - u.v
+     * f = [p]^2 [q]^2 - [u]^2 [v]^2
+     *
+     * h = (p x q) @ u @ v + (q x u) @ v @ p + (u x v) @ p @ q + (v x p) @ q @ u
+     *
+     * w = [d3, d1, d2, e]^T
      */
-    double pp = vec3f_sqlen(p);
-    double qq = vec3f_sqlen(q);
-    double uu = vec3f_sqlen(u);
-    double vv = vec3f_sqlen(v);
+    double ppqq = vec3f_sqlen(p) * vec3f_sqlen(q);
+    double uuvv = vec3f_sqlen(u) * vec3f_sqlen(v);
+    double l = a * sqrt(ppqq) + b * sqrt(uuvv);
+    double f = ppqq - uuvv;
     double pq = vec3f_dot(p, q);
     double uv = vec3f_dot(u, v);
-    double pv = vec3f_dot(p, v);
-    double qu = vec3f_dot(q, u);
-    double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
-    double g = pp * qq - uu * vv;
-    vec3f_t pxq, qxu, uxv, vxp, r;
+    double t = pq + uv;
+    double n = pq - uv;
+    vec3f_t pxq, qxu, uxv, vxp, r, m, h;
+    double mm, nn;
 
     vec3f_cross(&pxq, p, q);
     vec3f_cross(&qxu, q, u);
     vec3f_cross(&uxv, u, v);
     vec3f_cross(&vxp, v, p);
     vec3f_add(&r, &pxq, &uxv);
+    vec3f_sub(&m, &pxq, &uxv);
 
-    w->x = - l * (l * r.z - 2.0 * (pxq.z * u->z * v->z + uxv.z * p->z * q->z + vxp.z * q->z * u->z + qxu.z * p->z * v->z)) + (pxq.z - uxv.z) * g;
-    w->y = - l * (l * r.x - 2.0 * (pxq.x * u->x * v->x + uxv.x * p->x * q->x + vxp.x * q->x * u->x + qxu.x * p->x * v->x)) + (pxq.x - uxv.x) * g;
-    w->z = - l * (l * r.y - 2.0 * (pxq.y * u->y * v->y + uxv.y * p->y * q->y + vxp.y * q->y * u->y + qxu.y * p->y * v->y)) + (pxq.y - uxv.y) * g;
-    w->w = l * (l * (l - pq - uv) - (pp * qq + uu * vv - 2.0 * (pq * uv - pv * qu))) + (pq - uv) * g;
+    vec3f_set(&h,
+              pxq.x * u->x * v->x + uxv.x * p->x * q->x + vxp.x * q->x * u->x + qxu.x * p->x * v->x,
+              pxq.y * u->y * v->y + uxv.y * p->y * q->y + vxp.y * q->y * u->y + qxu.y * p->y * v->y,
+              pxq.z * u->z * v->z + uxv.z * p->z * q->z + vxp.z * q->z * u->z + qxu.z * p->z * v->z);
 
-#else
+    mm = vec3f_sqlen(&m);
+    nn = n * n;
 
-    /* previous theorem */
-
-    /*
-     * D = (P.Q + U.V + L) ((Q x V) tr(P x U) + (P x U) tr(Q x V))
-     *   - (P tr(U) + U tr(P)) (P.V [Q]^2 + Q.U [V]^2)
-     *   - (Q tr(V) + V tr(Q)) (P.V [U]^2 + Q.U [P]^2)
-     *   - (P tr(Q) + Q tr(P)) ([U]^2 [V]^2 + (P x U).(Q x V))
-     *   - (U tr(V) + V tr(U)) ([P]^2 [Q]^2 + (P x U).(Q x V))
-     *   + 2 U.V (P tr(P) [Q]^2 + Q tr(Q) [P]^2)
-     *   + 2 P.Q (U tr(U) [V]^2 + V tr(V) [U]^2)
-     *   - L (P.Q (U tr(V) + V tr(U)) + U.V (P tr(Q) + Q tr(P)))
-     *   + L (P.V (Q tr(U) + U tr(Q)) + Q.U (P tr(V) + V tr(P)))
-     *   + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2) (J (P.Q + U.V + L) - (P tr(Q) + Q tr(P) + U tr(V) + V tr(U)))
-     *
-     * E = 2 ((Q x V) tr(P x U) + (P x U) tr(Q x V))
-     *   + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2 - 2 (P x U).(Q x V)) J
-     *   + (P.Q + U.V - L) (P tr(Q) + Q tr(P) + U tr(V) + V tr(U))
-     *
-     * W = [D3, D1, D2, E]^T
-     */
-    double pp = vec3f_sqlen(p);
-    double qq = vec3f_sqlen(q);
-    double uu = vec3f_sqlen(u);
-    double vv = vec3f_sqlen(v);
-    double pq = vec3f_dot(p, q);
-    double pv = vec3f_dot(p, v);
-    double qu = vec3f_dot(q, u);
-    double uv = vec3f_dot(u, v);
-    double tp = vec3f_tr(p);
-    double tq = vec3f_tr(q);
-    double tu = vec3f_tr(u);
-    double tv = vec3f_tr(v);
-    double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
-    double pq_uv_l = pq + uv + l;
-    double ll_ppqq_uuvv = l * l - pp * qq - uu * vv;
-    double pxuqxv;
-    vec3f_t pxq, uxv, pxu, qxv;
-    vec3f_t pxu_tqxv_qxv_tpxu, ptq_qtp_utv_vtu;
-    vec3f_t t, r, d, e;
-    const vec3f_t j = { 1.0, 1.0, 1.0 };
-
-    /* common */
-    vec3f_cross(&pxq, p, q);
-    vec3f_cross(&uxv, u, v);
-    vec3f_cross(&pxu, p, u);
-    vec3f_cross(&qxv, q, v);
-
-    vec3f_add(&r, &pxq, &uxv);
-    pxuqxv = vec3f_dot(&pxu, &qxv);
-
-    vec3f_mad2(&pxu_tqxv_qxv_tpxu, &pxu, vec3f_tr(&qxv), &qxv, vec3f_tr(&pxu));
-    vec3f_mad4(&ptq_qtp_utv_vtu, p, tq, q, tp, u, tv, v, tu);
-
-    /* D */
-    vec3f_mul(&d, &pxu_tqxv_qxv_tpxu, pq_uv_l);
-
-    vec3f_mad2(&t, p, tu, u, tp);
-    vec3f_mul(&t, &t, - pv * qq - qu * vv);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad2(&t, q, tv, v, tq);
-    vec3f_mul(&t, &t, - pv * uu - qu * pp);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad2(&t, p, tq, q, tp);
-    vec3f_mul(&t, &t, - uu * vv - pxuqxv);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad2(&t, u, tv, v, tu);
-    vec3f_mul(&t, &t, - pp * qq - pxuqxv);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad2(&t, p, tp * qq, q, tq * pp);
-    vec3f_mul(&t, &t, 2.0 * uv);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad2(&t, u, tu * vv, v, tv * uu);
-    vec3f_mul(&t, &t, 2.0 * pq);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad4(&t, u, tv * pq, v, tu * pq, p, tq * uv, q, tp * uv);
-    vec3f_mul(&t, &t, -l);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad4(&t, q, tu * pv, u, tq * pv, p, tv * qu, v, tp * qu);
-    vec3f_mul(&t, &t, l);
-    vec3f_add(&d, &d, &t);
-
-    vec3f_mad2(&t, &j, pq_uv_l, &ptq_qtp_utv_vtu, -1.0);
-    vec3f_mul(&t, &t, ll_ppqq_uuvv);
-    vec3f_add(&d, &d, &t);
-
-    /* E */
-    vec3f_mad3(&e, &pxu_tqxv_qxv_tpxu, 2.0, &j, ll_ppqq_uuvv - 2.0 * pxuqxv, &ptq_qtp_utv_vtu, pq + uv - l);
-
-    /* W */
-    w->x = d.z;
-    w->y = d.x;
-    w->z = d.y;
-    w->w = -vec3f_dot(&r, &e);
-
-#endif
+    w->x = (2.0 * h.z - r.z * l) * l + m.z * f;
+    w->y = (2.0 * h.x - r.x * l) * l + m.x * f;
+    w->z = (2.0 * h.y - r.y * l) * l + m.y * f;
+    w->w = ((l - t) * l - mm - nn) * l + n * f;
 }
 
 static predgparamtype3f_t inproper_param_case()
