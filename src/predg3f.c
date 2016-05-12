@@ -70,53 +70,25 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
     /*
-     * d = -r l^2 + 2 h l + m f
-     *   = (2 h - r l) l + m f
-     *
-     * e = l^3 - t l^2 - ([m]^2 + n^2) l + n f
-     *   = ((l - t) l - [m]^2 - n^2) l + n f
-     *
-     * r = p x q + u x v
-     * t = p.q + u.v
-     *
-     * m = p x q - u x v
-     * n = p.q - u.v
-     * f = [p]^2 [q]^2 - [u]^2 [v]^2
-     *
-     * h = (p x q) @ u @ v + (q x u) @ v @ p + (u x v) @ p @ q + (v x p) @ q @ u
+     * d = a [p] [q] (U x V) + b [u] [v] (P x Q) - (P x U) x (Q x V)
+     * e = a [p] [q] (U.V) + b [u] [v] (P.Q) - (P x U).(Q x V) - a b [p] [q] [u] [v]
      *
      * w = [d3, d1, d2, e]^T
      */
-    double ppqq = vec3f_sqlen(p) * vec3f_sqlen(q);
-    double uuvv = vec3f_sqlen(u) * vec3f_sqlen(v);
-    double l = a * sqrt(ppqq) + b * sqrt(uuvv);
-    double f = ppqq - uuvv;
-    double pq = vec3f_dot(p, q);
-    double uv = vec3f_dot(u, v);
-    double t = pq + uv;
-    double n = pq - uv;
-    vec3f_t pxq, qxu, uxv, vxp, r, m, h;
-    double mm, nn;
+    double apq = a * vec3f_len(p) * vec3f_len(q);
+    double buv = b * vec3f_len(u) * vec3f_len(v);
+    vec3f_t pxq, uxv, pxu, qxv, pxuxqxv;
 
     vec3f_cross(&pxq, p, q);
-    vec3f_cross(&qxu, q, u);
     vec3f_cross(&uxv, u, v);
-    vec3f_cross(&vxp, v, p);
-    vec3f_add(&r, &pxq, &uxv);
-    vec3f_sub(&m, &pxq, &uxv);
+    vec3f_cross(&pxu, p, u);
+    vec3f_cross(&qxv, q, v);
+    vec3f_cross(&pxuxqxv, &pxu, &qxv);
 
-    vec3f_set(&h,
-              pxq.x * u->x * v->x + uxv.x * p->x * q->x + vxp.x * q->x * u->x + qxu.x * p->x * v->x,
-              pxq.y * u->y * v->y + uxv.y * p->y * q->y + vxp.y * q->y * u->y + qxu.y * p->y * v->y,
-              pxq.z * u->z * v->z + uxv.z * p->z * q->z + vxp.z * q->z * u->z + qxu.z * p->z * v->z);
-
-    mm = vec3f_sqlen(&m);
-    nn = n * n;
-
-    w->x = (2.0 * h.z - r.z * l) * l + m.z * f;
-    w->y = (2.0 * h.x - r.x * l) * l + m.x * f;
-    w->z = (2.0 * h.y - r.y * l) * l + m.y * f;
-    w->w = ((l - t) * l - mm - nn) * l + n * f;
+    w->x = apq * uxv.z + buv * pxq.z - pxuxqxv.z;
+    w->y = apq * uxv.x + buv * pxq.x - pxuxqxv.x;
+    w->z = apq * uxv.y + buv * pxq.y - pxuxqxv.y;
+    w->w = apq * vec3f_dot(u, v) + buv * vec3f_dot(p, q) - vec3f_dot(&pxu, &qxv) - apq * buv;
 }
 
 static void calc_toroidal_w(vec4f_t *w1, vec4f_t *w2, const vec3f_t *p, const vec3f_t *q, double a)
@@ -319,6 +291,10 @@ static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
         double z = sp.a13 * m->m[0][i] + sp.a23 * m->m[1][i] + sp.a33 * m->m[2][i] + sp.a34 * m->m[3][i];
         double w = sp.a14 * m->m[0][i] + sp.a24 * m->m[1][i] + sp.a34 * m->m[2][i] + sp.a44 * m->m[3][i];
         double l = sqrt(x * x + y * y  + z * z + w * w);
+        double ex = m->m[0][i];
+        double ey = m->m[1][i];
+        double ez = m->m[2][i];
+        double ew = m->m[3][i];
 
         /* normalize */
         x /= l;
@@ -326,8 +302,8 @@ static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
         z /= l;
         w /= l;
 
-        assert((fabs(x - m->m[0][i]) + fabs(y - m->m[1][i]) + fabs(z - m->m[2][i]) + fabs(w - m->m[3][i]) < EPS) ||
-               (fabs(x + m->m[0][i]) + fabs(y + m->m[1][i]) + fabs(z + m->m[2][i]) + fabs(w + m->m[3][i]) < EPS) );
+        assert((fabs(x - ex) + fabs(y - ey) + fabs(z - ez) + fabs(w - ew) < EPS) ||
+               (fabs(x + ex) + fabs(y + ey) + fabs(z + ez) + fabs(w + ew) < EPS) );
     }
 }
 
