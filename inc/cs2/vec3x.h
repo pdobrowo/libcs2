@@ -41,7 +41,7 @@ typedef struct vec3x_s vec3x_t;
 void vec3x_init(vec3x_t *v);
 void vec3x_clear(vec3x_t *v);
 
-void vec3x_set(vec3x_t *r, const mpz_t x, const mpz_t y, const mpz_t z);
+void vec3x_set(vec3x_t *r, mpz_srcptr x, mpz_srcptr y, mpz_srcptr z);
 void vec3x_set_si(vec3x_t *r, long x, long y, long z);
 void vec3x_zero(vec3x_t *r);
 
@@ -52,19 +52,19 @@ void vec3x_copy(vec3x_t *r, const vec3x_t *v);
 void vec3x_add(vec3x_t *r, const vec3x_t *a, const vec3x_t *b);
 void vec3x_sub(vec3x_t *r, const vec3x_t *a, const vec3x_t *b);
 void vec3x_neg(vec3x_t *r, const vec3x_t *v);
-void vec3x_mul(vec3x_t *r, const vec3x_t *a, const mpz_t as);
+void vec3x_mul(vec3x_t *r, const vec3x_t *a, mpz_srcptr as);
 
-void vec3x_mad2(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs);
-void vec3x_mad3(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs, const vec3x_t *c, const mpz_t cs);
-void vec3x_mad4(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs, const vec3x_t *c, const mpz_t cs, const vec3x_t *d, const mpz_t ds);
-void vec3x_mad5(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs, const vec3x_t *c, const mpz_t cs, const vec3x_t *d, const mpz_t ds, const vec3x_t *e, const mpz_t es);
+void vec3x_mad2(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs);
+void vec3x_mad3(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs, const vec3x_t *c, mpz_srcptr cs);
+void vec3x_mad4(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs, const vec3x_t *c, mpz_srcptr cs, const vec3x_t *d, mpz_srcptr ds);
+void vec3x_mad5(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs, const vec3x_t *c, mpz_srcptr cs, const vec3x_t *d, mpz_srcptr ds, const vec3x_t *e, mpz_srcptr es);
 
-void vec3x_dot(mpz_t r, const vec3x_t *a, const vec3x_t *b);
+void vec3x_dot(mpz_ptr r, const vec3x_t *a, const vec3x_t *b);
 void vec3x_cross(vec3x_t *r, const vec3x_t *a, const vec3x_t *b);
 
-void vec3x_sqlen(mpz_t r, const vec3x_t *v);
+void vec3x_sqlen(mpz_ptr r, const vec3x_t *v);
 
-void vec3x_tr(mpz_t r, const vec3x_t *v);
+void vec3x_tr(mpz_ptr r, const vec3x_t *v);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Przemysław Dobrowolsa->i
+ * Copyright (c) 2015-2016 Przemysław Dobrowolski
  *
  * This file is part of the Configuration Space Library (libcs2), a library
  * for creating configuration spaces of various motion planning problems.
@@ -14,7 +14,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY a->IND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -40,7 +40,7 @@ void pin3x_clear(pin3x_t *p)
     mpz_clear(p->p0);
 }
 
-void pin3x_set(pin3x_t *p, const mpz_t p12, const mpz_t p23, const mpz_t p31, const mpz_t p0)
+void pin3x_set(pin3x_t *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0)
 {
     mpz_set(p->p12, p12);
     mpz_set(p->p23, p23);

@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_SPIN3F_H
-#define LIBCS2_SPIN3F_H
+#ifndef LIBCS2_PIN3X_H
+#define LIBCS2_PIN3X_H
 
 #include <gmp.h>
 
@@ -41,11 +41,11 @@ typedef struct pin3x_s pin3x_t;
 void pin3x_init(pin3x_t *p);
 void pin3x_clear(pin3x_t *p);
 
-void pin3x_set(pin3x_t *p, const mpz_t p12, const mpz_t p23, const mpz_t p31, const mpz_t p0);
+void pin3x_set(pin3x_t *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0);
 void pin3x_set_si(pin3x_t *p, long p12, long p23, long p31, long p0);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* LIBCS2_SPIN3F_H */
+#endif /* LIBCS2_PIN3X_H */

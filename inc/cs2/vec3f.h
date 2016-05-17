@@ -25,6 +25,8 @@
 #ifndef LIBCS2_VEC3F_H
 #define LIBCS2_VEC3F_H
 
+#include "pin3f.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -46,6 +48,8 @@ void vec3f_sub(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
 void vec3f_neg(vec3f_t *r, const vec3f_t *v);
 void vec3f_mul(vec3f_t *r, const vec3f_t *a, double as);
 
+void vec3f_cl(pin3f_t *r, const vec3f_t *a, const vec3f_t *b);
+
 void vec3f_mad2(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs);
 void vec3f_mad3(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs, const vec3f_t *c, double cs);
 void vec3f_mad4(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs, const vec3f_t *c, double cs, const vec3f_t *d, double ds);
@@ -53,6 +57,8 @@ void vec3f_mad5(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, doubl
 
 double vec3f_dot(const vec3f_t *a, const vec3f_t *b);
 void vec3f_cross(vec3f_t *r, const vec3f_t *a, const vec3f_t *b);
+
+void vec3f_unit(vec3f_t *r, const vec3f_t *v);
 
 double vec3f_len(const vec3f_t *v);
 double vec3f_sqlen(const vec3f_t *v);

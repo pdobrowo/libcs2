@@ -24,6 +24,7 @@
  */
 #include "cs2/predg3f.h"
 #include "cs2/vec4f.h"
+#include "cs2/pin3f.h"
 #include "cs2/spinquad3f.h"
 #include <math.h>
 #include <assert.h>
@@ -70,25 +71,23 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
     /*
-     * d = a [p] [q] (U x V) + b [u] [v] (P x Q) - (P x U) x (Q x V)
-     * e = a [p] [q] (U.V) + b [u] [v] (P.Q) - (P x U).(Q x V) - a b [p] [q] [u] [v]
-     *
-     * w = [d3, d1, d2, e]^T
+     * w = a p^ q^ + b u^ v^ + a b p^ u^ q^ v^ - 1
+     *   = a p^ q^ + b u^ v^ - a b (p^xu^) (q^xv^) - 1
      */
-    double apq = a * vec3f_len(p) * vec3f_len(q);
-    double buv = b * vec3f_len(u) * vec3f_len(v);
-    vec3f_t pxq, uxv, pxu, qxv, pxuxqxv;
+    vec3f_t ph, qh, uh, vh, phxuh, qhxvh;
+    pin3f_t wp, phqh, uhvh, phuhqhvh, one = { 0.0, 0.0, 0.0, 1.0 };
 
-    vec3f_cross(&pxq, p, q);
-    vec3f_cross(&uxv, u, v);
-    vec3f_cross(&pxu, p, u);
-    vec3f_cross(&qxv, q, v);
-    vec3f_cross(&pxuxqxv, &pxu, &qxv);
-
-    w->x = apq * uxv.z + buv * pxq.z - pxuxqxv.z;
-    w->y = apq * uxv.x + buv * pxq.x - pxuxqxv.x;
-    w->z = apq * uxv.y + buv * pxq.y - pxuxqxv.y;
-    w->w = apq * vec3f_dot(u, v) + buv * vec3f_dot(p, q) - vec3f_dot(&pxu, &qxv) - apq * buv;
+    vec3f_unit(&ph, p);
+    vec3f_unit(&qh, q);
+    vec3f_unit(&uh, u);
+    vec3f_unit(&vh, v);
+    vec3f_cross(&phxuh, &ph, &uh);
+    vec3f_cross(&qhxvh, &qh, &vh);
+    vec3f_cl(&phqh, &ph, &qh);
+    vec3f_cl(&uhvh, &uh, &vh);
+    vec3f_cl(&phuhqhvh, &phxuh, &qhxvh);
+    pin3f_mad4(&wp, &phqh, a, &uhvh, b, &phuhqhvh, -a * b, &one, -1.0);
+    vec4f_from_pin3f(w, &wp);
 }
 
 static void calc_toroidal_w(vec4f_t *w1, vec4f_t *w2, const vec3f_t *p, const vec3f_t *q, double a)

@@ -38,7 +38,7 @@ void vec3x_clear(vec3x_t *v)
     mpz_clear(v->z);
 }
 
-void vec3x_set(vec3x_t *r, const mpz_t x, const mpz_t y, const mpz_t z)
+void vec3x_set(vec3x_t *r, mpz_srcptr x, mpz_srcptr y, mpz_srcptr z)
 {
     mpz_set(r->x, x);
     mpz_set(r->y, y);
@@ -92,14 +92,14 @@ void vec3x_neg(vec3x_t *r, const vec3x_t *v)
     mpz_neg(r->z, v->z);
 }
 
-void vec3x_mul(vec3x_t *r, const vec3x_t *a, const mpz_t as)
+void vec3x_mul(vec3x_t *r, const vec3x_t *a, mpz_srcptr as)
 {
     mpz_mul(r->x, a->x, as);
     mpz_mul(r->y, a->y, as);
     mpz_mul(r->z, a->z, as);
 }
 
-void vec3x_mad2(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs)
+void vec3x_mad2(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs)
 {
     mpz_t t;
     mpz_init(t);
@@ -115,7 +115,7 @@ void vec3x_mad2(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, 
     mpz_clear(t);
 }
 
-void vec3x_mad3(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs, const vec3x_t *c, const mpz_t cs)
+void vec3x_mad3(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs, const vec3x_t *c, mpz_srcptr cs)
 {
     mpz_t t;
     mpz_init(t);
@@ -137,7 +137,7 @@ void vec3x_mad3(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, 
     mpz_clear(t);
 }
 
-void vec3x_mad4(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs, const vec3x_t *c, const mpz_t cs, const vec3x_t *d, const mpz_t ds)
+void vec3x_mad4(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs, const vec3x_t *c, mpz_srcptr cs, const vec3x_t *d, mpz_srcptr ds)
 {
     mpz_t t;
     mpz_init(t);
@@ -165,7 +165,7 @@ void vec3x_mad4(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, 
     mpz_clear(t);
 }
 
-void vec3x_mad5(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, const mpz_t bs, const vec3x_t *c, const mpz_t cs, const vec3x_t *d, const mpz_t ds, const vec3x_t *e, const mpz_t es)
+void vec3x_mad5(vec3x_t *r, const vec3x_t *a, mpz_srcptr as, const vec3x_t *b, mpz_srcptr bs, const vec3x_t *c, mpz_srcptr cs, const vec3x_t *d, mpz_srcptr ds, const vec3x_t *e, mpz_srcptr es)
 {
     mpz_t t;
     mpz_init(t);
@@ -199,7 +199,7 @@ void vec3x_mad5(vec3x_t *r, const vec3x_t *a, const mpz_t as, const vec3x_t *b, 
     mpz_clear(t);
 }
 
-void vec3x_dot(mpz_t r, const vec3x_t *a, const vec3x_t *b)
+void vec3x_dot(mpz_ptr r, const vec3x_t *a, const vec3x_t *b)
 {
     mpz_t t;
     mpz_init(t);
@@ -227,7 +227,7 @@ void vec3x_cross(vec3x_t *r, const vec3x_t *a, const vec3x_t *b)
     mpz_clear(t);
 }
 
-void vec3x_sqlen(mpz_t r, const vec3x_t *v)
+void vec3x_sqlen(mpz_ptr r, const vec3x_t *v)
 {
     mpz_t t;
     mpz_init(t);
@@ -239,7 +239,7 @@ void vec3x_sqlen(mpz_t r, const vec3x_t *v)
     mpz_clear(t);
 }
 
-void vec3x_tr(mpz_t r, const vec3x_t *v)
+void vec3x_tr(mpz_ptr r, const vec3x_t *v)
 {
     mpz_add(r, v->x, v->y);
     mpz_add(r, r, v->z);

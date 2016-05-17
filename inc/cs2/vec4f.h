@@ -25,6 +25,8 @@
 #ifndef LIBCS2_VEC4F_H
 #define LIBCS2_VEC4F_H
 
+#include "pin3f.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -55,6 +57,8 @@ double vec4f_len(const vec4f_t *v);
 double vec4f_sqlen(const vec4f_t *v);
 
 double vec4f_tr(const vec4f_t *v);
+
+void vec4f_from_pin3f(vec4f_t *r, const pin3f_t *p);
 
 #ifdef __cplusplus
 }

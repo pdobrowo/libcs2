@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Przemysław Dobrowolsa->i
+ * Copyright (c) 2015-2016 Przemysław Dobrowolski
  *
  * This file is part of the Configuration Space Library (libcs2), a library
  * for creating configuration spaces of various motion planning problems.
@@ -14,7 +14,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY a->IND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -120,4 +120,13 @@ double vec4f_sqlen(const vec4f_t *v)
 double vec4f_tr(const vec4f_t *v)
 {
     return v->x + v->y + v->z + v->w;
+}
+
+
+void vec4f_from_pin3f(vec4f_t *r, const pin3f_t *p)
+{
+    r->x = p->p12;
+    r->y = p->p23;
+    r->z = p->p31;
+    r->w = p->p0;
 }

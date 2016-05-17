@@ -209,7 +209,7 @@ void spinquad3x_from_predg3x(spinquad3x_t *sq, const predg3x_t *pg)
     mpz_clear(uzvz);
 }
 
-void spinquad3x_eval(mpz_t v, const spinquad3x_t *sq, const pin3x_t *p)
+void spinquad3x_eval(mpz_ptr v, const spinquad3x_t *sq, const pin3x_t *p)
 {
     mpz_t t;
     mpz_init(t);
