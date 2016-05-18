@@ -24,6 +24,8 @@ add_definitions(
     -Wno-long-long
 )
 
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+
 # optimizations
 check_c_compiler_flag(-Ofast COMPILER_SUPPORT_OFAST)
 
@@ -69,6 +71,7 @@ set(cs2_HEADERS
     inc/cs2/predg3x.h
 
     # other
+    inc/cs2/defs.h
     inc/cs2/plugin.h
     inc/cs2/timer.h
 )
@@ -107,7 +110,10 @@ set(cs2_SOURCES
     src/timer.c
 )
 
-add_library(cs2 STATIC ${cs2_SOURCES})
+add_library(cs2 SHARED ${cs2_SOURCES})
+add_library(cs2_s STATIC ${cs2_SOURCES})
+
+target_link_libraries(cs2 dl m gmp)
 
 message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")

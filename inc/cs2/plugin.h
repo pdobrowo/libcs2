@@ -22,24 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PLUGIN_H
-#define LIBCS2_PLUGIN_H
+#ifndef CS2_PLUGIN_H
+#define CS2_PLUGIN_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#include "defs.h"
+
+CS2_API_BEGIN
 
 typedef void (*plugin_fn_t)();
 
-int plugin_ldpath(const char *p);
+CS2_API int plugin_ldpath(const char *p);
 
-void *plugin_load(const char *f);
-void *plugin_sym(void *p, const char *s);
-plugin_fn_t plugin_fn(void *p, const char *s);
-void plugin_unload(void *p);
+CS2_API void *plugin_load(const char *f);
+CS2_API void *plugin_sym(void *p, const char *s);
+CS2_API plugin_fn_t plugin_fn(void *p, const char *s);
+CS2_API void plugin_unload(void *p);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PLUGIN_H */
+#endif /* CS2_PLUGIN_H */

@@ -22,14 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PLANE3F_H
-#define LIBCS2_PLANE3F_H
+#ifndef CS2_PLANE3F_H
+#define CS2_PLANE3F_H
 
+#include "defs.h"
 #include "vec3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 struct plane3f_s
 {
@@ -39,11 +38,9 @@ struct plane3f_s
 
 typedef struct plane3f_s plane3f_t;
 
-void plane3f_set(plane3f_t *p, const vec3f_t *n, double d);
-void plane3f_copy(plane3f_t *r, const plane3f_t *p);
+CS2_API void plane3f_set(plane3f_t *p, const vec3f_t *n, double d);
+CS2_API void plane3f_copy(plane3f_t *r, const plane3f_t *p);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PLANE3F_H */
+#endif /* CS2_PLANE3F_H */

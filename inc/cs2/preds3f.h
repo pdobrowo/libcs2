@@ -22,14 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDS3F_H
-#define LIBCS2_PREDS3F_H
+#ifndef CS2_PREDS3F_H
+#define CS2_PREDS3F_H
 
+#include "defs.h"
 #include "vec3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * screw predicate:
@@ -43,11 +42,9 @@ struct preds3f_s
 
 typedef struct preds3f_s preds3f_t;
 
-void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b);
-void preds3f_copy(preds3f_t *r, const preds3f_t *s);
+CS2_API void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b);
+CS2_API void preds3f_copy(preds3f_t *r, const preds3f_t *s);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDS3F_H */
+#endif /* CS2_PREDS3F_H */

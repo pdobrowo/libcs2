@@ -22,12 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_MAT44F_H
-#define LIBCS2_MAT44F_H
+#ifndef CS2_MAT44F_H
+#define CS2_MAT44F_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#include "defs.h"
+
+CS2_API_BEGIN
 
 struct mat44f_s
 {
@@ -36,11 +36,9 @@ struct mat44f_s
 
 typedef struct mat44f_s mat44f_t;
 
-void mat44f_zero(mat44f_t *m);
-void mat44f_identity(mat44f_t *m);
+CS2_API void mat44f_zero(mat44f_t *m);
+CS2_API void mat44f_identity(mat44f_t *m);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_MAT44F_H */
+#endif /* CS2_MAT44F_H */

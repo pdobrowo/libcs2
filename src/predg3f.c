@@ -71,11 +71,11 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
     /*
-     * w = a p^ q^ + b u^ v^ + a b p^ u^ q^ v^ - 1
-     *   = a p^ q^ + b u^ v^ - a b (p^xu^) (q^xv^) - 1
+     * w = 1 - a p^ q^ - b u^ v^ - a b p^ u^ q^ v^
+     *   = 1 - a p^ q^ - b u^ v^ + a b (p^xu^) (q^xv^)
      */
     vec3f_t ph, qh, uh, vh, phxuh, qhxvh;
-    pin3f_t wp, phqh, uhvh, phuhqhvh, one = { 0.0, 0.0, 0.0, 1.0 };
+    pin3f_t wp, ws, phqh, uhvh, phuhqhvh;
 
     vec3f_unit(&ph, p);
     vec3f_unit(&qh, q);
@@ -86,8 +86,9 @@ static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, c
     vec3f_cl(&phqh, &ph, &qh);
     vec3f_cl(&uhvh, &uh, &vh);
     vec3f_cl(&phuhqhvh, &phxuh, &qhxvh);
-    pin3f_mad4(&wp, &phqh, a, &uhvh, b, &phuhqhvh, -a * b, &one, -1.0);
-    vec4f_from_pin3f(w, &wp);
+    pin3f_mad4(&wp, &PIN3F_ONE, 1.0, &phqh, -a, &uhvh, -b, &phuhqhvh, a * b);
+    pin3f_mul(&ws, &wp, 0.5 / sqrt(pclamp(wp.p0)));
+    vec4f_from_pin3f(w, &ws);
 }
 
 static void calc_toroidal_w(vec4f_t *w1, vec4f_t *w2, const vec3f_t *p, const vec3f_t *q, double a)
@@ -116,6 +117,10 @@ static void calc_toroidal_w(vec4f_t *w1, vec4f_t *w2, const vec3f_t *p, const ve
     w2->y = p->y * p->y * qq - q->y * q->y * pp;
     w2->z = q->x * q->y * pp - p->x * p->y * qq + l * (p->x * q->y - p->y * q->x);
     w2->w = q->y * q->z * pp + p->y * p->z * qq - l * (p->y * q->z + p->z * q->y);
+
+    /* normalize */
+    vec4f_mul(w1, w1, 1.0 / vec4f_len(w1));
+    vec4f_mul(w2, w2, 1.0 / vec4f_len(w2));
 }
 
 static predgparamtype3f_t inproper_param_case()
@@ -289,7 +294,7 @@ static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
         double y = sp.a12 * m->m[0][i] + sp.a22 * m->m[1][i] + sp.a23 * m->m[2][i] + sp.a24 * m->m[3][i];
         double z = sp.a13 * m->m[0][i] + sp.a23 * m->m[1][i] + sp.a33 * m->m[2][i] + sp.a34 * m->m[3][i];
         double w = sp.a14 * m->m[0][i] + sp.a24 * m->m[1][i] + sp.a34 * m->m[2][i] + sp.a44 * m->m[3][i];
-        double l = sqrt(x * x + y * y  + z * z + w * w);
+        double l = sqrt(x * x + y * y + z * z + w * w);
         double ex = m->m[0][i];
         double ey = m->m[1][i];
         double ez = m->m[2][i];
@@ -900,7 +905,7 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
 {
     vec3f_t p, q, u, v;
     vec4f_t w1, w2, w3, w4;
-    double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
+    double pl, ql, ul, vl;
 
     /* base */
     predg3f_pquv(&p, &q, &u, &v, g);
@@ -960,31 +965,26 @@ void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
                 break;
         }
 
-        /* normalize */
-        w1l = vec4f_len(&w1);
-        w2l = vec4f_len(&w2);
-        w3l = vec4f_len(&w3);
-        w4l = vec4f_len(&w4);
+        /* copy */
+        m->m[0][0] = w1.x;
+        m->m[1][0] = w1.y;
+        m->m[2][0] = w1.z;
+        m->m[3][0] = w1.w;
 
-        m->m[0][0] = w1.x / w1l;
-        m->m[1][0] = w1.y / w1l;
-        m->m[2][0] = w1.z / w1l;
-        m->m[3][0] = w1.w / w1l;
+        m->m[0][1] = w2.x;
+        m->m[1][1] = w2.y;
+        m->m[2][1] = w2.z;
+        m->m[3][1] = w2.w;
 
-        m->m[0][1] = w2.x / w2l;
-        m->m[1][1] = w2.y / w2l;
-        m->m[2][1] = w2.z / w2l;
-        m->m[3][1] = w2.w / w2l;
+        m->m[0][2] = w3.x;
+        m->m[1][2] = w3.y;
+        m->m[2][2] = w3.z;
+        m->m[3][2] = w3.w;
 
-        m->m[0][2] = w3.x / w3l;
-        m->m[1][2] = w3.y / w3l;
-        m->m[2][2] = w3.z / w3l;
-        m->m[3][2] = w3.w / w3l;
-
-        m->m[0][3] = w4.x / w4l;
-        m->m[1][3] = w4.y / w4l;
-        m->m[2][3] = w4.z / w4l;
-        m->m[3][3] = w4.w / w4l;
+        m->m[0][3] = w4.x;
+        m->m[1][3] = w4.y;
+        m->m[2][3] = w4.z;
+        m->m[3][3] = w4.w;
 
         /* debug */
         debug_verify_polar_decomposition(m, g);

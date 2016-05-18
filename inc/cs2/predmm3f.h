@@ -22,14 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDMM3F_H
-#define LIBCS2_PREDMM3F_H
+#ifndef CS2_PREDMM3F_H
+#define CS2_PREDMM3F_H
 
+#include "defs.h"
 #include "vec3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * mesh-mesh predicate:
@@ -43,8 +42,6 @@ struct predmm3f_s
 
 typedef struct predmm3f_s predmm3f_t;
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDMM3F_H */
+#endif /* CS2_PREDMM3F_H */

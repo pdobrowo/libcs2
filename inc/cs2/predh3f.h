@@ -22,15 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDH3F_H
-#define LIBCS2_PREDH3F_H
+#ifndef CS2_PREDH3F_H
+#define CS2_PREDH3F_H
 
+#include "defs.h"
 #include "vec3f.h"
 #include "plane3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * half-space predicate:
@@ -45,11 +44,9 @@ struct predh3f_s
 
 typedef struct predh3f_s predh3f_t;
 
-void predh3f_set(predh3f_t *g, const vec3f_t *b, const plane3f_t *p);
-void predh3f_copy(predh3f_t *r, const predh3f_t *h);
+CS2_API void predh3f_set(predh3f_t *g, const vec3f_t *b, const plane3f_t *p);
+CS2_API void predh3f_copy(predh3f_t *r, const predh3f_t *h);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDH3F_H */
+#endif /* CS2_PREDH3F_H */

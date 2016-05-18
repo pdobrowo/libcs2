@@ -22,15 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDH3X_H
-#define LIBCS2_PREDH3X_H
+#ifndef CS2_PREDH3X_H
+#define CS2_PREDH3X_H
 
+#include "defs.h"
 #include "vec3x.h"
 #include "plane3x.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * half-space predicate:
@@ -45,11 +44,9 @@ struct predh3x_s
 
 typedef struct predh3x_s predh3x_t;
 
-void predh3x_init(predh3x_t *h);
-void predh3x_clear(predh3x_t *h);
+CS2_API void predh3x_init(predh3x_t *h);
+CS2_API void predh3x_clear(predh3x_t *h);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDH3X_H */
+#endif /* CS2_PREDH3X_H */

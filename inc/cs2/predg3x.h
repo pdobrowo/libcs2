@@ -22,9 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDG3X_H
-#define LIBCS2_PREDG3X_H
+#ifndef CS2_PREDG3X_H
+#define CS2_PREDG3X_H
 
+#include "defs.h"
 #include "vec3x.h"
 /*#include "vec4f.h"*/
 /*#include "mat44f.h"*/
@@ -33,9 +34,7 @@
 /*#include "spin3x.h"*/
 #include <gmp.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * general predicate:
@@ -50,12 +49,12 @@ struct predg3x_s
 
 typedef struct predg3x_s predg3x_t;
 
-void predg3x_init(predg3x_t *g);
-void predg3x_clear(predg3x_t *g);
+CS2_API void predg3x_init(predg3x_t *g);
+CS2_API void predg3x_clear(predg3x_t *g);
 
-void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h);
-void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s);
-void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g);
+CS2_API void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h);
+CS2_API void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s);
+CS2_API void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g);
 
 /* type */
 enum predgtype3x_e
@@ -67,9 +66,9 @@ enum predgtype3x_e
 
 typedef enum predgtype3x_e predgtype3x_t;
 
-const char *predgtype3x_str(predgtype3x_t t);
+CS2_API const char *predgtype3x_str(predgtype3x_t t);
 
-predgtype3x_t predg3x_type(const predg3x_t *g);
+CS2_API predgtype3x_t predg3x_type(const predg3x_t *g);
 
 #if 0
 
@@ -82,16 +81,14 @@ struct predgparam3x_s
 
 typedef struct predgparam3x_s predgparam3x_t;
 
-void predg3x_param(predgparam3x_t *pp, const predg3x_t *g);
-void predgparam3x_eval(spin3x_t *s, const predgparam3x_t *pp, double u, double v, double sgn);
+CS2_API void predg3x_param(predgparam3x_t *pp, const predg3x_t *g);
+CS2_API void predgparam3x_eval(spin3x_t *s, const predgparam3x_t *pp, double u, double v, double sgn);
 
 /* special */
-void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g);
+CS2_API void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g);
 
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDG3X_H */
+#endif /* CS2_PREDG3X_H */

@@ -22,22 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_TIMER_H
-#define LIBCS2_TIMER_H
+#ifndef CS2_TIMER_H
+#define CS2_TIMER_H
 
+#include "defs.h"
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
-uint64_t timer_sec();
-uint64_t timer_msec();
-uint64_t timer_usec();
-uint64_t timer_nsec();
+CS2_API uint64_t timer_sec();
+CS2_API uint64_t timer_msec();
+CS2_API uint64_t timer_usec();
+CS2_API uint64_t timer_nsec();
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_TIMER_H */
+#endif /* CS2_TIMER_H */

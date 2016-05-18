@@ -22,17 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_SPINQUAD3F_H
-#define LIBCS2_SPINQUAD3F_H
+#ifndef CS2_SPINQUAD3F_H
+#define CS2_SPINQUAD3F_H
 
+#include "defs.h"
 #include "predh3f.h"
 #include "preds3f.h"
 #include "predg3f.h"
 #include "spin3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * spin quadric:
@@ -59,14 +58,12 @@ struct spinquad3f_s
 
 typedef struct spinquad3f_s spinquad3f_t;
 
-void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph);
-void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps);
-void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg);
+CS2_API void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph);
+CS2_API void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps);
+CS2_API void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg);
 
-double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s);
+CS2_API double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_SPINQUAD3F_H */
+#endif /* CS2_SPINQUAD3F_H */

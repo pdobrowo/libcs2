@@ -22,26 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PREDBB3F_H
-#define CS2_PREDBB3F_H
+#ifndef CS2_DEFS_H
+#define CS2_DEFS_H
 
-#include "defs.h"
-#include "vec3f.h"
+/* api */
+#ifdef __cplusplus
 
-CS2_API_BEGIN
+#define CS2_API_BEGIN extern "C" {
+#define CS2_API_END }
+#define CS2_API extern "C" __attribute__((visibility("default")))
 
-/**
- * ball-ball predicate:
- *
- *    .
- */
-struct predbb3f_s
-{
-    int a;
-};
+#else /* __cplusplus */
 
-typedef struct predbb3f_s predbb3f_t;
+#define CS2_API_BEGIN
+#define CS2_API_END
+#define CS2_API extern __attribute__((visibility("default")))
 
-CS2_API_END
+#endif /* __cplusplus */
 
-#endif /* CS2_PREDBB3F_H */
+#endif /* CS2_DEFS_H */

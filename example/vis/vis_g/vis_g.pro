@@ -18,7 +18,7 @@ INCLUDEPATH += ../common
 LIBS += -lGLEW
 LIBS += -lGLU
 
-LIBS += ../../../lib/libcs2.a
+LIBS += ../../../lib/libcs2_s.a
 
 SOURCES += \
     mainwindow.cpp \

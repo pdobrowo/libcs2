@@ -22,14 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PIN3X_H
-#define LIBCS2_PIN3X_H
+#ifndef CS2_PIN3X_H
+#define CS2_PIN3X_H
 
+#include "defs.h"
 #include <gmp.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 struct pin3x_s
 {
@@ -38,14 +37,12 @@ struct pin3x_s
 
 typedef struct pin3x_s pin3x_t;
 
-void pin3x_init(pin3x_t *p);
-void pin3x_clear(pin3x_t *p);
+CS2_API void pin3x_init(pin3x_t *p);
+CS2_API void pin3x_clear(pin3x_t *p);
 
-void pin3x_set(pin3x_t *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0);
-void pin3x_set_si(pin3x_t *p, long p12, long p23, long p31, long p0);
+CS2_API void pin3x_set(pin3x_t *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0);
+CS2_API void pin3x_set_si(pin3x_t *p, long p12, long p23, long p31, long p0);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PIN3X_H */
+#endif /* CS2_PIN3X_H */

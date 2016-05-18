@@ -22,14 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDS3X_H
-#define LIBCS2_PREDS3X_H
+#ifndef CS2_PREDS3X_H
+#define CS2_PREDS3X_H
 
+#include "defs.h"
 #include "vec3x.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * screw predicate:
@@ -43,11 +42,9 @@ struct preds3x_s
 
 typedef struct preds3x_s preds3x_t;
 
-void preds3x_init(preds3x_t *s);
-void preds3x_clear(preds3x_t *s);
+CS2_API void preds3x_init(preds3x_t *s);
+CS2_API void preds3x_clear(preds3x_t *s);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDS3X_H */
+#endif /* CS2_PREDS3X_H */

@@ -22,9 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDG3F_H
-#define LIBCS2_PREDG3F_H
+#ifndef CS2_PREDG3F_H
+#define CS2_PREDG3F_H
 
+#include "defs.h"
 #include "vec3f.h"
 #include "vec4f.h"
 #include "mat44f.h"
@@ -32,9 +33,7 @@
 #include "preds3f.h"
 #include "spin3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * general predicate:
@@ -49,12 +48,12 @@ struct predg3f_s
 
 typedef struct predg3f_s predg3f_t;
 
-void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b, double c);
-void predg3f_copy(predg3f_t *r, const predg3f_t *g);
+CS2_API void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b, double c);
+CS2_API void predg3f_copy(predg3f_t *r, const predg3f_t *g);
 
-void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h);
-void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s);
-void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g);
+CS2_API void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h);
+CS2_API void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s);
+CS2_API void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g);
 
 /* type */
 enum predgtype3f_e
@@ -66,9 +65,9 @@ enum predgtype3f_e
 
 typedef enum predgtype3f_e predgtype3f_t;
 
-const char *predgtype3f_str(predgtype3f_t t);
+CS2_API const char *predgtype3f_str(predgtype3f_t t);
 
-predgtype3f_t predg3f_type(const predg3f_t *g);
+CS2_API predgtype3f_t predg3f_type(const predg3f_t *g);
 
 /* parametrization */
 enum predgparamtype3f_e
@@ -94,10 +93,10 @@ enum predgparamtype3f_e
 
 typedef enum predgparamtype3f_e predgparamtype3f_t;
 
-const char *predgparamtype3f_str(predgparamtype3f_t pt);
+CS2_API const char *predgparamtype3f_str(predgparamtype3f_t pt);
 
-int predgparamtype3f_dim(predgparamtype3f_t pt);
-int predgparamtype3f_components(predgparamtype3f_t pt);
+CS2_API int predgparamtype3f_dim(predgparamtype3f_t pt);
+CS2_API int predgparamtype3f_components(predgparamtype3f_t pt);
 
 struct predgparam3f_s
 {
@@ -108,14 +107,12 @@ struct predgparam3f_s
 
 typedef struct predgparam3f_s predgparam3f_t;
 
-void predg3f_param(predgparam3f_t *pp, const predg3f_t *g);
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, int component);
+CS2_API void predg3f_param(predgparam3f_t *pp, const predg3f_t *g);
+CS2_API void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, int component);
 
 /* special */
-void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g);
+CS2_API void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDG3F_H */
+#endif /* CS2_PREDG3F_H */

@@ -22,15 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_PREDTT3F_H
-#define LIBCS2_PREDTT3F_H
+#ifndef CS2_PREDTT3F_H
+#define CS2_PREDTT3F_H
 
+#include "defs.h"
 #include "preds3f.h"
 #include "vec3f.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 /**
  * triangle-triangle predicate:
@@ -65,10 +64,8 @@ struct predttdecomp3f_s
 
 typedef struct predttdecomp3f_s predttdecomp3f_t;
 
-void predtt3f_decomp(predttdecomp3f_t *d, const predtt3f_t *tt);
+CS2_API void predtt3f_decomp(predttdecomp3f_t *d, const predtt3f_t *tt);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_PREDTT3F_H */
+#endif /* CS2_PREDTT3F_H */

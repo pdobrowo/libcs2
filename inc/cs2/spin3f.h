@@ -22,12 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef LIBCS2_SPIN3F_H
-#define LIBCS2_SPIN3F_H
+#ifndef CS2_SPIN3F_H
+#define CS2_SPIN3F_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#include "defs.h"
+
+CS2_API_BEGIN
 
 struct spin3f_s
 {
@@ -36,10 +36,8 @@ struct spin3f_s
 
 typedef struct spin3f_s spin3f_t;
 
-void spin3f_set(spin3f_t *s, double s12, double s23, double s31, double s0);
+CS2_API void spin3f_set(spin3f_t *s, double s12, double s23, double s31, double s0);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
-#endif /* LIBCS2_SPIN3F_H */
+#endif /* CS2_SPIN3F_H */
