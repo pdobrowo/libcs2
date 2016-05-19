@@ -112,7 +112,7 @@ add_library(cs2 SHARED ${cs2_SOURCES})
 add_library(cs2_s STATIC ${cs2_SOURCES})
 
 set_target_properties(cs2 PROPERTIES C_VISIBILITY_PRESET hidden)
-target_link_libraries(cs2 dl m gmp)
+target_link_libraries(cs2 c m dl gmp)
 
 message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")
