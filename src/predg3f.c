@@ -71,8 +71,8 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
 static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
 {
     /*
-     * w = 1 - a p^ q^ - b u^ v^ - a b p^ u^ q^ v^
-     *   = 1 - a p^ q^ - b u^ v^ + a b (p^xu^) (q^xv^)
+     * w = 1 - a b p^ u^ q^ v^ - a p^ q^ - b u^ v^
+     *   = 1 + a b (p^xu^) (q^xv^) - a p^ q^ - b u^ v^
      */
     vec3f_t ph, qh, uh, vh, phxuh, qhxvh;
     pin3f_t wp, ws, phqh, uhvh, phuhqhvh;
@@ -86,7 +86,7 @@ static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, c
     vec3f_cl(&phqh, &ph, &qh);
     vec3f_cl(&uhvh, &uh, &vh);
     vec3f_cl(&phuhqhvh, &phxuh, &qhxvh);
-    pin3f_mad4(&wp, &PIN3F_ONE, 1.0, &phqh, -a, &uhvh, -b, &phuhqhvh, a * b);
+    pin3f_mad4(&wp, &PIN3F_ONE, 1.0, &phuhqhvh, a * b, &phqh, -a, &uhvh, -b);
     pin3f_mul(&ws, &wp, 0.5 / sqrt(pclamp(wp.p0)));
     vec4f_from_pin3f(w, &ws);
 }
