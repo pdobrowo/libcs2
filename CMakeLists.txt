@@ -112,7 +112,7 @@ add_library(cs2 SHARED ${cs2_SOURCES})
 add_library(cs2_s STATIC ${cs2_SOURCES})
 
 set_target_properties(cs2 PROPERTIES C_VISIBILITY_PRESET hidden)
-target_link_libraries(cs2 c m gmp)
+target_link_libraries(cs2 c m ${GMP_LIBRARIES})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(cs2 dl)
@@ -122,3 +122,4 @@ message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")
 message("CS2 compiler: ${CMAKE_C_COMPILER_ID}")
 message("CS2 processor: ${CMAKE_SYSTEM_PROCESSOR}")
+
