@@ -34,7 +34,7 @@ int main()
 {
     uint64_t begin = timer_nsec();
 
-    predg3f_t g;
+    struct predg3f_s g;
 
     /* pred */
     vec3f_set(&g.k, 1.0, 2.0, 3.0);
@@ -52,15 +52,14 @@ int main()
     printf("predgtype3f: %s\n", predgtype3f_str(gt));
 
     /* spinquad */
-    spinquad3f_t gsq;
-
+    struct spinquad3f_s gsq;
     spinquad3f_from_predg3f(&gsq, &g);
 
     printf("spinquad3f: a11=%.2f, a22=%.2f, a33=%.2f, a44=%.2f, a12=%.2f, a13=%.2f, a14=%.2f, a23=%.2f, a24=%.2f, a34=%.2f\n",
            gsq.a11, gsq.a22, gsq.a33, gsq.a44, gsq.a12, gsq.a13, gsq.a14, gsq.a23, gsq.a24, gsq.a34);
 
     /* spinquad eval */
-    spin3f_t s;
+    struct spin3f_s s;
     spin3f_set(&s, 1.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0),
                    2.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0),
                    3.0 / sqrt(1.0 + 2.0 + 3.0 + 4.0),

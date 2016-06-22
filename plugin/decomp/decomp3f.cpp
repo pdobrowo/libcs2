@@ -46,7 +46,7 @@ class Polyhedron_builder
     typedef typename Vertex::Point Point;
 
 public:
-    Polyhedron_builder(const decompmesh3f_t *m)
+    Polyhedron_builder(const struct decompmesh3f_s *m)
         : m_m(m)
     {
     }
@@ -81,31 +81,31 @@ public:
     }
 
 private:
-    const decompmesh3f_t *m_m;
+    const struct decompmesh3f_s *m_m;
 
-    Point conv(const vec3f_t *v)
+    Point conv(const struct vec3f_s *v)
     {
         return Point(v->x, v->y, v->z);
     }
 };
 
-static void decomp3f_conv(Polyhedron_3 *p, const decompmesh3f_t *m)
+static void decomp3f_conv(Polyhedron_3 *p, const struct decompmesh3f_s *m)
 {
     Polyhedron_builder<HalfedgeDS> c(m);
     p->delegate(c);
 }
 
-static void decomp3f_conv(decompmesh3f_t *m, const Polyhedron_3 *p)
+static void decomp3f_conv(struct decompmesh3f_s *m, const Polyhedron_3 *p)
 {
     size_t vs = p->size_of_vertices();
     size_t fs = p->size_of_facets();
 
-    m->v = static_cast<vec3f_t *>(malloc(sizeof(vec3f_t) * vs));
+    m->v = static_cast<struct vec3f_s *>(malloc(sizeof(struct vec3f_s) * vs));
 
     if (!m->v)
         return; // todo: handle
 
-    m->f = static_cast<decompface3f_t *>(malloc(sizeof(decompface3f_t) * fs));
+    m->f = static_cast<struct decompface3f_s *>(malloc(sizeof(struct decompface3f_s) * fs));
 
     if (!m->f)
     {
@@ -153,7 +153,7 @@ static void decomp3f_conv(decompmesh3f_t *m, const Polyhedron_3 *p)
     }
 }
 
-static void decompmesh3f_init(decompmesh3f_t *m)
+static void decompmesh3f_init(struct decompmesh3f_s *m)
 {
     m->v = 0;
     m->vs = 0;
@@ -161,7 +161,7 @@ static void decompmesh3f_init(decompmesh3f_t *m)
     m->fs = 0;
 }
 
-static void decompmesh3f_clear(decompmesh3f_t *m)
+static void decompmesh3f_clear(struct decompmesh3f_s *m)
 {
     if (m->v)
         free(m->v);
@@ -174,14 +174,14 @@ static void decompmesh3f_clear(decompmesh3f_t *m)
     m->fs = 0;
 }
 
-void decomp3f_init(decomp3f_t *d)
+void decomp3f_init(struct decomp3f_s *d)
 {
     d->t = decomptype3f_undefined;
     d->m = 0;
     d->ms = 0;
 }
 
-void decomp3f_make(decomp3f_t *d, const decompmesh3f_t *dm)
+void decomp3f_make(struct decomp3f_s *d, const struct decompmesh3f_s *dm)
 {
     /* clear any previous decomposition */
     decomp3f_clear(d);
@@ -212,7 +212,7 @@ void decomp3f_make(decomp3f_t *d, const decompmesh3f_t *dm)
                 ++n;
 
         /* alloc convex parts */
-        d->m = static_cast<decompmesh3f_t *>(malloc(sizeof(decompmesh3f_t) * n));
+        d->m = static_cast<struct decompmesh3f_s *>(malloc(sizeof(struct decompmesh3f_s) * n));
 
         if (!d->m)
         {
@@ -259,7 +259,7 @@ void decomp3f_make(decomp3f_t *d, const decompmesh3f_t *dm)
     }
 }
 
-void decomp3f_clear(decomp3f_t *d)
+void decomp3f_clear(struct decomp3f_s *d)
 {
     if (d->m)
     {

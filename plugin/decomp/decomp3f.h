@@ -25,12 +25,11 @@
 #ifndef LIBCS2_PLUGIN_DECOMP3F_H
 #define LIBCS2_PLUGIN_DECOMP3F_H
 
+#include "cs2/defs.h"
 #include "cs2/vec3f.h"
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+CS2_API_BEGIN
 
 struct decompface3f_s
 {
@@ -39,20 +38,16 @@ struct decompface3f_s
     size_t is;
 };
 
-typedef struct decompface3f_s decompface3f_t;
-
 struct decompmesh3f_s
 {
     /* vertices */
-    vec3f_t *v;
+    struct vec3f_s *v;
     size_t vs;
 
     /* faces */
-    decompface3f_t *f;
+    struct decompface3f_s *f;
     size_t fs;
 };
-
-typedef struct decompmesh3f_s decompmesh3f_t;
 
 enum decomptype3f_e
 {
@@ -63,33 +58,27 @@ enum decomptype3f_e
     decomptype3f_out_of_memory
 };
 
-typedef enum decomptype3f_e decomptype3f_t;
-
 struct decomp3f_s
 {
-    decomptype3f_t t;
+    enum decomptype3f_e t;
 
     /* meshes */
-    decompmesh3f_t *m;
+    struct decompmesh3f_s *m;
     size_t ms;
 };
 
-typedef struct decomp3f_s decomp3f_t;
+CS2_API void decomp3f_init(struct decomp3f_s *d);
+CS2_API void decomp3f_make(struct decomp3f_s *d, const struct decompmesh3f_s *dm);
+CS2_API void decomp3f_clear(struct decomp3f_s *d);
 
-__attribute__((visibility("default"))) void decomp3f_init(decomp3f_t *d);
-__attribute__((visibility("default"))) void decomp3f_make(decomp3f_t *d, const decompmesh3f_t *dm);
-__attribute__((visibility("default"))) void decomp3f_clear(decomp3f_t *d);
-
-typedef void (*decomp3f_init_f)(decomp3f_t *d);
-typedef void (*decomp3f_make_f)(decomp3f_t *d, const decompmesh3f_t *dm);
-typedef void (*decomp3f_clear_f)(decomp3f_t *d);
+typedef void (*decomp3f_init_f)(struct decomp3f_s *d);
+typedef void (*decomp3f_make_f)(struct decomp3f_s *d, const struct decompmesh3f_s *dm);
+typedef void (*decomp3f_clear_f)(struct decomp3f_s *d);
 
 #define DECOMP3F_INIT_F_SYM "decomp3f_init"
 #define DECOMP3F_MAKE_F_SYM "decomp3f_make"
 #define DECOMP3F_CLEAR_F_SYM "decomp3f_clear"
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+CS2_API_END
 
 #endif /* LIBCS2_PLUGIN_DECOMP3F_H */

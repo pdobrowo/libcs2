@@ -39,9 +39,9 @@
 
 namespace // anonymous
 {
-double projectedDistance(const spin3f_t *a, const spin3f_t *b)
+double projectedDistance(const struct spin3f_s *a, const struct spin3f_s *b)
 {
-    vec3f_t pa, pb, pc;
+    struct vec3f_s pa, pb, pc;
 
     pa.x = a->s12 / (1.0 - a->s0);
     pa.y = a->s23 / (1.0 - a->s0);
@@ -97,16 +97,17 @@ void MainWindow::updatePredicateInformation()
     updateWindowTitle();
 
     // predicate g
-    predg3f_t pred = {
-                        { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
-                        { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
-                        { sliderToParamValue(ui->verticalSliderAX), sliderToParamValue(ui->verticalSliderAY), sliderToParamValue(ui->verticalSliderAZ) },
-                        { sliderToParamValue(ui->verticalSliderBX), sliderToParamValue(ui->verticalSliderBY), sliderToParamValue(ui->verticalSliderBZ) },
-                          sliderToParamValue(ui->verticalSliderC)
-                     };
+    struct predg3f_s pred =
+        {
+            { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
+            { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
+            { sliderToParamValue(ui->verticalSliderAX), sliderToParamValue(ui->verticalSliderAY), sliderToParamValue(ui->verticalSliderAZ) },
+            { sliderToParamValue(ui->verticalSliderBX), sliderToParamValue(ui->verticalSliderBY), sliderToParamValue(ui->verticalSliderBZ) },
+            sliderToParamValue(ui->verticalSliderC)
+        };
 
     // param g
-    predgparam3f_t param;
+    struct predgparam3f_s param;
     predg3f_param(&param, &pred);
 
     double a = param.a;
@@ -124,7 +125,7 @@ void MainWindow::updatePredicateInformation()
     ui->labelCval->setText(QString::number(c, 'f', 2));
 
     // information -> base variables
-    vec3f_t p, q, u, v;
+    struct vec3f_s p, q, u, v;
     predg3f_pquv(&p, &q, &u, &v, &pred);
 
     ui->labelPval->setText(formatVector(&p));
@@ -134,7 +135,7 @@ void MainWindow::updatePredicateInformation()
     ui->labelC2val->setText(QString::number(c, 'f', 2));
 
     // information -> type
-    predgtype3f_t type = predg3f_type(&pred);
+    enum predgtype3f_e type = predg3f_type(&pred);
 
     ui->labelproperval->setText(type == predgtype3f_inproper ? "no" : "yes");
     ui->labeltypeval->setText(predgtype3f_str(type));
@@ -151,8 +152,8 @@ void MainWindow::updatePredicateInformation()
     ui->labelcompval->setText(QString::number(predgparamtype3f_components(param.t)));
 
     // information -> eigen decomposition
-    mat44f_t eigenvec;
-    vec4f_t eigenval;
+    struct mat44f_s eigenvec;
+    struct vec4f_s eigenval;
     predg3f_eigen(&eigenvec, &eigenval, &pred);
 
     double l1 = eigenval.x;
@@ -162,10 +163,10 @@ void MainWindow::updatePredicateInformation()
 
     double det = l1 * l2 * l3 * l4;
 
-    vec4f_t w1 = { eigenvec.m[0][0], eigenvec.m[1][0], eigenvec.m[2][0], eigenvec.m[3][0] };
-    vec4f_t w2 = { eigenvec.m[0][1], eigenvec.m[1][1], eigenvec.m[2][1], eigenvec.m[3][1] };
-    vec4f_t w3 = { eigenvec.m[0][2], eigenvec.m[1][2], eigenvec.m[2][2], eigenvec.m[3][2] };
-    vec4f_t w4 = { eigenvec.m[0][3], eigenvec.m[1][3], eigenvec.m[2][3], eigenvec.m[3][3] };
+    struct vec4f_s w1 = { eigenvec.m[0][0], eigenvec.m[1][0], eigenvec.m[2][0], eigenvec.m[3][0] };
+    struct vec4f_s w2 = { eigenvec.m[0][1], eigenvec.m[1][1], eigenvec.m[2][1], eigenvec.m[3][1] };
+    struct vec4f_s w3 = { eigenvec.m[0][2], eigenvec.m[1][2], eigenvec.m[2][2], eigenvec.m[3][2] };
+    struct vec4f_s w4 = { eigenvec.m[0][3], eigenvec.m[1][3], eigenvec.m[2][3], eigenvec.m[3][3] };
 
     ui->labeldetval->setText(QString::number(det, 'f', 8));
 
@@ -234,12 +235,12 @@ void MainWindow::updateSliderInformation()
     formatSliderValue(ui->labelSliderC, ui->verticalSliderC->value());
 }
 
-QString MainWindow::formatVector(const vec3f_t *v)
+QString MainWindow::formatVector(const struct vec3f_s *v)
 {
     return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + "]";
 }
 
-QString MainWindow::formatVector(const vec4f_t *v)
+QString MainWindow::formatVector(const struct vec4f_s *v)
 {
     return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + ", " + QString::number(v->w, 'f', 2) + "]";
 }
@@ -340,7 +341,7 @@ void MainWindow::updateWindowTitle()
     setWindowTitle(fileName + ": vis" + (m_currentChanged ? " *" : ""));
 }
 
-void MainWindow::autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double initialRadius, double targetRadius, int maxSubdivisions)
+void MainWindow::autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions)
 {
     int number_of_components = predgparamtype3f_components(param->t);
 
@@ -350,9 +351,9 @@ void MainWindow::autoMesh(TriangleListPtr trianglesFront, TriangleListPtr triang
                 autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
 }
 
-void MainWindow::autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
+void MainWindow::autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
 {
-    spin3f_t sp00, sp01, sp10, sp11;
+    struct spin3f_s sp00, sp01, sp10, sp11;
 
     predgparam3f_eval(&sp00, param, minU, minV, component);
     predgparam3f_eval(&sp01, param, minU, maxV, component);
@@ -382,7 +383,7 @@ void MainWindow::autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPt
     }
 }
 
-void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, predgparam3f_t *param, double radius)
+void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct predgparam3f_s *param, double radius)
 {
     int number_of_components = predgparamtype3f_components(param->t);
 
@@ -390,7 +391,7 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
     {
         for (double pu = 0; pu < 1 - radius; pu += radius) for (double pv = 0; pv < 1 - radius; pv += radius)
         {
-            spin3f_t sp00, sp01, sp10, sp11;
+            struct spin3f_s sp00, sp01, sp10, sp11;
 
             predgparam3f_eval(&sp00, param, pu, pv, c);
             predgparam3f_eval(&sp01, param, pu, pv + radius, c);
@@ -412,7 +413,7 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
         // last u
         for (double pu = 0; pu < 1 - radius; pu += radius)
         {
-            spin3f_t sp00, sp01, sp10, sp11;
+            struct spin3f_s sp00, sp01, sp10, sp11;
 
             predgparam3f_eval(&sp00, param, pu, 1.0 - radius, c);
             predgparam3f_eval(&sp01, param, pu, 1.0, c);
@@ -434,7 +435,7 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
         // last v
         for (double pv = 0; pv < 1 - radius; pv += radius)
         {
-            spin3f_t sp00, sp01, sp10, sp11;
+            struct spin3f_s sp00, sp01, sp10, sp11;
 
             predgparam3f_eval(&sp00, param, 1.0 - radius, pv, c);
             predgparam3f_eval(&sp01, param, 1.0 - radius, pv + radius, c);
@@ -455,7 +456,7 @@ void MainWindow::simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr tria
 
         // last uv
         {
-            spin3f_t sp00, sp01, sp10, sp11;
+            struct spin3f_s sp00, sp01, sp10, sp11;
 
             predgparam3f_eval(&sp00, param, 1.0 - radius, 1.0 - radius, c);
             predgparam3f_eval(&sp01, param, 1.0 - radius, 1.0, c);

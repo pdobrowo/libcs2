@@ -28,7 +28,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-void load_mesh(decompmesh3f_t *m, const char *fp)
+void load_mesh(struct decompmesh3f_s *m, const char *fp)
 {
     int vs, fs, i, j;
     FILE *f = fopen(fp, "r");
@@ -39,14 +39,14 @@ void load_mesh(decompmesh3f_t *m, const char *fp)
     if (fscanf(f, "%*s%d%d%*d",&vs,&fs) != 2)
         return;
 
-    m->v = (vec3f_t *)malloc(sizeof(vec3f_t) * vs);
+    m->v = (struct vec3f_s *)malloc(sizeof(struct vec3f_s) * vs);
     m->vs = vs;
 
     for (i = 0; i < vs; ++i)
         if (fscanf(f, "%lf%lf%lf", &m->v[i].x, &m->v[i].y, &m->v[i].z) != 3)
             return;
 
-    m->f = (decompface3f_t *)malloc(sizeof(decompface3f_t) * fs);
+    m->f = (struct decompface3f_s *)malloc(sizeof(struct decompface3f_s) * fs);
     m->fs = fs;
 
     for (i = 0; i < fs; ++i)
@@ -90,9 +90,9 @@ int main()
     decomp3f_make_f pl_make = (decomp3f_make_f)plugin_fn(pl, DECOMP3F_MAKE_F_SYM);
     decomp3f_clear_f pl_clear = (decomp3f_clear_f)plugin_fn(pl, DECOMP3F_CLEAR_F_SYM);
 
-    decomp3f_t d;
+    struct decomp3f_s d;
 
-    decompmesh3f_t dm;
+    struct decompmesh3f_s dm;
     load_mesh(&dm, "../data/mushroom.off");
 
     pl_init(&d);

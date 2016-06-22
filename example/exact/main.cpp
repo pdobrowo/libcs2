@@ -34,7 +34,7 @@ int main()
 {
     uint64_t begin = timer_nsec();
 
-    predg3x_t g;
+    struct predg3x_s g;
 
     /* pred */
     predg3x_init(&g);
@@ -53,7 +53,7 @@ int main()
     printf("predgtype3x: %s\n", predgtype3x_str(gt));
 
     /* spinquad */
-    spinquad3x_t gsq;
+    struct spinquad3x_s gsq;
     spinquad3x_init(&gsq);
 
     spinquad3x_from_predg3x(&gsq, &g);
@@ -62,7 +62,7 @@ int main()
                gsq.a11, gsq.a22, gsq.a33, gsq.a44, gsq.a12, gsq.a13, gsq.a14, gsq.a23, gsq.a24, gsq.a34);
 
     /* spinquad eval */
-    pin3x_t p;
+    struct pin3x_s p;
     pin3x_init(&p);
     pin3x_set_si(&p, 1, 2, 3, 4);
 
