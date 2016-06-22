@@ -94,7 +94,6 @@ void plugin_unload(void *p)
     (void)dlclose(p);
 }
 
-
 plugin_fn_t plugin_fn(void *p, const char *s)
 {
     plugin_fn_t fn;

@@ -24,13 +24,13 @@
  */
 #include "cs2/predh3x.h"
 
-void predh3x_init(predh3x_t *h)
+void predh3x_init(struct predh3x_s *h)
 {
     vec3x_init(&h->b);
     plane3x_init(&h->p);
 }
 
-void predh3x_clear(predh3x_t *h)
+void predh3x_clear(struct predh3x_s *h)
 {
     vec3x_clear(&h->b);
     plane3x_clear(&h->p);

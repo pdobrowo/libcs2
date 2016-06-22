@@ -25,10 +25,10 @@
 #include "cs2/pin3f.h"
 #include <math.h>
 
-const pin3f_t PIN3F_ZERO = { 0.0, 0.0, 0.0, 0.0 };
-const pin3f_t PIN3F_ONE = { 0.0, 0.0, 0.0, 1.0 };
+const struct pin3f_s PIN3F_ZERO = { 0.0, 0.0, 0.0, 0.0 };
+const struct pin3f_s PIN3F_ONE = { 0.0, 0.0, 0.0, 1.0 };
 
-void pin3f_set(pin3f_t *r, double p12, double p23, double p31, double p0)
+void pin3f_set(struct pin3f_s *r, double p12, double p23, double p31, double p0)
 {
     r->p12 = p12;
     r->p23 = p23;
@@ -36,12 +36,12 @@ void pin3f_set(pin3f_t *r, double p12, double p23, double p31, double p0)
     r->p0 = p0;
 }
 
-void pin3f_zero(pin3f_t *r)
+void pin3f_zero(struct pin3f_s *r)
 {
     pin3f_set(r, 0, 0, 0, 0);
 }
 
-void pin3f_add(pin3f_t *r, const pin3f_t *a, const pin3f_t *b)
+void pin3f_add(struct pin3f_s *r, const struct pin3f_s *a, const struct pin3f_s *b)
 {
     r->p12 = a->p12 + b->p12;
     r->p23 = a->p23 + b->p23;
@@ -49,7 +49,7 @@ void pin3f_add(pin3f_t *r, const pin3f_t *a, const pin3f_t *b)
     r->p0 = a->p0 + b->p0;
 }
 
-void pin3f_sub(pin3f_t *r, const pin3f_t *a, const pin3f_t *b)
+void pin3f_sub(struct pin3f_s *r, const struct pin3f_s *a, const struct pin3f_s *b)
 {
     r->p12 = a->p12 - b->p12;
     r->p23 = a->p23 - b->p23;
@@ -57,7 +57,7 @@ void pin3f_sub(pin3f_t *r, const pin3f_t *a, const pin3f_t *b)
     r->p0 = a->p0 - b->p0;
 }
 
-void pin3f_neg(pin3f_t *r, const pin3f_t *v)
+void pin3f_neg(struct pin3f_s *r, const struct pin3f_s *v)
 {
     r->p12 = -v->p12;
     r->p23 = -v->p23;
@@ -65,7 +65,7 @@ void pin3f_neg(pin3f_t *r, const pin3f_t *v)
     r->p0 = -v->p0;
 }
 
-void pin3f_mul(pin3f_t *r, const pin3f_t *a, double as)
+void pin3f_mul(struct pin3f_s *r, const struct pin3f_s *a, double as)
 {
     r->p12 = a->p12 * as;
     r->p23 = a->p23 * as;
@@ -73,7 +73,7 @@ void pin3f_mul(pin3f_t *r, const pin3f_t *a, double as)
     r->p0 = a->p0 * as;
 }
 
-void pin3f_mad2(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, double bs)
+void pin3f_mad2(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs)
 {
     r->p12 = a->p12 * as + b->p12 * bs;
     r->p23 = a->p23 * as + b->p23 * bs;
@@ -81,7 +81,7 @@ void pin3f_mad2(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, doubl
     r->p0 = a->p0 * as + b->p0 * bs;
 }
 
-void pin3f_mad3(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, double bs, const pin3f_t *c, double cs)
+void pin3f_mad3(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs, const struct pin3f_s *c, double cs)
 {
     r->p12 = a->p12 * as + b->p12 * bs + c->p12 * cs;
     r->p23 = a->p23 * as + b->p23 * bs + c->p23 * cs;
@@ -89,7 +89,7 @@ void pin3f_mad3(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, doubl
     r->p0 = a->p0 * as + b->p0 * bs + c->p0 * cs;
 }
 
-void pin3f_mad4(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, double bs, const pin3f_t *c, double cs, const pin3f_t *d, double ds)
+void pin3f_mad4(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs, const struct pin3f_s *c, double cs, const struct pin3f_s *d, double ds)
 {
     r->p12 = a->p12 * as + b->p12 * bs + c->p12 * cs + d->p12 * ds;
     r->p23 = a->p23 * as + b->p23 * bs + c->p23 * cs + d->p23 * ds;
@@ -97,7 +97,7 @@ void pin3f_mad4(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, doubl
     r->p0 = a->p0 * as + b->p0 * bs + c->p0 * cs + d->p0 * ds;
 }
 
-void pin3f_mad5(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, double bs, const pin3f_t *c, double cs, const pin3f_t *d, double ds, const pin3f_t *e, double es)
+void pin3f_mad5(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs, const struct pin3f_s *c, double cs, const struct pin3f_s *d, double ds, const struct pin3f_s *e, double es)
 {
     r->p12 = a->p12 * as + b->p12 * bs + c->p12 * cs + d->p12 * ds + e->p12 * es;
     r->p23 = a->p23 * as + b->p23 * bs + c->p23 * cs + d->p23 * ds + e->p23 * es;
@@ -105,12 +105,12 @@ void pin3f_mad5(pin3f_t *r, const pin3f_t *a, double as, const pin3f_t *b, doubl
     r->p0 = a->p0 * as + b->p0 * bs + c->p0 * cs + d->p0 * ds + e->p0 * es;
 }
 
-double pin3f_len(const pin3f_t *v)
+double pin3f_len(const struct pin3f_s *v)
 {
     return sqrt(v->p12 * v->p12 + v->p23 * v->p23 + v->p31 * v->p31 + v->p0 * v->p0);
 }
 
-double pin3f_sqlen(const pin3f_t *v)
+double pin3f_sqlen(const struct pin3f_s *v)
 {
     return v->p12 * v->p12 + v->p23 * v->p23 + v->p31 * v->p31 + v->p0 * v->p0;
 }

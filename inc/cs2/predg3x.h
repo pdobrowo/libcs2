@@ -43,18 +43,16 @@ CS2_API_BEGIN
  */
 struct predg3x_s
 {
-    vec3x_t k, l, a, b;
+    struct vec3x_s k, l, a, b;
     mpz_t c;
 };
 
-typedef struct predg3x_s predg3x_t;
+CS2_API void predg3x_init(struct predg3x_s *g);
+CS2_API void predg3x_clear(struct predg3x_s *g);
 
-CS2_API void predg3x_init(predg3x_t *g);
-CS2_API void predg3x_clear(predg3x_t *g);
-
-CS2_API void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h);
-CS2_API void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s);
-CS2_API void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g);
+CS2_API void predg3x_from_predh3x(struct predg3x_s *g, const struct predh3x_s *h);
+CS2_API void predg3x_from_preds3x(struct predg3x_s *g, const struct preds3x_s *s);
+CS2_API void predg3x_pquv(struct vec3x_s *p, struct vec3x_s *q, struct vec3x_s *u, struct vec3x_s *v, const struct predg3x_s *g);
 
 /* type */
 enum predgtype3x_e
@@ -64,28 +62,24 @@ enum predgtype3x_e
     predgtype3x_toroidal
 };
 
-typedef enum predgtype3x_e predgtype3x_t;
+CS2_API const char *predgtype3x_str(enum predgtype3x_e t);
 
-CS2_API const char *predgtype3x_str(predgtype3x_t t);
-
-CS2_API predgtype3x_t predg3x_type(const predg3x_t *g);
+CS2_API enum predgtype3x_e predg3x_type(const struct predg3x_s *g);
 
 #if 0
 
 /* parametrization */
 struct predgparam3x_s
 {
-    mat44f_t q;
+    struct mat44f_s q;
     double r12, r23, r31;
 };
 
-typedef struct predgparam3x_s predgparam3x_t;
-
-CS2_API void predg3x_param(predgparam3x_t *pp, const predg3x_t *g);
-CS2_API void predgparam3x_eval(spin3x_t *s, const predgparam3x_t *pp, double u, double v, double sgn);
+CS2_API void predg3x_param(struct predgparam3x_s *pp, const struct predg3x_s *g);
+CS2_API void predgparam3x_eval(sstruct pin3x_s *s, const struct predgparam3x_s *pp, double u, double v, double sgn);
 
 /* special */
-CS2_API void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g);
+CS2_API void predg3x_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3x_s *g);
 
 #endif
 

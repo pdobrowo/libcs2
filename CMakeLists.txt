@@ -122,4 +122,3 @@ message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")
 message("CS2 compiler: ${CMAKE_C_COMPILER_ID}")
 message("CS2 processor: ${CMAKE_SYSTEM_PROCESSOR}")
-

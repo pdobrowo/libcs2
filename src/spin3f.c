@@ -24,7 +24,7 @@
  */
 #include "cs2/spin3f.h"
 
-void spin3f_set(spin3f_t *s, double s12, double s23, double s31, double s0)
+void spin3f_set(struct spin3f_s *s, double s12, double s23, double s31, double s0)
 {
     s->s12 = s12;
     s->s23 = s23;

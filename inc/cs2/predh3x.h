@@ -38,14 +38,12 @@ CS2_API_BEGIN
  */
 struct predh3x_s
 {
-    vec3x_t b;
-    plane3x_t p;
+    struct vec3x_s b;
+    struct plane3x_s p;
 };
 
-typedef struct predh3x_s predh3x_t;
-
-CS2_API void predh3x_init(predh3x_t *h);
-CS2_API void predh3x_clear(predh3x_t *h);
+CS2_API void predh3x_init(struct predh3x_s *h);
+CS2_API void predh3x_clear(struct predh3x_s *h);
 
 CS2_API_END
 

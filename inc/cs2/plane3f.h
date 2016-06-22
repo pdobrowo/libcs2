@@ -32,14 +32,12 @@ CS2_API_BEGIN
 
 struct plane3f_s
 {
-    vec3f_t n;
+    struct vec3f_s n;
     double d;
 };
 
-typedef struct plane3f_s plane3f_t;
-
-CS2_API void plane3f_set(plane3f_t *p, const vec3f_t *n, double d);
-CS2_API void plane3f_copy(plane3f_t *r, const plane3f_t *p);
+CS2_API void plane3f_set(struct plane3f_s *p, const struct vec3f_s *n, double d);
+CS2_API void plane3f_copy(struct plane3f_s *r, const struct plane3f_s *p);
 
 CS2_API_END
 

@@ -24,7 +24,7 @@
  */
 #include "cs2/predtt3f.h"
 
-void predtt3f_decomp(predttdecomp3f_t *d, const predtt3f_t *tt)
+void predtt3f_decomp(struct predttdecomp3f_s *d, const struct predtt3f_s *tt)
 {
     preds3f_set(&d->s[0][0], &tt->k, &tt->l, &tt->a, &tt->b);
     preds3f_set(&d->s[0][1], &tt->k, &tt->l, &tt->b, &tt->c);

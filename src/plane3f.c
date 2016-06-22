@@ -24,13 +24,13 @@
  */
 #include "cs2/plane3f.h"
 
-void plane3f_set(plane3f_t *p, const vec3f_t *n, double d)
+void plane3f_set(struct plane3f_s *p, const struct vec3f_s *n, double d)
 {
     vec3f_copy(&p->n, n);
     p->d = d;
 }
 
-void plane3f_copy(plane3f_t *r, const plane3f_t *p)
+void plane3f_copy(struct plane3f_s *r, const struct plane3f_s *p)
 {
     vec3f_copy(&r->n, &p->n);
     r->d = p->d;

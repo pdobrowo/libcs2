@@ -42,18 +42,16 @@ CS2_API_BEGIN
  */
 struct predg3f_s
 {
-    vec3f_t k, l, a, b;
+    struct vec3f_s k, l, a, b;
     double c;
 };
 
-typedef struct predg3f_s predg3f_t;
+CS2_API void predg3f_set(struct predg3f_s *g, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b, double c);
+CS2_API void predg3f_copy(struct predg3f_s *r, const struct predg3f_s *g);
 
-CS2_API void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b, double c);
-CS2_API void predg3f_copy(predg3f_t *r, const predg3f_t *g);
-
-CS2_API void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h);
-CS2_API void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s);
-CS2_API void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g);
+CS2_API void predg3f_from_predh3f(struct predg3f_s *g, const struct predh3f_s *h);
+CS2_API void predg3f_from_preds3f(struct predg3f_s *g, const struct preds3f_s *s);
+CS2_API void predg3f_pquv(struct vec3f_s *p, struct vec3f_s *q, struct vec3f_s *u, struct vec3f_s *v, const struct predg3f_s *g);
 
 /* type */
 enum predgtype3f_e
@@ -63,11 +61,9 @@ enum predgtype3f_e
     predgtype3f_toroidal
 };
 
-typedef enum predgtype3f_e predgtype3f_t;
+CS2_API const char *predgtype3f_str(enum predgtype3f_e t);
 
-CS2_API const char *predgtype3f_str(predgtype3f_t t);
-
-CS2_API predgtype3f_t predg3f_type(const predg3f_t *g);
+CS2_API enum predgtype3f_e predg3f_type(const struct predg3f_s *g);
 
 /* parametrization */
 enum predgparamtype3f_e
@@ -91,27 +87,23 @@ enum predgparamtype3f_e
     predgparamtype3f_a_torus
 };
 
-typedef enum predgparamtype3f_e predgparamtype3f_t;
+CS2_API const char *predgparamtype3f_str(enum predgparamtype3f_e pt);
 
-CS2_API const char *predgparamtype3f_str(predgparamtype3f_t pt);
-
-CS2_API int predgparamtype3f_dim(predgparamtype3f_t pt);
-CS2_API int predgparamtype3f_components(predgparamtype3f_t pt);
+CS2_API int predgparamtype3f_dim(enum predgparamtype3f_e pt);
+CS2_API int predgparamtype3f_components(enum predgparamtype3f_e pt);
 
 struct predgparam3f_s
 {
-    predgparamtype3f_t t;
-    mat44f_t q;
+    enum predgparamtype3f_e t;
+    struct mat44f_s q;
     double a, b, c;
 };
 
-typedef struct predgparam3f_s predgparam3f_t;
-
-CS2_API void predg3f_param(predgparam3f_t *pp, const predg3f_t *g);
-CS2_API void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, int component);
+CS2_API void predg3f_param(struct predgparam3f_s *pp, const struct predg3f_s *g);
+CS2_API void predgparam3f_eval(struct spin3f_s *s, const struct predgparam3f_s *pp, double u, double v, int component);
 
 /* special */
-CS2_API void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g);
+CS2_API void predg3f_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3f_s *g);
 
 CS2_API_END
 

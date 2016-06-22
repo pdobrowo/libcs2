@@ -35,29 +35,27 @@ struct vec4f_s
     double x, y, z, w;
 };
 
-typedef struct vec4f_s vec4f_t;
+CS2_API void vec4f_set(struct vec4f_s *r, double x, double y, double z, double w);
+CS2_API void vec4f_zero(struct vec4f_s *r);
 
-CS2_API void vec4f_set(vec4f_t *r, double x, double y, double z, double w);
-CS2_API void vec4f_zero(vec4f_t *r);
+CS2_API void vec4f_add(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b);
+CS2_API void vec4f_sub(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b);
+CS2_API void vec4f_neg(struct vec4f_s *r, const struct vec4f_s *v);
+CS2_API void vec4f_mul(struct vec4f_s *r, const struct vec4f_s *a, double as);
 
-CS2_API void vec4f_add(vec4f_t *r, const vec4f_t *a, const vec4f_t *b);
-CS2_API void vec4f_sub(vec4f_t *r, const vec4f_t *a, const vec4f_t *b);
-CS2_API void vec4f_neg(vec4f_t *r, const vec4f_t *v);
-CS2_API void vec4f_mul(vec4f_t *r, const vec4f_t *a, double as);
+CS2_API void vec4f_mad2(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs);
+CS2_API void vec4f_mad3(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs, const struct vec4f_s *c, double cs);
+CS2_API void vec4f_mad4(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs, const struct vec4f_s *c, double cs, const struct vec4f_s *d, double ds);
+CS2_API void vec4f_mad5(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs, const struct vec4f_s *c, double cs, const struct vec4f_s *d, double ds, const struct vec4f_s *e, double es);
 
-CS2_API void vec4f_mad2(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs);
-CS2_API void vec4f_mad3(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs, const vec4f_t *c, double cs);
-CS2_API void vec4f_mad4(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs, const vec4f_t *c, double cs, const vec4f_t *d, double ds);
-CS2_API void vec4f_mad5(vec4f_t *r, const vec4f_t *a, double as, const vec4f_t *b, double bs, const vec4f_t *c, double cs, const vec4f_t *d, double ds, const vec4f_t *e, double es);
+CS2_API double vec4f_dot(const struct vec4f_s *a, const struct vec4f_s *b);
 
-CS2_API double vec4f_dot(const vec4f_t *a, const vec4f_t *b);
+CS2_API double vec4f_len(const struct vec4f_s *v);
+CS2_API double vec4f_sqlen(const struct vec4f_s *v);
 
-CS2_API double vec4f_len(const vec4f_t *v);
-CS2_API double vec4f_sqlen(const vec4f_t *v);
+CS2_API double vec4f_tr(const struct vec4f_s *v);
 
-CS2_API double vec4f_tr(const vec4f_t *v);
-
-CS2_API void vec4f_from_pin3f(vec4f_t *r, const pin3f_t *p);
+CS2_API void vec4f_from_pin3f(struct vec4f_s *r, const struct pin3f_s *p);
 
 CS2_API_END
 

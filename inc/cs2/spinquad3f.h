@@ -56,13 +56,11 @@ struct spinquad3f_s
     double a11, a22, a33, a44, a12, a13, a14, a23, a24, a34;
 };
 
-typedef struct spinquad3f_s spinquad3f_t;
+CS2_API void spinquad3f_from_predh3f(struct spinquad3f_s *sq, const struct predh3f_s *ph);
+CS2_API void spinquad3f_from_preds3f(struct spinquad3f_s *sq, const struct preds3f_s *ps);
+CS2_API void spinquad3f_from_predg3f(struct spinquad3f_s *sq, const struct predg3f_s *pg);
 
-CS2_API void spinquad3f_from_predh3f(spinquad3f_t *sq, const predh3f_t *ph);
-CS2_API void spinquad3f_from_preds3f(spinquad3f_t *sq, const preds3f_t *ps);
-CS2_API void spinquad3f_from_predg3f(spinquad3f_t *sq, const predg3f_t *pg);
-
-CS2_API double spinquad3f_eval(const spinquad3f_t *sq, const spin3f_t *s);
+CS2_API double spinquad3f_eval(const struct spinquad3f_s *sq, const struct spin3f_s *s);
 
 CS2_API_END
 

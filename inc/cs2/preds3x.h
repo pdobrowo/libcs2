@@ -37,13 +37,11 @@ CS2_API_BEGIN
  */
 struct preds3x_s
 {
-    vec3x_t k, l, a, b;
+    struct vec3x_s k, l, a, b;
 };
 
-typedef struct preds3x_s preds3x_t;
-
-CS2_API void preds3x_init(preds3x_t *s);
-CS2_API void preds3x_clear(preds3x_t *s);
+CS2_API void preds3x_init(struct preds3x_s *s);
+CS2_API void preds3x_clear(struct preds3x_s *s);
 
 CS2_API_END
 

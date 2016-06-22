@@ -37,7 +37,7 @@ static int almost_zero(double x)
     return fabs(x) < EPS;
 }
 
-static int almost_zero_vector(const vec3f_t *v)
+static int almost_zero_vector(const struct vec3f_s *v)
 {
     return almost_zero(v->x) && almost_zero(v->y) && almost_zero(v->z);
 }
@@ -58,7 +58,7 @@ static double pclamp(double x)
     return x;
 }
 
-static void calc_r(vec3f_t *r, const vec3f_t *v)
+static void calc_r(struct vec3f_s *r, const struct vec3f_s *v)
 {
     if (!almost_zero(v->x))
         vec3f_set(r, -v->y, v->x, v->z); /* take x-y plane */
@@ -68,14 +68,14 @@ static void calc_r(vec3f_t *r, const vec3f_t *v)
         vec3f_set(r, v->z, v->y, -v->x); /* take z-x plane */
 }
 
-static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, const vec3f_t *u, const vec3f_t *v, double a, double b)
+static void calc_ellipsoidal_w(struct vec4f_s *w, const struct vec3f_s *p, const struct vec3f_s *q, const struct vec3f_s *u, const struct vec3f_s *v, double a, double b)
 {
     /*
      * w = 1 - a b p^ u^ q^ v^ - a p^ q^ - b u^ v^
      *   = 1 + a b (p^xu^) (q^xv^) - a p^ q^ - b u^ v^
      */
-    vec3f_t ph, qh, uh, vh, phxuh, qhxvh;
-    pin3f_t wp, ws, phqh, uhvh, phuhqhvh;
+    struct vec3f_s ph, qh, uh, vh, phxuh, qhxvh;
+    struct pin3f_s wp, ws, phqh, uhvh, phuhqhvh;
 
     vec3f_unit(&ph, p);
     vec3f_unit(&qh, q);
@@ -91,7 +91,7 @@ static void calc_ellipsoidal_w(vec4f_t *w, const vec3f_t *p, const vec3f_t *q, c
     vec4f_from_pin3f(w, &ws);
 }
 
-static void calc_toroidal_w(vec4f_t *w1, vec4f_t *w2, const vec3f_t *p, const vec3f_t *q, double a)
+static void calc_toroidal_w(struct vec4f_s *w1, struct vec4f_s *w2, const struct vec3f_s *p, const struct vec3f_s *q, double a)
 {
     /*
      * x = (p2^2 [q]^2 - q2^2 [p]^2) u
@@ -123,12 +123,12 @@ static void calc_toroidal_w(vec4f_t *w1, vec4f_t *w2, const vec3f_t *p, const ve
     vec4f_mul(w2, w2, 1.0 / vec4f_len(w2));
 }
 
-static predgparamtype3f_t inproper_param_case()
+static enum predgparamtype3f_e inproper_param_case()
 {
     return predgparamtype3f_an_empty_set;
 }
 
-static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
+static enum predgparamtype3f_e ellipsoidal_param_case(double a, double b, double c)
 {
     /*
      * ellipsoidal parametrization type
@@ -259,7 +259,7 @@ static predgparamtype3f_t ellipsoidal_param_case(double a, double b, double c)
     return predgparamtype3f_an_empty_set;
 }
 
-static predgparamtype3f_t toroidal_param_case(double a, double b, double c)
+static enum predgparamtype3f_e toroidal_param_case(double a, double b, double c)
 {
     if (almost_zero(a) && !almost_zero(b))
     {
@@ -281,9 +281,9 @@ static predgparamtype3f_t toroidal_param_case(double a, double b, double c)
     return predgparamtype3f_an_empty_set;
 }
 
-static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
+static void debug_verify_polar_decomposition(struct mat44f_s *m, const struct predg3f_s *g)
 {
-    spinquad3f_t sp;
+    struct spinquad3f_s sp;
     int i;
 
     spinquad3f_from_predg3f(&sp, g);
@@ -311,7 +311,7 @@ static void debug_verify_polar_decomposition(mat44f_t *m, const predg3f_t *g)
     }
 }
 
-static void predgparam3f_eval_an_empty_set(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_an_empty_set(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -329,7 +329,7 @@ static void predgparam3f_eval_an_empty_set(double *t12, double *t23, double *t31
     assert(0);
 }
 
-static void predgparam3f_eval_a_pair_of_points(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_points(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)pp;
 
@@ -358,7 +358,7 @@ static void predgparam3f_eval_a_pair_of_points(double *t12, double *t23, double 
     }
 }
 
-static void predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     double sgn = 0.0;
     double r = 0.5 * (pp->a + pp->b + pp->c);
@@ -395,7 +395,7 @@ static void predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, double 
     *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
-static void predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -413,7 +413,7 @@ static void predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, doubl
     assert(0);
 }
 
-static void predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -431,7 +431,7 @@ static void predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(double *t12, doubl
     assert(0);
 }
 
-static void predgparam3f_eval_a_pair_of_z_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_z_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -449,7 +449,7 @@ static void predgparam3f_eval_a_pair_of_z_touching_ellipsoids(double *t12, doubl
     assert(0);
 }
 
-static void predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     double a, h;
     double sa, ca;
@@ -485,7 +485,7 @@ static void predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *t31, 
     *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
-static void predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     double a, h;
     double sa, ca;
@@ -521,7 +521,7 @@ static void predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *t31, 
     *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
-static void predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -539,7 +539,7 @@ static void predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, doubl
     assert(0);
 }
 
-static void predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     (void)t12;
     (void)t23;
@@ -557,7 +557,7 @@ static void predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, doubl
     assert(0);
 }
 
-static void predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     /* yz-caps */
     double a, x, y, z, d;
@@ -611,7 +611,7 @@ static void predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t2
     *t0 = sgn * sqrt(pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
-static void predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, double *t0, const predgparam3f_t *pp, double u, double v, int component)
+static void predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, double *t0, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     double alpha = u * 2 * PI;
     double beta = v * 2 * PI;
@@ -640,7 +640,7 @@ static void predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, dou
     }
 }
 
-void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b, double c)
+void predg3f_set(struct predg3f_s *g, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b, double c)
 {
     vec3f_copy(&g->k, k);
     vec3f_copy(&g->l, l);
@@ -649,7 +649,7 @@ void predg3f_set(predg3f_t *g, const vec3f_t *k, const vec3f_t *l, const vec3f_t
     g->c = c;
 }
 
-void predg3f_copy(predg3f_t *r, const predg3f_t *g)
+void predg3f_copy(struct predg3f_s *r, const struct predg3f_s *g)
 {
     vec3f_copy(&r->k, &g->k);
     vec3f_copy(&r->l, &g->l);
@@ -658,9 +658,9 @@ void predg3f_copy(predg3f_t *r, const predg3f_t *g)
     r->c = g->c;
 }
 
-void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
+void predg3f_from_predh3f(struct predg3f_s *g, const struct predh3f_s *h)
 {
-    vec3f_t r, nr;
+    struct vec3f_s r, nr;
 
     calc_r(&r, &h->p.n);
     vec3f_cross(&nr, &h->p.n, &r);
@@ -672,7 +672,7 @@ void predg3f_from_predh3f(predg3f_t *g, const predh3f_t *h)
     g->c = 2 * h->p.d * vec3f_sqlen(&nr);
 }
 
-void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s)
+void predg3f_from_preds3f(struct predg3f_s *g, const struct preds3f_s *s)
 {
     g->k = s->k;
     g->l = s->l;
@@ -681,7 +681,7 @@ void predg3f_from_preds3f(predg3f_t *g, const preds3f_t *s)
     g->c = 0;
 }
 
-void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_t *g)
+void predg3f_pquv(struct vec3f_s *p, struct vec3f_s *q, struct vec3f_s *u, struct vec3f_s *v, const struct predg3f_s *g)
 {
     vec3f_cross(p, &g->k, &g->l);
     vec3f_sub(q, &g->a, &g->b);
@@ -689,7 +689,7 @@ void predg3f_pquv(vec3f_t *p, vec3f_t *q, vec3f_t *u, vec3f_t *v, const predg3f_
     vec3f_cross(v, &g->a, &g->b);
 }
 
-const char *predgtype3f_str(predgtype3f_t t)
+const char *predgtype3f_str(enum predgtype3f_e t)
 {
     switch (t)
     {
@@ -700,9 +700,9 @@ const char *predgtype3f_str(predgtype3f_t t)
     }
 }
 
-predgtype3f_t predg3f_type(const predg3f_t *g)
+enum predgtype3f_e predg3f_type(const struct predg3f_s *g)
 {
-    vec3f_t p, q, u, v;
+    struct vec3f_s p, q, u, v;
     double a, b;
     int za, zb;
 
@@ -721,7 +721,7 @@ predgtype3f_t predg3f_type(const predg3f_t *g)
         return predgtype3f_inproper;
 }
 
-const char *predgparamtype3f_str(predgparamtype3f_t pt)
+const char *predgparamtype3f_str(enum predgparamtype3f_e pt)
 {
     switch (pt)
     {
@@ -747,7 +747,7 @@ const char *predgparamtype3f_str(predgparamtype3f_t pt)
     }
 }
 
-int predgparamtype3f_dim(predgparamtype3f_t pt)
+int predgparamtype3f_dim(enum predgparamtype3f_e pt)
 {
     switch (pt)
     {
@@ -775,7 +775,7 @@ int predgparamtype3f_dim(predgparamtype3f_t pt)
     }
 }
 
-int predgparamtype3f_components(predgparamtype3f_t pt)
+int predgparamtype3f_components(enum predgparamtype3f_e pt)
 {
     switch (pt)
     {
@@ -803,9 +803,9 @@ int predgparamtype3f_components(predgparamtype3f_t pt)
     }
 }
 
-void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
+void predg3f_param(struct predgparam3f_s *pp, const struct predg3f_s *g)
 {
-    vec3f_t p, q, u, v;
+    struct vec3f_s p, q, u, v;
     int za, zb;
 
     predg3f_pquv(&p, &q, &u, &v, g);
@@ -830,7 +830,7 @@ void predg3f_param(predgparam3f_t *pp, const predg3f_t *g)
         pp->t = inproper_param_case();
 }
 
-void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v, int component)
+void predgparam3f_eval(struct spin3f_s *s, const struct predgparam3f_s *pp, double u, double v, int component)
 {
     double t12 = 0.0, t23 = 0.0, t31 = 0.0, t0 = 0.0;
 
@@ -901,10 +901,10 @@ void predgparam3f_eval(spin3f_t *s, const predgparam3f_t *pp, double u, double v
     s->s0 = pp->q.m[3][0] * t12 + pp->q.m[3][1] * t23 + pp->q.m[3][2] * t31 + pp->q.m[3][3] * t0;
 }
 
-void predg3f_eigen(mat44f_t *m, vec4f_t *e, const predg3f_t *g)
+void predg3f_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3f_s *g)
 {
-    vec3f_t p, q, u, v;
-    vec4f_t w1, w2, w3, w4;
+    struct vec3f_s p, q, u, v;
+    struct vec4f_s w1, w2, w3, w4;
     double pl, ql, ul, vl;
 
     /* base */

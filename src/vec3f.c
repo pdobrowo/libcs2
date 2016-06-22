@@ -25,54 +25,54 @@
 #include "cs2/vec3f.h"
 #include <math.h>
 
-void vec3f_set(vec3f_t *r, double x, double y, double z)
+void vec3f_set(struct vec3f_s *r, double x, double y, double z)
 {
     r->x = x;
     r->y = y;
     r->z = z;
 }
 
-void vec3f_zero(vec3f_t *r)
+void vec3f_zero(struct vec3f_s *r)
 {
     vec3f_set(r, 0, 0, 0);
 }
 
-void vec3f_copy(vec3f_t *r, const vec3f_t *v)
+void vec3f_copy(struct vec3f_s *r, const struct vec3f_s *v)
 {
     r->x = v->x;
     r->y = v->y;
     r->z = v->z;
 }
 
-void vec3f_add(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
+void vec3f_add(struct vec3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
 {
     r->x = a->x + b->x;
     r->y = a->y + b->y;
     r->z = a->z + b->z;
 }
 
-void vec3f_sub(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
+void vec3f_sub(struct vec3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
 {
     r->x = a->x - b->x;
     r->y = a->y - b->y;
     r->z = a->z - b->z;
 }
 
-void vec3f_neg(vec3f_t *r, const vec3f_t *v)
+void vec3f_neg(struct vec3f_s *r, const struct vec3f_s *v)
 {
     r->x = -v->x;
     r->y = -v->y;
     r->z = -v->z;
 }
 
-void vec3f_mul(vec3f_t *r, const vec3f_t *a, double as)
+void vec3f_mul(struct vec3f_s *r, const struct vec3f_s *a, double as)
 {
     r->x = a->x * as;
     r->y = a->y * as;
     r->z = a->z * as;
 }
 
-void vec3f_cl(pin3f_t *r, const vec3f_t *a, const vec3f_t *b)
+void vec3f_cl(struct pin3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
 {
     r->p12 = a->x * b->y - a->y * b->x;
     r->p23 = a->y * b->z - a->z * b->y;
@@ -80,62 +80,62 @@ void vec3f_cl(pin3f_t *r, const vec3f_t *a, const vec3f_t *b)
     r->p0 = a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
-void vec3f_mad2(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs)
+void vec3f_mad2(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs)
 {
     r->x = a->x * as + b->x * bs;
     r->y = a->y * as + b->y * bs;
     r->z = a->z * as + b->z * bs;
 }
 
-void vec3f_mad3(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs, const vec3f_t *c, double cs)
+void vec3f_mad3(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs, const struct vec3f_s *c, double cs)
 {
     r->x = a->x * as + b->x * bs + c->x * cs;
     r->y = a->y * as + b->y * bs + c->y * cs;
     r->z = a->z * as + b->z * bs + c->z * cs;
 }
 
-void vec3f_mad4(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs, const vec3f_t *c, double cs, const vec3f_t *d, double ds)
+void vec3f_mad4(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs, const struct vec3f_s *c, double cs, const struct vec3f_s *d, double ds)
 {
     r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds;
     r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds;
     r->z = a->z * as + b->z * bs + c->z * cs + d->z * ds;
 }
 
-void vec3f_mad5(vec3f_t *r, const vec3f_t *a, double as, const vec3f_t *b, double bs, const vec3f_t *c, double cs, const vec3f_t *d, double ds, const vec3f_t *e, double es)
+void vec3f_mad5(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs, const struct vec3f_s *c, double cs, const struct vec3f_s *d, double ds, const struct vec3f_s *e, double es)
 {
     r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds + e->x * es;
     r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds + e->y * es;
     r->z = a->z * as + b->z * bs + c->z * cs + d->z * ds + e->z * es;
 }
 
-double vec3f_dot(const vec3f_t *a, const vec3f_t *b)
+double vec3f_dot(const struct vec3f_s *a, const struct vec3f_s *b)
 {
     return a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
-void vec3f_cross(vec3f_t *r, const vec3f_t *a, const vec3f_t *b)
+void vec3f_cross(struct vec3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
 {
     r->x = a->y * b->z - a->z * b->y;
     r->y = a->z * b->x - a->x * b->z;
     r->z = a->x * b->y - a->y * b->x;
 }
 
-void vec3f_unit(vec3f_t *r, const vec3f_t *v)
+void vec3f_unit(struct vec3f_s *r, const struct vec3f_s *v)
 {
     vec3f_mul(r, v, 1.0 / vec3f_len(v));
 }
 
-double vec3f_len(const vec3f_t *v)
+double vec3f_len(const struct vec3f_s *v)
 {
     return sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
 }
 
-double vec3f_sqlen(const vec3f_t *v)
+double vec3f_sqlen(const struct vec3f_s *v)
 {
     return v->x * v->x + v->y * v->y + v->z * v->z;
 }
 
-double vec3f_tr(const vec3f_t *v)
+double vec3f_tr(const struct vec3f_s *v)
 {
     return v->x + v->y + v->z;
 }

@@ -40,8 +40,6 @@ struct predbb3f_s
     int a;
 };
 
-typedef struct predbb3f_s predbb3f_t;
-
 CS2_API_END
 
 #endif /* CS2_PREDBB3F_H */

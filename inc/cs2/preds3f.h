@@ -37,13 +37,11 @@ CS2_API_BEGIN
  */
 struct preds3f_s
 {
-    vec3f_t k, l, a, b;
+    struct vec3f_s k, l, a, b;
 };
 
-typedef struct preds3f_s preds3f_t;
-
-CS2_API void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b);
-CS2_API void preds3f_copy(preds3f_t *r, const preds3f_t *s);
+CS2_API void preds3f_set(struct preds3f_s *s, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b);
+CS2_API void preds3f_copy(struct preds3f_s *r, const struct preds3f_s *s);
 
 CS2_API_END
 

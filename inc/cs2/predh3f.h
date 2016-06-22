@@ -38,14 +38,12 @@ CS2_API_BEGIN
  */
 struct predh3f_s
 {
-    vec3f_t b;
-    plane3f_t p;
+    struct vec3f_s b;
+    struct plane3f_s p;
 };
 
-typedef struct predh3f_s predh3f_t;
-
-CS2_API void predh3f_set(predh3f_t *g, const vec3f_t *b, const plane3f_t *p);
-CS2_API void predh3f_copy(predh3f_t *r, const predh3f_t *h);
+CS2_API void predh3f_set(struct predh3f_s *g, const struct vec3f_s *b, const struct plane3f_s *p);
+CS2_API void predh3f_copy(struct predh3f_s *r, const struct predh3f_s *h);
 
 CS2_API_END
 

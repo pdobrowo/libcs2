@@ -24,13 +24,13 @@
  */
 #include "cs2/predh3f.h"
 
-void predh3f_set(predh3f_t *g, const vec3f_t *b, const plane3f_t *p)
+void predh3f_set(struct predh3f_s *g, const struct vec3f_s *b, const struct plane3f_s *p)
 {
     vec3f_copy(&g->b, b);
     plane3f_copy(&g->p, p);
 }
 
-void predh3f_copy(predh3f_t *r, const predh3f_t *h)
+void predh3f_copy(struct predh3f_s *r, const struct predh3f_s *h)
 {
     vec3f_copy(&r->b, &h->b);
     plane3f_copy(&r->p, &h->p);

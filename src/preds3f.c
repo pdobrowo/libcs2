@@ -24,7 +24,7 @@
  */
 #include "cs2/preds3f.h"
 
-void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t *a, const vec3f_t *b)
+void preds3f_set(struct preds3f_s *s, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b)
 {
     vec3f_copy(&s->k, k);
     vec3f_copy(&s->l, l);
@@ -32,7 +32,7 @@ void preds3f_set(preds3f_t *s, const vec3f_t *k, const vec3f_t *l, const vec3f_t
     vec3f_copy(&s->b, b);
 }
 
-void preds3f_copy(preds3f_t *r, const preds3f_t *s)
+void preds3f_copy(struct preds3f_s *r, const struct preds3f_s *s)
 {
     vec3f_copy(&r->k, &s->k);
     vec3f_copy(&r->l, &s->l);

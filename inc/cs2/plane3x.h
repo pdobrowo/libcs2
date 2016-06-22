@@ -32,14 +32,12 @@ CS2_API_BEGIN
 
 struct plane3x_s
 {
-    vec3x_t n;
+    struct vec3x_s n;
     mpz_t d;
 };
 
-typedef struct plane3x_s plane3x_t;
-
-CS2_API void plane3x_init(plane3x_t *p);
-CS2_API void plane3x_clear(plane3x_t *p);
+CS2_API void plane3x_init(struct plane3x_s *p);
+CS2_API void plane3x_clear(struct plane3x_s *p);
 
 CS2_API_END
 

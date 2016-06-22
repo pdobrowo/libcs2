@@ -39,11 +39,9 @@ CS2_API_BEGIN
  */
 struct predtt3f_s
 {
-    vec3f_t k, l, m;
-    vec3f_t a, b, c;
+    struct vec3f_s k, l, m;
+    struct vec3f_s a, b, c;
 };
-
-typedef struct predtt3f_s predtt3f_t;
 
 /**
  * decomposition
@@ -59,12 +57,10 @@ typedef struct predtt3f_s predtt3f_t;
  */
 struct predttdecomp3f_s
 {
-    preds3f_t s[3][3];
+    struct preds3f_s s[3][3];
 };
 
-typedef struct predttdecomp3f_s predttdecomp3f_t;
-
-CS2_API void predtt3f_decomp(predttdecomp3f_t *d, const predtt3f_t *tt);
+CS2_API void predtt3f_decomp(struct predttdecomp3f_s *d, const struct predtt3f_s *tt);
 
 CS2_API_END
 

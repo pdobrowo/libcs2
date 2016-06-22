@@ -34,10 +34,8 @@ struct mat44f_s
     double m[4][4];
 };
 
-typedef struct mat44f_s mat44f_t;
-
-CS2_API void mat44f_zero(mat44f_t *m);
-CS2_API void mat44f_identity(mat44f_t *m);
+CS2_API void mat44f_zero(struct mat44f_s *m);
+CS2_API void mat44f_identity(struct mat44f_s *m);
 
 CS2_API_END
 

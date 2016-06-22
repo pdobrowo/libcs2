@@ -25,7 +25,7 @@
 #include "cs2/predg3x.h"
 #include <assert.h>
 
-static void calc_r(vec3x_t *r, const vec3x_t *v)
+static void calc_r(struct vec3x_s *r, const struct vec3x_s *v)
 {
     if (mpz_sgn(v->x))
     {
@@ -49,7 +49,7 @@ static void calc_r(vec3x_t *r, const vec3x_t *v)
 
 #if 0
 
-static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t *u, const vec3x_t *v, double a, double b)
+static void calc_w(struct vec4f_s *w, const struct vec3x_s *p, const struct vec3x_s *q, const struct vec3x_s *u, const struct vec3x_s *v, double a, double b)
 {
     double pp = vec3x_sqlen(p);
     double qq = vec3x_sqlen(q);
@@ -59,14 +59,14 @@ static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t
     double pv = vec3x_dot(p, v);
     double qu = vec3x_dot(q, u);
     double uv = vec3x_dot(u, v);
-    double trp = vec3x_tr(p);
-    double trq = vec3x_tr(q);
-    double tru = vec3x_tr(u);
-    double trv = vec3x_tr(v);
+    double trp = struct vec3x_sr(p);
+    double trq = struct vec3x_sr(q);
+    double tru = struct vec3x_sr(u);
+    double trv = struct vec3x_sr(v);
     double l = a * sqrt(pp) * sqrt(qq) + b * sqrt(uu) * sqrt(vv);
 
-    vec3x_t pxq, uxv, pxu, qxv, t, r, d;
-    vec3x_t j = { 1, 1, 1 };
+    struct vec3x_s pxq, uxv, pxu, qxv, t, r, d;
+    struct vec3x_s j = { 1, 1, 1 };
 
     vec3x_cross(&pxq, p, q);
     vec3x_cross(&uxv, u, v);
@@ -88,7 +88,7 @@ static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t
      *     + L (P.V (Q tr(U) + U tr(Q)) + Q.U (P tr(V) + V tr(P)))
      *     + (L^2 - [P]^2 [Q]^2 - [U]^2 [V]^2) ( J (P.Q + U.V + L) - (P tr(Q) + Q tr(P) + U tr(V) + V tr(U)) )
      */
-    vec3x_mad2(&d, &pxu, vec3x_tr(&qxv), &qxv, vec3x_tr(&pxu));
+    vec3x_mad2(&d, &pxu, struct vec3x_sr(&qxv), &qxv, struct vec3x_sr(&pxu));
     vec3x_mul(&d, &d, pq + uv + l);
 
     vec3x_mad2(&t, p, tru, u, trp);
@@ -139,7 +139,7 @@ static void calc_w(vec4f_t *w, const vec3x_t *p, const vec3x_t *q, const vec3x_t
 
 #endif
 
-void predg3x_init(predg3x_t *g)
+void predg3x_init(struct predg3x_s *g)
 {
     vec3x_init(&g->k);
     vec3x_init(&g->l);
@@ -148,7 +148,7 @@ void predg3x_init(predg3x_t *g)
     mpz_init(g->c);
 }
 
-void predg3x_clear(predg3x_t *g)
+void predg3x_clear(struct predg3x_s *g)
 {
     vec3x_clear(&g->k);
     vec3x_clear(&g->l);
@@ -157,7 +157,7 @@ void predg3x_clear(predg3x_t *g)
     mpz_clear(g->c);
 }
 
-void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h)
+void predg3x_from_predh3x(struct predg3x_s *g, const struct predh3x_s *h)
 {
     calc_r(&g->l, &h->p.n);
     vec3x_cross(&g->k, &h->p.n, &g->l);
@@ -169,7 +169,7 @@ void predg3x_from_predh3x(predg3x_t *g, const predh3x_t *h)
     mpz_mul_2exp(g->c, g->c, 1);
 }
 
-void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s)
+void predg3x_from_preds3x(struct predg3x_s *g, const struct preds3x_s *s)
 {
     vec3x_copy(&g->k, &s->k);
     vec3x_copy(&g->l, &s->l);
@@ -178,7 +178,7 @@ void predg3x_from_preds3x(predg3x_t *g, const preds3x_t *s)
     mpz_set_si(g->c, 0);
 }
 
-void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_t *g)
+void predg3x_pquv(struct vec3x_s *p, struct vec3x_s *q, struct vec3x_s *u, struct vec3x_s *v, const struct predg3x_s *g)
 {
     vec3x_cross(p, &g->k, &g->l);
     vec3x_sub(q, &g->a, &g->b);
@@ -186,7 +186,7 @@ void predg3x_pquv(vec3x_t *p, vec3x_t *q, vec3x_t *u, vec3x_t *v, const predg3x_
     vec3x_cross(v, &g->a, &g->b);
 }
 
-const char *predgtype3x_str(predgtype3x_t t)
+const char *predgtype3x_str(enum predgtype3x_e t)
 {
     switch (t)
     {
@@ -197,11 +197,11 @@ const char *predgtype3x_str(predgtype3x_t t)
     }
 }
 
-predgtype3x_t predg3x_type(const predg3x_t *g)
+enum predgtype3x_e predg3x_type(const struct predg3x_s *g)
 {
-    vec3x_t p, q, u, v;
+    struct vec3x_s p, q, u, v;
     int pq, uv;
-    predgtype3x_t t;
+    enum predgtype3x_e t;
     vec3x_init(&p);
     vec3x_init(&q);
     vec3x_init(&u);
@@ -224,9 +224,9 @@ predgtype3x_t predg3x_type(const predg3x_t *g)
 
 #if 0
 
-void predg3x_param(predgparam3x_t *pp, const predg3x_t *g)
+void predg3x_param(struct predgparam3x_s *pp, const struct predg3x_s *g)
 {
-    vec3x_t p, q, u, v;
+    struct vec3x_s p, q, u, v;
     double pl, ql, ul, vl, su;
 
     predg3x_pquv(&p, &q, &u, &v, g);
@@ -246,7 +246,7 @@ void predg3x_param(predgparam3x_t *pp, const predg3x_t *g)
     predg3x_eigen(&pp->q, 0, g);
 }
 
-void predgparam3x_eval(spin3x_t *s, const predgparam3x_t *pp, double u, double v, double sgn)
+void predgparam3x_eval(sstruct pin3x_s *s, const struct predgparam3x_s *pp, double u, double v, double sgn)
 {
     double a = u * PI;
     double b = v * 2 * PI;
@@ -261,10 +261,10 @@ void predgparam3x_eval(spin3x_t *s, const predgparam3x_t *pp, double u, double v
     s->s0 = pp->q.m[3][0] * t12 + pp->q.m[3][1] * t23 + pp->q.m[3][2] * t31 + pp->q.m[3][3] * t0;
 }
 
-void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g)
+void predg3x_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3x_s *g)
 {
-    vec3x_t p, q, u, v;
-    vec4f_t w1, w2, w3, w4;
+    struct vec3x_s p, q, u, v;
+    struct vec4f_s w1, w2, w3, w4;
     double pl, ql, ul, vl, w1l, w2l, w3l, w4l;
 
     predg3x_pquv(&p, &q, &u, &v, g);
@@ -287,9 +287,9 @@ void predg3x_eigen(mat44f_t *m, vec4f_t *e, const predg3x_t *g)
     if (m)
     {
         /* only ellipsoidal param for now */
-        /*assert(predg3x_type(g) == predgtype3x_ellipsoidal);*/
+        /*assert(struct predg3x_sype(g) == predgtype3x_ellipsoidal);*/
 
-        if (predg3x_type(g) != predgtype3x_ellipsoidal)
+        if (struct predg3x_sype(g) != predgtype3x_ellipsoidal)
         {
             /* note: debug code */
             m->m[0][0] = 0;
