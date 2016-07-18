@@ -25,11 +25,20 @@
 #include "cs2/vec3f.h"
 #include <criterion/criterion.h>
 
+Test(vec3f, set)
+{
+    struct vec3f_s v;
+    vec3f_set(&v, 1.0f, 2.0f, 3.0f);
+    cr_assert(v.x == 1.0f);
+    cr_assert(v.y == 2.0f);
+    cr_assert(v.z == 3.0f);
+}
+
 Test(vec3f, zero)
 {
     struct vec3f_s v;
     vec3f_zero(&v);
     cr_assert(v.x == 0.0f);
+    cr_assert(v.y == 0.0f);
+    cr_assert(v.z == 0.0f);
 }
-
-
