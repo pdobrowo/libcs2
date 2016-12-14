@@ -1,9 +1,5 @@
 #!/bin/sh
-(
-    cd deps;
-    (
-        cd criterion;
-        cmake . && make;
-     )
-)
+
+# deps
+( cd deps; ./make.sh )
 
