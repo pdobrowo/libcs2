@@ -1,4 +1,5 @@
 # Configuration Space Library (libcs2)
+CircleCI: [![CircleCI](https://circleci.com/gh/pdobrowo/libcs2.svg?style=svg)](https://circleci.com/gh/pdobrowo/libcs2)
 ##### A library for creating configuration spaces of various motion planning problems.
 ###### Copyright (c) 2015-2016 Przemysław Dobrowolski
 
