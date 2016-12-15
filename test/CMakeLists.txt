@@ -59,6 +59,7 @@ set(test_HEADERS
 set(unittest_SOURCES
     ${unittest_HEADERS}
     vec3f.c
+    vec3x.c
 )
 
 add_executable(unittest ${unittest_SOURCES})

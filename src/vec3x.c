@@ -99,6 +99,27 @@ void vec3x_mul(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as)
     mpz_mul(r->z, a->z, as);
 }
 
+void vec3x_cl(struct pin3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b)
+{
+    mpz_t t;
+    mpz_init(t);
+    mpz_mul(r->p12, a->x, b->y);
+    mpz_mul(t, a->y, b->x);
+    mpz_sub(r->p12, r->p12, t);
+    mpz_mul(r->p23, a->y, b->z);
+    mpz_mul(t, a->z, b->y);
+    mpz_sub(r->p23, r->p23, t);
+    mpz_mul(r->p31, a->z, b->x);
+    mpz_mul(t, a->x, b->z);
+    mpz_sub(r->p31, r->p31, t);
+    mpz_mul(r->p0, a->x, b->x);
+    mpz_mul(t, a->y, b->y);
+    mpz_add(r->p0, r->p0, t);
+    mpz_mul(t, a->z, b->z);
+    mpz_add(r->p0, r->p0, t);
+    mpz_clear(t);
+}
+
 void vec3x_mad2(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs)
 {
     mpz_t t;
