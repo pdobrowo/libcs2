@@ -26,6 +26,7 @@
 #define CS2_VEC3X_H
 
 #include "defs.h"
+#include "pin3x.h"
 #include <gmp.h>
 
 CS2_API_BEGIN
@@ -50,6 +51,8 @@ CS2_API void vec3x_add(struct vec3x_s *r, const struct vec3x_s *a, const struct 
 CS2_API void vec3x_sub(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b);
 CS2_API void vec3x_neg(struct vec3x_s *r, const struct vec3x_s *v);
 CS2_API void vec3x_mul(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as);
+
+CS2_API void vec3x_cl(struct pin3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b);
 
 CS2_API void vec3x_mad2(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs);
 CS2_API void vec3x_mad3(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs);
