@@ -22,22 +22,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLUGIN_H
-#define CS2_PLUGIN_H
+#include "cs2/rand.h"
+#include <stdlib.h>
+#include <time.h>
 
-#include "defs.h"
+static void init_rand(void) __attribute__((constructor));
 
-CS2_API_BEGIN
+void init_rand(void)
+{
+    srand((unsigned)time(0));
+}
 
-typedef void (*plugin_fn_t)(void);
-
-CS2_API int plugin_ldpath(const char *p);
-
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_fn_t plugin_fn(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
-
-CS2_API_END
-
-#endif /* CS2_PLUGIN_H */
+double rand_u1f(double min, double max)
+{
+    return min + (max - min) * (double)rand() / (double)RAND_MAX;
+}

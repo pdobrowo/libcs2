@@ -58,6 +58,8 @@ set(cs2_HEADERS
     inc/cs2/predtt3f.h
     inc/cs2/predcc3f.h
     inc/cs2/predmm3f.h
+    inc/cs2/bezierqq1f.h
+    inc/cs2/bezierqq4f.h
 
     # exact integer arithmetic
     inc/cs2/vec3x.h
@@ -72,6 +74,7 @@ set(cs2_HEADERS
     inc/cs2/defs.h
     inc/cs2/plugin.h
     inc/cs2/timer.h
+    inc/cs2/rand.h
 )
 
 # src
@@ -93,6 +96,8 @@ set(cs2_SOURCES
     src/predtt3f.c
     src/predcc3f.c
     src/predmm3f.c
+    src/bezierqq1f.c
+    src/bezierqq4f.c
 
     # exact integer arithmetic
     src/vec3x.c
@@ -106,6 +111,7 @@ set(cs2_SOURCES
     # other
     src/plugin.c
     src/timer.c
+    src/rand.c
 )
 
 add_library(cs2 SHARED ${cs2_SOURCES})

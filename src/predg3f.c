@@ -123,7 +123,7 @@ static void calc_toroidal_w(struct vec4f_s *w1, struct vec4f_s *w2, const struct
     vec4f_mul(w2, w2, 1.0 / vec4f_len(w2));
 }
 
-static enum predgparamtype3f_e inproper_param_case()
+static enum predgparamtype3f_e inproper_param_case(void)
 {
     return predgparamtype3f_an_empty_set;
 }

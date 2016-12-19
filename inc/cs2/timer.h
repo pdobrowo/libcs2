@@ -30,10 +30,10 @@
 
 CS2_API_BEGIN
 
-CS2_API uint64_t timer_sec();
-CS2_API uint64_t timer_msec();
-CS2_API uint64_t timer_usec();
-CS2_API uint64_t timer_nsec();
+CS2_API uint64_t timer_sec(void);
+CS2_API uint64_t timer_msec(void);
+CS2_API uint64_t timer_usec(void);
+CS2_API uint64_t timer_nsec(void);
 
 CS2_API_END
 

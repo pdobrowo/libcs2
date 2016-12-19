@@ -38,6 +38,14 @@ void vec4f_zero(struct vec4f_s *r)
     vec4f_set(r, 0, 0, 0, 0);
 }
 
+void vec4f_copy(struct vec4f_s *r, const struct vec4f_s *v)
+{
+    r->x = v->x;
+    r->y = v->y;
+    r->z = v->z;
+    r->w = v->w;
+}
+
 void vec4f_add(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b)
 {
     r->x = a->x + b->x;

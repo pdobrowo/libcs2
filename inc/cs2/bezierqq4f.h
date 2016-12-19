@@ -22,22 +22,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLUGIN_H
-#define CS2_PLUGIN_H
+#ifndef CS2_BEZIERQQ4F_H
+#define CS2_BEZIERQQ4F_H
 
 #include "defs.h"
+#include "vec4f.h"
 
 CS2_API_BEGIN
 
-typedef void (*plugin_fn_t)(void);
+/**
+ * bezier quadratic-quadratic patch in 4 dimensions
+ *
+ * index (uv):
+ *
+ * 00 01 02
+ * 10 11 12
+ * 20 21 22
+ *
+ */
+struct bezierqq4f_s
+{
+    struct vec4f_s p00, p01, p02;
+    struct vec4f_s p10, p11, p12;
+    struct vec4f_s p20, p21, p22;
+};
 
-CS2_API int plugin_ldpath(const char *p);
+struct bezierqq4f_coeff_s
+{
+    /* coeffs at 0.0 - 0.5 - 1.0 */
+    struct vec4f_s c00, c01, c02;
+    struct vec4f_s c10, c11, c12;
+    struct vec4f_s c20, c21, c22;
+};
 
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_fn_t plugin_fn(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
+CS2_API void bezierqq4f_from_qq(struct bezierqq4f_s *b, const struct bezierqq4f_coeff_s *c);
+CS2_API void bezierqq4f_eval(struct vec4f_s *r, const struct bezierqq4f_s *b, double u, double v);
 
 CS2_API_END
 
-#endif /* CS2_PLUGIN_H */
+#endif /* CS2_BEZIERQQ4F_H */
