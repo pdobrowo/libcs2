@@ -22,22 +22,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLUGIN_H
-#define CS2_PLUGIN_H
+#include "cs2/bezierqq1f.h"
 
-#include "defs.h"
+void bezierqq1f_from_qq(struct bezierqq1f_s *b, const struct bezierqq1f_coeff_s *c)
+{
+    /* corners */
+    b->p00 = c->c00;
+    b->p02 = c->c02;
+    b->p20 = c->c20;
+    b->p22 = c->c22;
 
-CS2_API_BEGIN
+    /* mid-border */
+    b->p01 = 0.5 * (4.0 * c->c01 - (b->p00 + b->p02));
+    b->p10 = 0.5 * (4.0 * c->c10 - (b->p00 + b->p20));
+    b->p21 = 0.5 * (4.0 * c->c21 - (b->p20 + b->p22));
+    b->p12 = 0.5 * (4.0 * c->c12 - (b->p02 + b->p22));
 
-typedef void (*plugin_fn_t)(void);
+    /* mid */
+    b->p11 =  0.25 * (16.0 * c->c11 - 2.0 * (b->p01 + b->p10 + b->p12 + b->p21) - (b->p00 + b->p02 + b->p20 + b->p22));
+}
 
-CS2_API int plugin_ldpath(const char *p);
+double bezierqq1f_eval(const struct bezierqq1f_s *b, double u, double v)
+{
+    double uu = u * u;
+    double cu = 1.0 - u;
+    double cucu = cu * cu;
+    double ucu = u  * cu;
+    double vv = v * v;
+    double cv = 1.0 - v;
+    double cvcv = cv * cv;
+    double vcv = v * cv;
 
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_fn_t plugin_fn(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
-
-CS2_API_END
-
-#endif /* CS2_PLUGIN_H */
+    return 1.0 * 1.0 * cucu * cvcv * b->p00 + 1.0 * 2.0 * cucu * vcv * b->p01 + 1.0 * 1.0 * cucu * vv * b->p02 +
+           2.0 * 1.0 * ucu  * cvcv * b->p10 + 2.0 * 2.0 * ucu  * vcv * b->p11 + 2.0 * 1.0 * ucu  * vv * b->p12 +
+           1.0 * 1.0 * uu   * cvcv * b->p20 + 1.0 * 2.0 * uu   * vcv * b->p21 + 1.0 * 1.0 * uu   * vv * b->p22;
+}

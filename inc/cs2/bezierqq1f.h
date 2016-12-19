@@ -22,22 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLUGIN_H
-#define CS2_PLUGIN_H
+#ifndef CS2_BEZIERQQ1F_H
+#define CS2_BEZIERQQ1F_H
 
 #include "defs.h"
 
 CS2_API_BEGIN
 
-typedef void (*plugin_fn_t)(void);
+/**
+ * bezier quadratic-quadratic patch in 1 dimension
+ *
+ * index (uv):
+ *
+ * 00 01 02
+ * 10 11 12
+ * 20 21 22
+ *
+ */
+struct bezierqq1f_s
+{
+    double p00, p01, p02;
+    double p10, p11, p12;
+    double p20, p21, p22;
+};
 
-CS2_API int plugin_ldpath(const char *p);
+struct bezierqq1f_coeff_s
+{
+    /* coeffs at 0.0 - 0.5 - 1.0 */
+    double c00, c01, c02;
+    double c10, c11, c12;
+    double c20, c21, c22;
+};
 
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_fn_t plugin_fn(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
+CS2_API void bezierqq1f_from_qq(struct bezierqq1f_s *b, const struct bezierqq1f_coeff_s *c);
+CS2_API double bezierqq1f_eval(const struct bezierqq1f_s *b, double u, double v);
 
 CS2_API_END
 
-#endif /* CS2_PLUGIN_H */
+#endif /* CS2_BEZIERQQ1F_H */

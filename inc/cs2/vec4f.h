@@ -38,6 +38,8 @@ struct vec4f_s
 CS2_API void vec4f_set(struct vec4f_s *r, double x, double y, double z, double w);
 CS2_API void vec4f_zero(struct vec4f_s *r);
 
+CS2_API void vec4f_copy(struct vec4f_s *r, const struct vec4f_s *v);
+
 CS2_API void vec4f_add(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b);
 CS2_API void vec4f_sub(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b);
 CS2_API void vec4f_neg(struct vec4f_s *r, const struct vec4f_s *v);

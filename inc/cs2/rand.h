@@ -22,22 +22,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLUGIN_H
-#define CS2_PLUGIN_H
+#ifndef CS2_RAND_H
+#define CS2_RAND_H
 
 #include "defs.h"
+#include <stdint.h>
 
 CS2_API_BEGIN
 
-typedef void (*plugin_fn_t)(void);
-
-CS2_API int plugin_ldpath(const char *p);
-
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_fn_t plugin_fn(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
+CS2_API double rand_u1f(double min, double max); /* uniform rand [min; max] */
 
 CS2_API_END
 
-#endif /* CS2_PLUGIN_H */
+#endif /* CS2_RAND_H */
