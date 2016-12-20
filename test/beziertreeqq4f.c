@@ -22,83 +22,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plugin.h"
-#include <string.h>
-#include <stdlib.h>
-#include <dlfcn.h>
-#include <assert.h>
+#include "cs2/beziertreeqq4f.h"
+#include "cs2/predg3f.h"
+#include <criterion/criterion.h>
 
-#define PLUGIN_MAXPATH 1024
-
-static char g_ldpath[PLUGIN_MAXPATH] = "";
-static size_t g_ldpathlen = 0;
-
-int plugin_ldpath(const char *p)
+struct predbb_func_s
 {
-    size_t l = strlen(p);
+    struct predg3f_s p;
+    struct predgparam3f_s pp;
+};
 
-    if (l >= sizeof(g_ldpath))
-        return -1;
-
-    memcpy(g_ldpath, p, l + 1);
-    g_ldpathlen = l;
-
-    return 0;
+static void predbb_func(struct vec4f_s *r, double u, double v, void *data)
+{
+    struct predbb_func_s *f = (struct predbb_func_s *)data;
+    struct spin3f_s s;
+    predgparam3f_eval(&s, &f->pp, u, v, 0);
+    r->x = s.s12;
+    r->y = s.s23;
+    r->z = s.s31;
+    r->w = s.s0;
 }
 
-void *plugin_load(const char *f)
+static void create_z_barrel(struct predg3f_s *p)
 {
-    size_t pl, fl;
-    char *p, *r;
-    void *d;
-
-    /* real ld path */
-    p = realpath(g_ldpath, 0);
-
-    if (!p)
-        return 0;
-
-    pl = strlen(p);
-
-    /* file name */
-    fl = strlen(f);
-
-    /* full path */
-    r = (char *)malloc(pl + fl + 2);
-
-    if (!r)
-    {
-        free(p);
-        return 0;
-    }
-
-    memcpy(r, p, pl);
-    r[pl] = '/';
-    memcpy(r + pl + 1, f, fl + 1);
-
-    d = dlopen(r, RTLD_NOW);
-
-    free(r);
-    free(p);
-
-    return d;
+    /* an example z-barrel */
+    vec3f_set(&p->k, 1.0, 1.0, 1.0);
+    vec3f_set(&p->l, 1.0, 0.0, 2.0);
+    vec3f_set(&p->a, 0.0, 1.0, 1.0);
+    vec3f_set(&p->b, 0.0, 2.0, 1.0);
+    p->c = 0.5;
 }
 
-void *plugin_sym(void *p, const char *s)
+Test(beziertreeqq4f, predbb3f)
 {
-    return dlsym(p, s);
-}
-
-void plugin_unload(void *p)
-{
-    (void)dlclose(p);
-}
-
-plugin_func_t plugin_func(void *p, const char *s)
-{
-    plugin_func_t fn;
-    void *sym = plugin_sym(p, s);
-    assert(sizeof(fn) == sizeof(sym));
-    memcpy(&fn, &sym, sizeof(fn));
-    return fn;
+    struct beziertreeqq4f_s bt;
+    struct predbb_func_s f;
+    create_z_barrel(&f.p);
+    predg3f_param(&f.pp, &f.p);
+    beziertreeqq4f_init(&bt);
+    beziertreeqq4f_from_func(&bt, &predbb_func, &f);
+    beziertreenodeqq4f_subdivide(bt.r);
 }
