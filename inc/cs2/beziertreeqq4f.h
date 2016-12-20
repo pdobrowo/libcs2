@@ -22,22 +22,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLUGIN_H
-#define CS2_PLUGIN_H
+#ifndef CS2_BEZIERTREEQQ4F_H
+#define CS2_BEZIERTREEQQ4F_H
 
 #include "defs.h"
+#include "bezierqq4f.h"
+#include "vec4f.h"
 
 CS2_API_BEGIN
 
-typedef void (*plugin_func_t)(void);
+/**
+ * spin bezier tree node
+ */
+struct beziertreenodeqq4f_s
+{
+    struct bezierqq4f_s b;
 
-CS2_API int plugin_ldpath(const char *p);
+    double u0, u1, u2;
+    double v0, v1, v2;
 
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_func_t plugin_func(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
+    struct beziertreeqq4f_s *r;
+    struct beziertreenodeqq4f_s *p;
+
+    /**
+     * index (uv):
+     *
+     * 00 01
+     * 10 11
+     */
+    struct beziertreenodeqq4f_s *c[2][2];
+};
+
+CS2_API void beziertreenodeqq4f_init(struct beziertreenodeqq4f_s *btn, double u0, double u1, double u2, double v0, double v1, double v2,
+                                     struct beziertreeqq4f_s *r, struct beziertreenodeqq4f_s *p);
+CS2_API void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *btn);
+
+CS2_API void beziertreenodeqq4f_subdivide(struct beziertreenodeqq4f_s *btn);
+
+typedef void (*beziertreeqq4f_func_t)(struct vec4f_s *r, double u, double v, void *data);
+
+struct beziertreeqq4f_s
+{
+    beziertreeqq4f_func_t f;
+    void *data;
+    struct beziertreenodeqq4f_s *r;
+};
+
+CS2_API void beziertreeqq4f_init(struct beziertreeqq4f_s *bt);
+CS2_API void beziertreeqq4f_clear(struct beziertreeqq4f_s *bt);
+
+CS2_API void beziertreeqq4f_from_func(struct beziertreeqq4f_s *bt, beziertreeqq4f_func_t f, void *data);
 
 CS2_API_END
 
-#endif /* CS2_PLUGIN_H */
+#endif /* CS2_BEZIERTREEQQ4F_H */

@@ -59,6 +59,7 @@ set(test_HEADERS
 set(unittest_SOURCES
     ${unittest_HEADERS}
     bezierqq1f.c
+    beziertreeqq4f.c
     vec3f.c
     vec3x.c
 )

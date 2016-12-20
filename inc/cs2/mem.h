@@ -22,83 +22,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/plugin.h"
-#include <string.h>
-#include <stdlib.h>
-#include <dlfcn.h>
-#include <assert.h>
+#ifndef CS2_MEM_H
+#define CS2_MEM_H
 
-#define PLUGIN_MAXPATH 1024
+#include "defs.h"
+#include <stddef.h>
 
-static char g_ldpath[PLUGIN_MAXPATH] = "";
-static size_t g_ldpathlen = 0;
+CS2_API_BEGIN
 
-int plugin_ldpath(const char *p)
-{
-    size_t l = strlen(p);
+typedef void (*mem_error_func_t)(const char *file, int line, size_t size, const char *type);
 
-    if (l >= sizeof(g_ldpath))
-        return -1;
+CS2_API mem_error_func_t mem_at_error(mem_error_func_t f);
+CS2_API void mem_default_error_func(const char *file, int line, size_t size, const char *type);
+CS2_API void mem_trigger_error(const char *file, int line, size_t size, const char *type);
 
-    memcpy(g_ldpath, p, l + 1);
-    g_ldpathlen = l;
+#define MEM_MALLOC(Type) \
+    (__extension__( \
+        { \
+            void *ptr; \
+            while (!(ptr = malloc(sizeof(Type)))) \
+                mem_trigger_error(__FILE__, __LINE__, sizeof(Type), #Type); \
+            (Type *)ptr; \
+        } \
+    ))
 
-    return 0;
-}
+#define MEM_FREE(Ptr) \
+    do { if (Ptr) free(Ptr); } while (0)
 
-void *plugin_load(const char *f)
-{
-    size_t pl, fl;
-    char *p, *r;
-    void *d;
-
-    /* real ld path */
-    p = realpath(g_ldpath, 0);
-
-    if (!p)
-        return 0;
-
-    pl = strlen(p);
-
-    /* file name */
-    fl = strlen(f);
-
-    /* full path */
-    r = (char *)malloc(pl + fl + 2);
-
-    if (!r)
-    {
-        free(p);
-        return 0;
-    }
-
-    memcpy(r, p, pl);
-    r[pl] = '/';
-    memcpy(r + pl + 1, f, fl + 1);
-
-    d = dlopen(r, RTLD_NOW);
-
-    free(r);
-    free(p);
-
-    return d;
-}
-
-void *plugin_sym(void *p, const char *s)
-{
-    return dlsym(p, s);
-}
-
-void plugin_unload(void *p)
-{
-    (void)dlclose(p);
-}
-
-plugin_func_t plugin_func(void *p, const char *s)
-{
-    plugin_func_t fn;
-    void *sym = plugin_sym(p, s);
-    assert(sizeof(fn) == sizeof(sym));
-    memcpy(&fn, &sym, sizeof(fn));
-    return fn;
-}
+#endif /* CS2_MEM_H */
