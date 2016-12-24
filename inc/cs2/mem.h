@@ -46,6 +46,16 @@ CS2_API void mem_trigger_error(const char *file, int line, size_t size, const ch
         } \
     ))
 
+#define MEM_MALLOC_N(Type, N) \
+    (__extension__( \
+        { \
+            void *ptr; \
+            while (!(ptr = malloc(sizeof(Type) * N))) \
+                mem_trigger_error(__FILE__, __LINE__, sizeof(Type), #Type); \
+            (Type *)ptr; \
+        } \
+    ))
+
 #define MEM_FREE(Ptr) \
     do { if (Ptr) free(Ptr); } while (0)
 

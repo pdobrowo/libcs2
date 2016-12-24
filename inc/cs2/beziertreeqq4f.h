@@ -41,6 +41,8 @@ struct beziertreenodeqq4f_s
     double u0, u1, u2;
     double v0, v1, v2;
 
+    double vol;
+
     struct beziertreeqq4f_s *r;
     struct beziertreenodeqq4f_s *p;
 
@@ -59,6 +61,8 @@ CS2_API void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *btn);
 
 CS2_API void beziertreenodeqq4f_subdivide(struct beziertreenodeqq4f_s *btn);
 
+CS2_API double beziertreenodeqq4f_volume(struct beziertreenodeqq4f_s *btn);
+
 typedef void (*beziertreeqq4f_func_t)(struct vec4f_s *r, double u, double v, void *data);
 
 struct beziertreeqq4f_s
@@ -72,6 +76,8 @@ CS2_API void beziertreeqq4f_init(struct beziertreeqq4f_s *bt);
 CS2_API void beziertreeqq4f_clear(struct beziertreeqq4f_s *bt);
 
 CS2_API void beziertreeqq4f_from_func(struct beziertreeqq4f_s *bt, beziertreeqq4f_func_t f, void *data);
+
+CS2_API double beziertreeqq4f_volume(struct beziertreeqq4f_s *btn);
 
 CS2_API_END
 

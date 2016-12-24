@@ -24,7 +24,7 @@
  */
 #include "cs2/bezierqq1f.h"
 #include "cs2/rand.h"
-#include <criterion/criterion.h>
+#include "criterion/criterion.h"
 #include <math.h>
 
 #define EPS (10e-8)

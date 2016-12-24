@@ -38,6 +38,7 @@ struct plane3x_s
 
 CS2_API void plane3x_init(struct plane3x_s *p);
 CS2_API void plane3x_clear(struct plane3x_s *p);
+CS2_API void plane3x_pops(mpz_ptr d, struct plane3x_s *r, struct vec3x_s *p);
 
 CS2_API_END
 

@@ -17,9 +17,9 @@ find_package(CS2 REQUIRED)
 include_directories(${CS2_INCLUDE_DIR})
 link_directories(${CS2_LIBRARY_DIR})
 
-# criterion
-include_directories(${CMAKE_SOURCE_DIR}/../deps/criterion/include)
-link_directories(${CMAKE_SOURCE_DIR}/../deps/criterion)
+# criterion (local)
+set(CRITERION_BASE_DIR ${CMAKE_SOURCE_DIR}/../deps/criterion)
+include_directories(${CRITERION_BASE_DIR}/include)
 
 # output directory
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin)
@@ -62,11 +62,9 @@ set(unittest_SOURCES
     beziertreeqq4f.c
     vec3f.c
     vec3x.c
+    hull4f.c
 )
 
 add_executable(unittest ${unittest_SOURCES})
-
-target_link_libraries(unittest
-    ${CS2_LIBRARIES}
-    criterion
-)
+target_link_libraries(unittest ${CS2_LIBRARIES})
+target_link_libraries(unittest ${CRITERION_BASE_DIR}/lib/libcriterion.so)

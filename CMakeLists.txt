@@ -12,9 +12,13 @@ include(CheckCCompilerFlag)
 # modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
-# gmp
+# deps: gmp (system)
 find_package(GMP REQUIRED)
 include_directories(${GMP_INCLUDE_DIR})
+
+# deps: qhull (local)
+set(QHULL_BASE_DIR ${CMAKE_SOURCE_DIR}/deps/qhull)
+include_directories(${QHULL_BASE_DIR}/include)
 
 # compiler settings
 add_definitions(
@@ -48,6 +52,7 @@ set(cs2_HEADERS
     inc/cs2/vec4f.h
     inc/cs2/mat44f.h
     inc/cs2/plane3f.h
+    inc/cs2/plane4f.h
     inc/cs2/pin3f.h
     inc/cs2/spin3f.h
     inc/cs2/spinquad3f.h
@@ -61,6 +66,7 @@ set(cs2_HEADERS
     inc/cs2/bezierqq1f.h
     inc/cs2/bezierqq4f.h
     inc/cs2/beziertreeqq4f.h
+    inc/cs2/hull4f.h
 
     # exact integer arithmetic
     inc/cs2/vec3x.h
@@ -88,6 +94,7 @@ set(cs2_SOURCES
     src/vec4f.c
     src/mat44f.c
     src/plane3f.c
+    src/plane4f.c
     src/pin3f.c
     src/spin3f.c
     src/spinquad3f.c
@@ -101,6 +108,7 @@ set(cs2_SOURCES
     src/bezierqq1f.c
     src/bezierqq4f.c
     src/beziertreeqq4f.c
+    src/hull4f.c
 
     # exact integer arithmetic
     src/vec3x.c
@@ -122,7 +130,13 @@ add_library(cs2 SHARED ${cs2_SOURCES})
 add_library(cs2_s STATIC ${cs2_SOURCES})
 
 set_target_properties(cs2 PROPERTIES C_VISIBILITY_PRESET hidden)
-target_link_libraries(cs2 c m ${GMP_LIBRARIES})
+target_link_libraries(cs2 c m)
+
+# deps: gmp (system)
+target_link_libraries(cs2 ${GMP_LIBRARIES})
+
+# deps: qhull (local)
+target_link_libraries(cs2 ${QHULL_BASE_DIR}/lib/libqhullstatic_r.a)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(cs2 dl)

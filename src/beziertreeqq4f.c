@@ -46,6 +46,8 @@ static void beziertreenodeqq4f_eval(struct beziertreenodeqq4f_s *btn)
 
 void beziertreenodeqq4f_init(struct beziertreenodeqq4f_s *btn, double u0, double u1, double u2, double v0, double v1, double v2, struct beziertreeqq4f_s *r, struct beziertreenodeqq4f_s *p)
 {
+    bezierqq4f_init(&btn->b);
+
     btn->u0 = u0;
     btn->u1 = u1;
     btn->u2 = u2;
@@ -62,6 +64,8 @@ void beziertreenodeqq4f_init(struct beziertreenodeqq4f_s *btn, double u0, double
     btn->c[1][1] = 0;
 
     beziertreenodeqq4f_eval(btn);
+
+    btn->vol = btn->b.h.vol;
 }
 
 void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *btn)
@@ -75,6 +79,8 @@ void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *btn)
     beziertreenodeqq4f_clear(btn->c[1][1]);
 
     MEM_FREE(btn);
+
+    bezierqq4f_clear(&btn->b);
 }
 
 void beziertreenodeqq4f_subdivide(struct beziertreenodeqq4f_s *btn)
@@ -84,10 +90,19 @@ void beziertreenodeqq4f_subdivide(struct beziertreenodeqq4f_s *btn)
     btn->c[1][0] = MEM_MALLOC(struct beziertreenodeqq4f_s);
     btn->c[1][1] = MEM_MALLOC(struct beziertreenodeqq4f_s);
 
-    beziertreenodeqq4f_init(btn->c[0][0], btn->u0, 0.5 * (btn->u1 - btn->u0), btn->u1, btn->v0, 0.5 * (btn->v1 - btn->v0), btn->v1, btn->r, btn);
-    beziertreenodeqq4f_init(btn->c[0][1], btn->u0, 0.5 * (btn->u1 - btn->u0), btn->u1, btn->v1, 0.5 * (btn->v2 - btn->v1), btn->v2, btn->r, btn);
-    beziertreenodeqq4f_init(btn->c[1][0], btn->u1, 0.5 * (btn->u2 - btn->u1), btn->u2, btn->v0, 0.5 * (btn->v1 - btn->v0), btn->v1, btn->r, btn);
-    beziertreenodeqq4f_init(btn->c[1][1], btn->u1, 0.5 * (btn->u2 - btn->u1), btn->u2, btn->v1, 0.5 * (btn->v2 - btn->v1), btn->v2, btn->r, btn);
+    beziertreenodeqq4f_init(btn->c[0][0], btn->u0, 0.5 * (btn->u1 + btn->u0), btn->u1, btn->v0, 0.5 * (btn->v1 + btn->v0), btn->v1, btn->r, btn);
+    beziertreenodeqq4f_init(btn->c[0][1], btn->u0, 0.5 * (btn->u1 + btn->u0), btn->u1, btn->v1, 0.5 * (btn->v2 + btn->v1), btn->v2, btn->r, btn);
+    beziertreenodeqq4f_init(btn->c[1][0], btn->u1, 0.5 * (btn->u2 + btn->u1), btn->u2, btn->v0, 0.5 * (btn->v1 + btn->v0), btn->v1, btn->r, btn);
+    beziertreenodeqq4f_init(btn->c[1][1], btn->u1, 0.5 * (btn->u2 + btn->u1), btn->u2, btn->v1, 0.5 * (btn->v2 + btn->v1), btn->v2, btn->r, btn);
+}
+
+double beziertreenodeqq4f_volume(struct beziertreenodeqq4f_s *btn)
+{
+    if (!btn->c[0][0])
+        return btn->vol;
+
+    return beziertreenodeqq4f_volume(btn->c[0][0]) + beziertreenodeqq4f_volume(btn->c[0][1])
+         + beziertreenodeqq4f_volume(btn->c[1][0]) + beziertreenodeqq4f_volume(btn->c[1][1]);
 }
 
 void beziertreeqq4f_init(struct beziertreeqq4f_s *bt)
@@ -116,4 +131,12 @@ void beziertreeqq4f_from_func(struct beziertreeqq4f_s *bt, beziertreeqq4f_func_t
     bt->r = MEM_MALLOC(struct beziertreenodeqq4f_s);
 
     beziertreenodeqq4f_init(bt->r, 0.0, 0.5, 1.0, 0.0, 0.5, 1.0, bt, 0);
+}
+
+double beziertreeqq4f_volume(struct beziertreeqq4f_s *btn)
+{
+    if (!btn->r)
+        return 0.0;
+
+    return beziertreenodeqq4f_volume(btn->r);
 }

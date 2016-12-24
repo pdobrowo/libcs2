@@ -23,6 +23,34 @@
  * SOFTWARE.
  */
 #include "cs2/bezierqq4f.h"
+#include "cs2/hull4f.h"
+
+static void bezierqq4f_calc_hull(struct bezierqq4f_s *b)
+{
+    struct vec4f_s pts[9];
+
+    vec4f_copy(&pts[0], &b->p00);
+    vec4f_copy(&pts[1], &b->p01);
+    vec4f_copy(&pts[2], &b->p02);
+    vec4f_copy(&pts[3], &b->p10);
+    vec4f_copy(&pts[4], &b->p11);
+    vec4f_copy(&pts[5], &b->p12);
+    vec4f_copy(&pts[6], &b->p20);
+    vec4f_copy(&pts[7], &b->p21);
+    vec4f_copy(&pts[8], &b->p22);
+
+    hull4f_from_arr(&b->h, pts, 9);
+}
+
+void bezierqq4f_init(struct bezierqq4f_s *b)
+{
+    hull4f_init(&b->h);
+}
+
+void bezierqq4f_clear(struct bezierqq4f_s *b)
+{
+    hull4f_clear(&b->h);
+}
 
 void bezierqq4f_from_qq(struct bezierqq4f_s *b, const struct bezierqq4f_coeff_s *c)
 {
@@ -54,6 +82,9 @@ void bezierqq4f_from_qq(struct bezierqq4f_s *b, const struct bezierqq4f_coeff_s 
     BEZIERQQ44F_MID_CASE_IMPL(z)
     BEZIERQQ44F_MID_CASE_IMPL(w)
     #undef BEZIERQQ44F_MID_CASE_IMPL
+
+    /* hull */
+    bezierqq4f_calc_hull(b);
 }
 
 void bezierqq4f_eval(struct vec4f_s *r, const struct bezierqq4f_s *b, double u, double v)
@@ -77,4 +108,9 @@ void bezierqq4f_eval(struct vec4f_s *r, const struct bezierqq4f_s *b, double u, 
     BEZIERQQ44F_EVAL_CASE_IMPL(z)
     BEZIERQQ44F_EVAL_CASE_IMPL(w)
     #undef BEZIERQQ44F_EVAL_CASE_IMPL
+}
+
+int bezierqq4f_inter(const struct bezierqq4f_s *p, const struct bezierqq4f_s *q)
+{
+    return 0;
 }
