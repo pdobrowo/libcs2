@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/vec3x.h"
-#include <criterion/criterion.h>
+#include "criterion/criterion.h"
 #include <math.h>
 
 struct ctx

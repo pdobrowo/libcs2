@@ -35,3 +35,9 @@ void plane3x_clear(struct plane3x_s *p)
     vec3x_clear(&p->n);
     mpz_clear(p->d);
 }
+
+void plane3x_pops(mpz_ptr d, struct plane3x_s *r, struct vec3x_s *p)
+{
+    vec3x_dot(d, &r->n, p);
+    mpz_add(d, d, r->d);
+}

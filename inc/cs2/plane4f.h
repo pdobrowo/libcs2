@@ -22,51 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_BEZIERQQ4F_H
-#define CS2_BEZIERQQ4F_H
+#ifndef CS2_PLANE4F_H
+#define CS2_PLANE4F_H
 
 #include "defs.h"
 #include "vec4f.h"
-#include "hull4f.h"
 
 CS2_API_BEGIN
 
-/**
- * bezier quadratic-quadratic patch in 4 dimensions
- *
- * index (uv):
- *
- * 00 01 02
- * 10 11 12
- * 20 21 22
- *
- */
-struct bezierqq4f_s
+struct plane4f_s
 {
-    /* control */
-    struct vec4f_s p00, p01, p02;
-    struct vec4f_s p10, p11, p12;
-    struct vec4f_s p20, p21, p22;
-
-    /* hull */
-    struct hull4f_s h;
+    struct vec4f_s n;
+    double d;
 };
 
-struct bezierqq4f_coeff_s
-{
-    /* coeffs at 0.0 - 0.5 - 1.0 */
-    struct vec4f_s c00, c01, c02;
-    struct vec4f_s c10, c11, c12;
-    struct vec4f_s c20, c21, c22;
-};
-
-CS2_API void bezierqq4f_init(struct bezierqq4f_s *b);
-CS2_API void bezierqq4f_clear(struct bezierqq4f_s *b);
-
-CS2_API void bezierqq4f_from_qq(struct bezierqq4f_s *b, const struct bezierqq4f_coeff_s *c);
-CS2_API void bezierqq4f_eval(struct vec4f_s *r, const struct bezierqq4f_s *b, double u, double v);
-CS2_API int bezierqq4f_inter(const struct bezierqq4f_s *p, const struct bezierqq4f_s *q);
+CS2_API void plane4f_set(struct plane4f_s *p, const struct vec4f_s *n, double d);
+CS2_API void plane4f_copy(struct plane4f_s *r, const struct plane4f_s *p);
+CS2_API double plane4f_pops(const struct plane4f_s *r, const struct vec4f_s *p);
 
 CS2_API_END
 
-#endif /* CS2_BEZIERQQ4F_H */
+#endif /* CS2_PLANE4F_H */

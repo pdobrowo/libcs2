@@ -35,3 +35,8 @@ void plane3f_copy(struct plane3f_s *r, const struct plane3f_s *p)
     vec3f_copy(&r->n, &p->n);
     r->d = p->d;
 }
+
+double plane3f_pops(const struct plane3f_s *r, const struct vec3f_s *p)
+{
+    return vec3f_dot(&r->n, p) + r->d;
+}
