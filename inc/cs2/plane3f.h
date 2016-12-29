@@ -27,6 +27,8 @@
 
 #include "defs.h"
 #include "vec3f.h"
+#include <stddef.h>
+#include <stdio.h>
 
 CS2_API_BEGIN
 
@@ -39,6 +41,8 @@ struct plane3f_s
 CS2_API void plane3f_set(struct plane3f_s *p, const struct vec3f_s *n, double d);
 CS2_API void plane3f_copy(struct plane3f_s *r, const struct plane3f_s *p);
 CS2_API double plane3f_pops(const struct plane3f_s *r, const struct vec3f_s *p);
+
+CS2_API void plane3f_print_json(const struct plane3f_s *r, FILE *f, size_t ind);
 
 CS2_API_END
 

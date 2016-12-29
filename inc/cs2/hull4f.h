@@ -29,6 +29,7 @@
 #include "vec4f.h"
 #include "plane4f.h"
 #include <stddef.h>
+#include <stdio.h>
 
 CS2_API_BEGIN
 
@@ -38,18 +39,25 @@ CS2_API_BEGIN
  */
 struct hull4f_s
 {
-    /* half-planes */
-    struct plane4f_s *hp;
-    size_t nhp;
+    /* h-rep */
+    struct plane4f_s *hr;
+    size_t nhr;
 
-    /* volume */
-    double vol;
+    /* v-rep */
+    struct vec4f_s *vr;
+    size_t nvr;
+
+    /* volume and area */
+    double vol, area;
 };
 
 CS2_API void hull4f_init(struct hull4f_s *h);
 CS2_API void hull4f_clear(struct hull4f_s *h);
 
 CS2_API void hull4f_from_arr(struct hull4f_s *h, const struct vec4f_s *v, size_t c);
+CS2_API int hull4f_inter(const struct hull4f_s *p, const struct hull4f_s *q);
+
+CS2_API void hull4f_print_json(struct hull4f_s *h, FILE *f, size_t ind);
 
 CS2_API_END
 

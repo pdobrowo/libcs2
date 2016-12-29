@@ -112,5 +112,5 @@ void bezierqq4f_eval(struct vec4f_s *r, const struct bezierqq4f_s *b, double u, 
 
 int bezierqq4f_inter(const struct bezierqq4f_s *p, const struct bezierqq4f_s *q)
 {
-    return 0;
+    return hull4f_inter(&p->h, &q->h);
 }

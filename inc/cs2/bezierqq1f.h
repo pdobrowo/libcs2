@@ -37,7 +37,6 @@ CS2_API_BEGIN
  * 00 01 02
  * 10 11 12
  * 20 21 22
- *
  */
 struct bezierqq1f_s
 {

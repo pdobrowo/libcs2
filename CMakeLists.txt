@@ -83,6 +83,7 @@ set(cs2_HEADERS
     inc/cs2/timer.h
     inc/cs2/rand.h
     inc/cs2/mem.h
+    inc/cs2/fmt.h
 )
 
 # src
@@ -124,6 +125,7 @@ set(cs2_SOURCES
     src/timer.c
     src/rand.c
     src/mem.c
+    src/fmt.c
 )
 
 add_library(cs2 SHARED ${cs2_SOURCES})

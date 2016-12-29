@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/vec3f.h"
+#include "cs2/fmt.h"
 #include <math.h>
 
 void vec3f_set(struct vec3f_s *r, double x, double y, double z)
@@ -138,4 +139,10 @@ double vec3f_sqlen(const struct vec3f_s *v)
 double vec3f_tr(const struct vec3f_s *v)
 {
     return v->x + v->y + v->z;
+}
+
+void vec3f_print_json(const struct vec3f_s *r, FILE *f, size_t ind)
+{
+    fmt_indent(ind, f);
+    fprintf(f, "{ \"x\": %.2f, \"y\": %.2f, \"z\": %.2f }", r->x, r->y, r->z);
 }

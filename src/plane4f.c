@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/plane4f.h"
+#include "cs2/fmt.h"
 
 void plane4f_set(struct plane4f_s *p, const struct vec4f_s *n, double d)
 {
@@ -39,4 +40,22 @@ void plane4f_copy(struct plane4f_s *r, const struct plane4f_s *p)
 double plane4f_pops(const struct plane4f_s *r, const struct vec4f_s *p)
 {
     return vec4f_dot(&r->n, p) + r->d;
+}
+
+void plane4f_print_json(const struct plane4f_s *r, FILE *f, size_t ind)
+{
+    fmt_indent(ind, f);
+    fprintf(f, "{\n");
+
+    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    fprintf(f, "\"n\": ");
+    vec4f_print_json(&r->n, f, 0);
+
+    fprintf(f, ",\n");
+
+    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    fprintf(f, "\"d\": %.2f\n", r->d);
+
+    fmt_indent(ind, f);
+    fprintf(f, "}");
 }

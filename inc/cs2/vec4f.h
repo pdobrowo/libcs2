@@ -27,6 +27,8 @@
 
 #include "defs.h"
 #include "pin3f.h"
+#include <stddef.h>
+#include <stdio.h>
 
 CS2_API_BEGIN
 
@@ -58,6 +60,8 @@ CS2_API double vec4f_sqlen(const struct vec4f_s *v);
 CS2_API double vec4f_tr(const struct vec4f_s *v);
 
 CS2_API void vec4f_from_pin3f(struct vec4f_s *r, const struct pin3f_s *p);
+
+CS2_API void vec4f_print_json(const struct vec4f_s *r, FILE *f, size_t ind);
 
 CS2_API_END
 
