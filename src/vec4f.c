@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/vec4f.h"
+#include "cs2/fmt.h"
 #include <math.h>
 
 void vec4f_set(struct vec4f_s *r, double x, double y, double z, double w)
@@ -136,4 +137,10 @@ void vec4f_from_pin3f(struct vec4f_s *r, const struct pin3f_s *p)
     r->y = p->p23;
     r->z = p->p31;
     r->w = p->p0;
+}
+
+void vec4f_print_json(const struct vec4f_s *r, FILE *f, size_t ind)
+{
+    fmt_indent(ind, f);
+    fprintf(f, "{ \"x\": %.2f, \"y\": %.2f, \"z\": %.2f, \"w\": %.2f }", r->x, r->y, r->z, r->w);
 }

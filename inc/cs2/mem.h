@@ -27,6 +27,7 @@
 
 #include "defs.h"
 #include <stddef.h>
+#include <stdlib.h>
 
 CS2_API_BEGIN
 
@@ -58,5 +59,7 @@ CS2_API void mem_trigger_error(const char *file, int line, size_t size, const ch
 
 #define MEM_FREE(Ptr) \
     do { if (Ptr) free(Ptr); } while (0)
+
+CS2_API_END
 
 #endif /* CS2_MEM_H */

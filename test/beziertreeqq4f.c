@@ -25,6 +25,10 @@
 #include "cs2/beziertreeqq4f.h"
 #include "cs2/predg3f.h"
 #include "criterion/criterion.h"
+#include <math.h>
+
+#define EPS (10e-8)
+#define test_almost_equal(x, y) cr_assert(fabs((x) - (y)) < EPS)
 
 struct predbb_func_s
 {
@@ -57,34 +61,34 @@ Test(beziertreeqq4f, predbb3f)
 {
     struct beziertreeqq4f_s bt;
     struct predbb_func_s f;
+
     create_z_barrel(&f.p);
+
     predg3f_param(&f.pp, &f.p);
+
     beziertreeqq4f_init(&bt);
     beziertreeqq4f_from_func(&bt, &predbb_func, &f);
 
-    beziertreenodeqq4f_subdivide(bt.r);
+    /* initial tree is virtual with zero volume and zero area */
+    cr_assert(beziertreenodeqq4f_is_virt(bt.r));
+    test_almost_equal(beziertreeqq4f_vol(&bt), 0.0);
+    test_almost_equal(beziertreeqq4f_area(&bt), 0.0);
 
-    beziertreenodeqq4f_subdivide(bt.r->c[0][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][1]);
+    /* do first level subdivision */
+    beziertreenodeqq4f_sub(bt.r);
 
-    beziertreenodeqq4f_subdivide(bt.r->c[0][0]->c[0][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][0]->c[0][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][0]->c[1][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][0]->c[1][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][1]->c[0][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][1]->c[0][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][1]->c[1][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[0][1]->c[1][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][0]->c[0][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][0]->c[0][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][0]->c[1][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][0]->c[1][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][1]->c[0][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][1]->c[0][1]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][1]->c[1][0]);
-    beziertreenodeqq4f_subdivide(bt.r->c[1][1]->c[1][1]);
+    /* first level subdivision must not be virtual and volume must not be zero */
+    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[0][0]));
+    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[0][1]));
+    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[1][0]));
+    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[1][1]));
 
-    cr_assert(beziertreeqq4f_volume(&bt) > 0.0);
+    cr_assert(beziertreeqq4f_vol(&bt) > 0.0);
+    cr_assert(beziertreeqq4f_area(&bt) > 0.0);
+
+    /* do second level subdivision */
+    beziertreenodeqq4f_sub(bt.r->c[0][0]);
+    beziertreenodeqq4f_sub(bt.r->c[0][1]);
+    beziertreenodeqq4f_sub(bt.r->c[1][0]);
+    beziertreenodeqq4f_sub(bt.r->c[1][1]);
 }

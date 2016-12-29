@@ -29,21 +29,185 @@
 #define EPS (10e-8)
 #define test_almost_equal(x, y) cr_assert(fabs((x) - (y)) < EPS)
 
-Test(hull4f, vol)
+const struct vec4f_s SIMPLEX_A[] = {
+    { 0.0, 0.0, 0.0, 0.0 },
+    { 1.0, 0.0, 0.0, 0.0 },
+    { 0.0, 1.0, 0.0, 0.0 },
+    { 0.0, 0.0, 1.0, 0.0 },
+    { 0.0, 0.0, 0.0, 1.0 }
+};
+
+static const size_t SIMPLEX_A_SIZE = sizeof(SIMPLEX_A) / sizeof(SIMPLEX_A[0]);
+
+const struct vec4f_s SIMPLEX_B[] = {
+    { 0.5, 0.0, 0.0, 0.0 },
+    { 1.5, 0.0, 0.0, 0.0 },
+    { 0.5, 1.0, 0.0, 0.0 },
+    { 0.5, 0.0, 1.0, 0.0 },
+    { 0.5, 0.0, 0.0, 1.0 }
+};
+
+static const size_t SIMPLEX_B_SIZE = sizeof(SIMPLEX_B) / sizeof(SIMPLEX_B[0]);
+
+const struct vec4f_s SIMPLEX_C[] = {
+    { 2.0, 0.0, 0.0, 0.0 },
+    { 3.0, 0.0, 0.0, 0.0 },
+    { 2.0, 1.0, 0.0, 0.0 },
+    { 2.0, 0.0, 1.0, 0.0 },
+    { 2.0, 0.0, 0.0, 1.0 }
+};
+
+static const size_t SIMPLEX_C_SIZE = sizeof(SIMPLEX_C) / sizeof(SIMPLEX_C[0]);
+
+const struct vec4f_s CUBE_A[] = {
+    { 0.0, 0.0, 0.0, 0.0 },
+    { 1.0, 0.0, 0.0, 0.0 },
+    { 0.0, 1.0, 0.0, 0.0 },
+    { 1.0, 1.0, 0.0, 0.0 },
+    { 0.0, 0.0, 1.0, 0.0 },
+    { 1.0, 0.0, 1.0, 0.0 },
+    { 0.0, 1.0, 1.0, 0.0 },
+    { 1.0, 1.0, 1.0, 0.0 },
+    { 0.0, 0.0, 0.0, 1.0 },
+    { 1.0, 0.0, 0.0, 1.0 },
+    { 0.0, 1.0, 0.0, 1.0 },
+    { 1.0, 1.0, 0.0, 1.0 },
+    { 0.0, 0.0, 1.0, 1.0 },
+    { 1.0, 0.0, 1.0, 1.0 },
+    { 0.0, 1.0, 1.0, 1.0 },
+    { 1.0, 1.0, 1.0, 1.0 }
+};
+
+static const size_t CUBE_A_SIZE = sizeof(CUBE_A) / sizeof(CUBE_A[0]);
+
+const struct vec4f_s CUBE_B[] = {
+    { 0.5, 0.0, 0.0, 0.0 },
+    { 1.5, 0.0, 0.0, 0.0 },
+    { 0.5, 1.0, 0.0, 0.0 },
+    { 1.5, 1.0, 0.0, 0.0 },
+    { 0.5, 0.0, 1.0, 0.0 },
+    { 1.5, 0.0, 1.0, 0.0 },
+    { 0.5, 1.0, 1.0, 0.0 },
+    { 1.5, 1.0, 1.0, 0.0 },
+    { 0.5, 0.0, 0.0, 1.0 },
+    { 1.5, 0.0, 0.0, 1.0 },
+    { 0.5, 1.0, 0.0, 1.0 },
+    { 1.5, 1.0, 0.0, 1.0 },
+    { 0.5, 0.0, 1.0, 1.0 },
+    { 1.5, 0.0, 1.0, 1.0 },
+    { 0.5, 1.0, 1.0, 1.0 },
+    { 1.5, 1.0, 1.0, 1.0 }
+};
+
+static const size_t CUBE_B_SIZE = sizeof(CUBE_B) / sizeof(CUBE_B[0]);
+
+const struct vec4f_s CUBE_C[] = {
+    { 2.0, 0.0, 0.0, 0.0 },
+    { 3.0, 0.0, 0.0, 0.0 },
+    { 2.0, 1.0, 0.0, 0.0 },
+    { 3.0, 1.0, 0.0, 0.0 },
+    { 2.0, 0.0, 1.0, 0.0 },
+    { 3.0, 0.0, 1.0, 0.0 },
+    { 2.0, 1.0, 1.0, 0.0 },
+    { 3.0, 1.0, 1.0, 0.0 },
+    { 2.0, 0.0, 0.0, 1.0 },
+    { 3.0, 0.0, 0.0, 1.0 },
+    { 2.0, 1.0, 0.0, 1.0 },
+    { 3.0, 1.0, 0.0, 1.0 },
+    { 2.0, 0.0, 1.0, 1.0 },
+    { 3.0, 0.0, 1.0, 1.0 },
+    { 2.0, 1.0, 1.0, 1.0 },
+    { 3.0, 1.0, 1.0, 1.0 }
+};
+
+static const size_t CUBE_C_SIZE = sizeof(CUBE_C) / sizeof(CUBE_C[0]);
+
+Test(hull4f, vol_simplex_a)
 {
-    struct hull4f_s h;
-    struct vec4f_s p[5] = {
-        { 0.0, 0.0, 0.0, 0.0 },
-        { 1.0, 0.0, 0.0, 0.0 },
-        { 0.0, 1.0, 0.0, 0.0 },
-        { 0.0, 0.0, 1.0, 0.0 },
-        { 0.0, 0.0, 0.0, 1.0 }
-    };
+    struct hull4f_s hsa;
 
-    hull4f_init(&h);
-    hull4f_from_arr(&h, p, 5);
+    hull4f_init(&hsa);
+    hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
 
-    test_almost_equal(h.vol, 1.0 / 24.0);
+    test_almost_equal(hsa.vol, 1.0 / 24.0);
 
-    hull4f_clear(&h);
+    hull4f_clear(&hsa);
+}
+
+Test(hull4f, area_simplex_a)
+{
+    struct hull4f_s hsa;
+
+    hull4f_init(&hsa);
+    hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
+
+    test_almost_equal(hsa.area, 1.0);
+
+    hull4f_clear(&hsa);
+}
+
+Test(hull4f, vol_cube_a)
+{
+    struct hull4f_s hca;
+
+    hull4f_init(&hca);
+    hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
+
+    test_almost_equal(hca.vol, 1.0);
+
+    hull4f_clear(&hca);
+}
+
+Test(hull4f, area_cube_a)
+{
+    struct hull4f_s hca;
+
+    hull4f_init(&hca);
+    hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
+
+    test_almost_equal(hca.area, 8.0);
+
+    hull4f_clear(&hca);
+}
+
+Test(hull4f, sep_cube_abc)
+{
+    struct hull4f_s hca, hcb, hcc;
+
+    hull4f_init(&hca);
+    hull4f_init(&hcb);
+    hull4f_init(&hcc);
+
+    hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
+    hull4f_from_arr(&hcb, CUBE_B, CUBE_B_SIZE);
+    hull4f_from_arr(&hcc, CUBE_C, CUBE_C_SIZE);
+
+    cr_assert(hull4f_inter(&hca, &hcb));
+    cr_assert(!hull4f_inter(&hca, &hcc));
+    cr_assert(!hull4f_inter(&hcb, &hcc));
+
+    hull4f_clear(&hca);
+    hull4f_clear(&hcb);
+    hull4f_clear(&hcc);
+}
+
+Test(hull4f, sep_simplex_abc)
+{
+    struct hull4f_s hsa, hsb, hsc;
+
+    hull4f_init(&hsa);
+    hull4f_init(&hsb);
+    hull4f_init(&hsc);
+
+    hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
+    hull4f_from_arr(&hsb, SIMPLEX_B, SIMPLEX_B_SIZE);
+    hull4f_from_arr(&hsc, SIMPLEX_C, SIMPLEX_C_SIZE);
+
+    cr_assert(hull4f_inter(&hsa, &hsb));
+    cr_assert(!hull4f_inter(&hsa, &hsc));
+    cr_assert(!hull4f_inter(&hsb, &hsc));
+
+    hull4f_clear(&hsa);
+    hull4f_clear(&hsb);
+    hull4f_clear(&hsc);
 }

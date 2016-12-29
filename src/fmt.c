@@ -22,28 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_PLANE4F_H
-#define CS2_PLANE4F_H
+#include "cs2/fmt.h"
 
-#include "defs.h"
-#include "vec4f.h"
-#include <stddef.h>
-#include <stdio.h>
-
-CS2_API_BEGIN
-
-struct plane4f_s
+void fmt_indent(size_t n, FILE *f)
 {
-    struct vec4f_s n;
-    double d;
-};
+    size_t i;
 
-CS2_API void plane4f_set(struct plane4f_s *p, const struct vec4f_s *n, double d);
-CS2_API void plane4f_copy(struct plane4f_s *r, const struct plane4f_s *p);
-CS2_API double plane4f_pops(const struct plane4f_s *r, const struct vec4f_s *p);
-
-CS2_API void plane4f_print_json(const struct plane4f_s *r, FILE *f, size_t ind);
-
-CS2_API_END
-
-#endif /* CS2_PLANE4F_H */
+    for (i = 0; i < n; ++i)
+        fprintf(f, " ");
+}
