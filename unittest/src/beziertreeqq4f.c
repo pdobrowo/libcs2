@@ -24,11 +24,11 @@
  */
 #include "cs2/beziertreeqq4f.h"
 #include "cs2/predg3f.h"
-#include "criterion/criterion.h"
+#include "unittest/unittest.h"
 #include <math.h>
 
 #define EPS (10e-8)
-#define test_almost_equal(x, y) cr_assert(fabs((x) - (y)) < EPS)
+#define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
 
 struct predbb_func_s
 {
@@ -57,7 +57,9 @@ static void create_z_barrel(struct predg3f_s *p)
     p->c = 0.5;
 }
 
-Test(beziertreeqq4f, predbb3f)
+TEST_SUITE(beziertreeqq4f)
+
+TEST_CASE(beziertreeqq4f, predbb3f)
 {
     struct beziertreeqq4f_s bt;
     struct predbb_func_s f;
@@ -70,7 +72,7 @@ Test(beziertreeqq4f, predbb3f)
     beziertreeqq4f_from_func(&bt, &predbb_func, &f);
 
     /* initial tree is virtual with zero volume and zero area */
-    cr_assert(beziertreenodeqq4f_is_virt(bt.r));
+    TEST_ASSERT(beziertreenodeqq4f_is_virt(bt.r));
     test_almost_equal(beziertreeqq4f_vol(&bt), 0.0);
     test_almost_equal(beziertreeqq4f_area(&bt), 0.0);
 
@@ -78,13 +80,13 @@ Test(beziertreeqq4f, predbb3f)
     beziertreenodeqq4f_sub(bt.r);
 
     /* first level subdivision must not be virtual and volume must not be zero */
-    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[0][0]));
-    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[0][1]));
-    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[1][0]));
-    cr_assert(!beziertreenodeqq4f_is_virt(bt.r->c[1][1]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[0][0]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[0][1]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[1][0]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[1][1]));
 
-    cr_assert(beziertreeqq4f_vol(&bt) > 0.0);
-    cr_assert(beziertreeqq4f_area(&bt) > 0.0);
+    TEST_ASSERT(beziertreeqq4f_vol(&bt) > 0.0);
+    TEST_ASSERT(beziertreeqq4f_area(&bt) > 0.0);
 
     /* do second level subdivision */
     beziertreenodeqq4f_sub(bt.r->c[0][0]);

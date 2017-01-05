@@ -23,11 +23,11 @@
  * SOFTWARE.
  */
 #include "cs2/hull4f.h"
-#include "criterion/criterion.h"
+#include "unittest/unittest.h"
 #include <math.h>
 
 #define EPS (10e-8)
-#define test_almost_equal(x, y) cr_assert(fabs((x) - (y)) < EPS)
+#define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
 
 const struct vec4f_s SIMPLEX_A[] = {
     { 0.0, 0.0, 0.0, 0.0 },
@@ -122,7 +122,9 @@ const struct vec4f_s CUBE_C[] = {
 
 static const size_t CUBE_C_SIZE = sizeof(CUBE_C) / sizeof(CUBE_C[0]);
 
-Test(hull4f, vol_simplex_a)
+TEST_SUITE(hull4f)
+
+TEST_CASE(hull4f, vol_simplex_a)
 {
     struct hull4f_s hsa;
 
@@ -134,7 +136,7 @@ Test(hull4f, vol_simplex_a)
     hull4f_clear(&hsa);
 }
 
-Test(hull4f, area_simplex_a)
+TEST_CASE(hull4f, area_simplex_a)
 {
     struct hull4f_s hsa;
 
@@ -146,7 +148,7 @@ Test(hull4f, area_simplex_a)
     hull4f_clear(&hsa);
 }
 
-Test(hull4f, vol_cube_a)
+TEST_CASE(hull4f, vol_cube_a)
 {
     struct hull4f_s hca;
 
@@ -158,7 +160,7 @@ Test(hull4f, vol_cube_a)
     hull4f_clear(&hca);
 }
 
-Test(hull4f, area_cube_a)
+TEST_CASE(hull4f, area_cube_a)
 {
     struct hull4f_s hca;
 
@@ -170,7 +172,7 @@ Test(hull4f, area_cube_a)
     hull4f_clear(&hca);
 }
 
-Test(hull4f, sep_cube_abc)
+TEST_CASE(hull4f, sep_cube_abc)
 {
     struct hull4f_s hca, hcb, hcc;
 
@@ -182,16 +184,16 @@ Test(hull4f, sep_cube_abc)
     hull4f_from_arr(&hcb, CUBE_B, CUBE_B_SIZE);
     hull4f_from_arr(&hcc, CUBE_C, CUBE_C_SIZE);
 
-    cr_assert(hull4f_inter(&hca, &hcb));
-    cr_assert(!hull4f_inter(&hca, &hcc));
-    cr_assert(!hull4f_inter(&hcb, &hcc));
+    TEST_ASSERT(hull4f_inter(&hca, &hcb));
+    TEST_ASSERT(!hull4f_inter(&hca, &hcc));
+    TEST_ASSERT(!hull4f_inter(&hcb, &hcc));
 
     hull4f_clear(&hca);
     hull4f_clear(&hcb);
     hull4f_clear(&hcc);
 }
 
-Test(hull4f, sep_simplex_abc)
+TEST_CASE(hull4f, sep_simplex_abc)
 {
     struct hull4f_s hsa, hsb, hsc;
 
@@ -203,9 +205,9 @@ Test(hull4f, sep_simplex_abc)
     hull4f_from_arr(&hsb, SIMPLEX_B, SIMPLEX_B_SIZE);
     hull4f_from_arr(&hsc, SIMPLEX_C, SIMPLEX_C_SIZE);
 
-    cr_assert(hull4f_inter(&hsa, &hsb));
-    cr_assert(!hull4f_inter(&hsa, &hsc));
-    cr_assert(!hull4f_inter(&hsb, &hsc));
+    TEST_ASSERT(hull4f_inter(&hsa, &hsb));
+    TEST_ASSERT(!hull4f_inter(&hsa, &hsc));
+    TEST_ASSERT(!hull4f_inter(&hsb, &hsc));
 
     hull4f_clear(&hsa);
     hull4f_clear(&hsb);

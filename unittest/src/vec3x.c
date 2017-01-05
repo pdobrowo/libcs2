@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/vec3x.h"
-#include "criterion/criterion.h"
+#include "unittest/unittest.h"
 #include <math.h>
 
 struct ctx
@@ -63,186 +63,188 @@ static void ctx_clear(struct ctx *c)
     vec3x_clear(&c->v);
 }
 
-Test(vec3x, set)
+TEST_SUITE(vec3x)
+
+TEST_CASE(vec3x, set)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_set(&c.v, c.si[3], c.si[5], c.si[7]);
-    cr_assert(mpz_cmp_si(c.v.x, 3) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 5) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 7) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 3) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 5) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 7) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, set_si)
+TEST_CASE(vec3x, set_si)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_set_si(&c.v, 3, 5, 7);
-    cr_assert(mpz_cmp_si(c.v.x, 3) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 5) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 7) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 3) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 5) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 7) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, zero)
+TEST_CASE(vec3x, zero)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_zero(&c.v);
-    cr_assert(mpz_cmp_si(c.v.x, 0) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 0) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 0) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 0) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 0) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 0) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, is_zero)
+TEST_CASE(vec3x, is_zero)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_zero(&c.v);
-    cr_assert(vec3x_is_zero(&c.v));
+    TEST_ASSERT(vec3x_is_zero(&c.v));
     ctx_clear(&c);
 }
 
-Test(vec3x, copy)
+TEST_CASE(vec3x, copy)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_copy(&c.v, &c.v357);
-    cr_assert(mpz_cmp_si(c.v.x, 3) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 5) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 7) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 3) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 5) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 7) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, add)
+TEST_CASE(vec3x, add)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_add(&c.v, &c.v123, &c.v357);
-    cr_assert(mpz_cmp_si(c.v.x, 4) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 7) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 10) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 4) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 7) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 10) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, sub)
+TEST_CASE(vec3x, sub)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_sub(&c.v, &c.v123, &c.v357);
-    cr_assert(mpz_cmp_si(c.v.x, -2) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, -3) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, -4) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, -2) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, -3) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, -4) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, neg)
+TEST_CASE(vec3x, neg)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_neg(&c.v, &c.v123);
-    cr_assert(mpz_cmp_si(c.v.x, -1) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, -2) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, -3) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, -1) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, -2) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, -3) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, mul)
+TEST_CASE(vec3x, mul)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_mul(&c.v, &c.v123, c.si[5]);
-    cr_assert(mpz_cmp_si(c.v.x, 5) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 10) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 15) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 5) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 10) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 15) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, cl)
+TEST_CASE(vec3x, cl)
 {
     struct ctx c;
     struct pin3x_s p;
     ctx_init(&c);
     pin3x_init(&p);
     vec3x_cl(&p, &c.v123, &c.v357);
-    cr_assert(mpz_cmp_si(p.p0, 34) == 0);
-    cr_assert(mpz_cmp_si(p.p12, -1) == 0);
-    cr_assert(mpz_cmp_si(p.p23, -1) == 0);
-    cr_assert(mpz_cmp_si(p.p31, 2) == 0);
+    TEST_ASSERT(mpz_cmp_si(p.p0, 34) == 0);
+    TEST_ASSERT(mpz_cmp_si(p.p12, -1) == 0);
+    TEST_ASSERT(mpz_cmp_si(p.p23, -1) == 0);
+    TEST_ASSERT(mpz_cmp_si(p.p31, 2) == 0);
     pin3x_clear(&p);
     ctx_clear(&c);
 }
 
-Test(vec3x, mad2)
+TEST_CASE(vec3x, mad2)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_mad2(&c.v, &c.v123, c.si[4], &c.v357, c.si[8]);
-    cr_assert(mpz_cmp_si(c.v.x, 28) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 48) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 68) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 28) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 48) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 68) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, mad3)
+TEST_CASE(vec3x, mad3)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_mad3(&c.v, &c.v123, c.si[4], &c.v357, c.si[8], &c.v248, c.si[9]);
-    cr_assert(mpz_cmp_si(c.v.x, 46) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 84) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 140) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 46) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 84) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 140) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, mad4)
+TEST_CASE(vec3x, mad4)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_mad4(&c.v, &c.v123, c.si[4], &c.v357, c.si[8], &c.v248, c.si[9], &c.v159, c.si[2]);
-    cr_assert(mpz_cmp_si(c.v.x, 48) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 94) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 158) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 48) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 94) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 158) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, mad5)
+TEST_CASE(vec3x, mad5)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_mad5(&c.v, &c.v123, c.si[4], &c.v357, c.si[8], &c.v248, c.si[9], &c.v159, c.si[2], &c.v789, c.si[5]);
-    cr_assert(mpz_cmp_si(c.v.x, 83) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 134) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, 203) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, 83) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 134) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, 203) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, dot)
+TEST_CASE(vec3x, dot)
 {
     struct ctx c;
     mpz_t d;
     ctx_init(&c);
     mpz_init(d);
     vec3x_dot(d, &c.v123, &c.v357);
-    cr_assert(mpz_cmp_si(d, 34) == 0);
+    TEST_ASSERT(mpz_cmp_si(d, 34) == 0);
     mpz_clear(d);
     ctx_clear(&c);
 }
 
-Test(vec3x, cross)
+TEST_CASE(vec3x, cross)
 {
     struct ctx c;
     ctx_init(&c);
     vec3x_cross(&c.v, &c.v123, &c.v357);
-    cr_assert(mpz_cmp_si(c.v.x, -1) == 0);
-    cr_assert(mpz_cmp_si(c.v.y, 2) == 0);
-    cr_assert(mpz_cmp_si(c.v.z, -1) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.x, -1) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.y, 2) == 0);
+    TEST_ASSERT(mpz_cmp_si(c.v.z, -1) == 0);
     ctx_clear(&c);
 }
 
-Test(vec3x, cl_vs_cross_and_dot)
+TEST_CASE(vec3x, cl_vs_cross_and_dot)
 {
     struct ctx c;
     struct pin3x_s p;
@@ -253,35 +255,35 @@ Test(vec3x, cl_vs_cross_and_dot)
     vec3x_cl(&p, &c.v123, &c.v357);
     vec3x_cross(&c.v, &c.v123, &c.v357);
     vec3x_dot(d, &c.v123, &c.v357);
-    cr_assert(mpz_cmp(p.p0, d) == 0);
-    cr_assert(mpz_cmp(p.p12, c.v.z) == 0);
-    cr_assert(mpz_cmp(p.p23, c.v.x) == 0);
-    cr_assert(mpz_cmp(p.p31, c.v.y) == 0);
+    TEST_ASSERT(mpz_cmp(p.p0, d) == 0);
+    TEST_ASSERT(mpz_cmp(p.p12, c.v.z) == 0);
+    TEST_ASSERT(mpz_cmp(p.p23, c.v.x) == 0);
+    TEST_ASSERT(mpz_cmp(p.p31, c.v.y) == 0);
     mpz_clear(d);
     pin3x_clear(&p);
     ctx_clear(&c);
 }
 
-Test(vec3x, sqlen)
+TEST_CASE(vec3x, sqlen)
 {
     struct ctx c;
     mpz_t d;
     ctx_init(&c);
     mpz_init(d);
     vec3x_sqlen(d, &c.v123);
-    cr_assert(mpz_cmp_si(d, 14) == 0);
+    TEST_ASSERT(mpz_cmp_si(d, 14) == 0);
     mpz_clear(d);
     ctx_clear(&c);
 }
 
-Test(vec3x, tr)
+TEST_CASE(vec3x, tr)
 {
     struct ctx c;
     mpz_t d;
     ctx_init(&c);
     mpz_init(d);
     vec3x_tr(d, &c.v123);
-    cr_assert(mpz_cmp_si(d, 6) == 0);
+    TEST_ASSERT(mpz_cmp_si(d, 6) == 0);
     mpz_clear(d);
     ctx_clear(&c);
 }

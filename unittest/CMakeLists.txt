@@ -12,17 +12,14 @@ include(CheckCCompilerFlag)
 # modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/../cmake)
 
-# cs2
+# deps: cs2 (local)
 find_package(CS2 REQUIRED)
 include_directories(${CS2_INCLUDE_DIR})
 link_directories(${CS2_LIBRARY_DIR})
 
-# criterion (local)
-set(CRITERION_BASE_DIR ${CMAKE_SOURCE_DIR}/../deps/criterion)
-include_directories(${CRITERION_BASE_DIR}/include)
-
-# output directory
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin)
+# deps: cmocka (local)
+set(CMOCKA_BASE_DIR ${CMAKE_SOURCE_DIR}/../deps/cmocka)
+include_directories(${CMOCKA_BASE_DIR}/include)
 
 # compiler settings
 add_definitions(
@@ -53,18 +50,38 @@ endif(COMPILER_SUPPORT_OFAST)
 
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${COMPILER_RELEASE_OPTIMIZATION} -fomit-frame-pointer -march=native")
 
-set(test_HEADERS
+
+# output directory
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin)
+
+# internal
+include_directories(${CMAKE_SOURCE_DIR}/inc)
+
+# inc
+set(unittest_HEADERS
+    # runner
+    inc/unittest/unittest.h
 )
 
+# src
 set(unittest_SOURCES
     ${unittest_HEADERS}
-    bezierqq1f.c
-    beziertreeqq4f.c
-    vec3f.c
-    vec3x.c
-    hull4f.c
+    # runner
+    src/main.c
+    src/unittest.c
+
+    # suites
+    src/bezierqq1f.c
+    src/beziertreeqq4f.c
+    src/hull4f.c
+    src/vec3f.c
+    src/vec3x.c
 )
 
 add_executable(unittest ${unittest_SOURCES})
+
+# deps: cs2 (local)
 target_link_libraries(unittest ${CS2_LIBRARIES})
-target_link_libraries(unittest ${CRITERION_BASE_DIR}/lib/libcriterion.so)
+
+# deps: cmocka (local)
+target_link_libraries(unittest ${CMOCKA_BASE_DIR}/lib/libcmocka.so)
