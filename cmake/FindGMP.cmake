@@ -14,7 +14,7 @@ find_path(GMP_INCLUDE_DIR
           PATHS /usr/include/gmp)
 
 find_library(GMP_LIBRARIES
-             NAMES gmp libgmp) 
+             NAMES gmp libgmp)
 
 message(STATUS "GMP_INCLUDE_DIR: ${GMP_INCLUDE_DIR}")
 message(STATUS "GMP_LIBRARIES: ${GMP_LIBRARIES}")

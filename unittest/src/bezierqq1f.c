@@ -24,18 +24,20 @@
  */
 #include "cs2/bezierqq1f.h"
 #include "cs2/rand.h"
-#include "criterion/criterion.h"
+#include "unittest/unittest.h"
 #include <math.h>
 
 #define EPS (10e-8)
-#define test_almost_equal(x, y) cr_assert(fabs((x) - (y)) < EPS)
+#define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
 
-static double f1(double u, double v)
+static double fn1(double u, double v)
 {
     return 2.0 * u * u + 3.0 * u * v - 5 * v * v;
 }
 
-Test(bezierqq1f, bump_1)
+TEST_SUITE(bezierqq1f)
+
+TEST_CASE(bezierqq1f, bump_1)
 {
     struct bezierqq1f_s b;
     struct bezierqq1f_coeff_s c = { 0, 0, 0,
@@ -79,7 +81,7 @@ Test(bezierqq1f, bump_1)
     test_almost_equal(bezierqq1f_eval(&b, 0.25, 0.25), 9.0 / 16.0);
 }
 
-Test(bezierqq1f, bump_2)
+TEST_CASE(bezierqq1f, bump_2)
 {
     struct bezierqq1f_s b;
     struct bezierqq1f_coeff_s c = { 0, 1, 0,
@@ -115,12 +117,12 @@ Test(bezierqq1f, bump_2)
     test_almost_equal(bezierqq1f_eval(&b, 0.25, 0.25), 15.0 / 16.0);
 }
 
-Test(bezierqq1f, f1)
+TEST_CASE(bezierqq1f, func_fn1)
 {
     struct bezierqq1f_s b;
-    struct bezierqq1f_coeff_s c = { f1(0.0, 0.0), f1(0.0, 0.5), f1(0.0, 1.0),
-                                    f1(0.5, 0.0), f1(0.5, 0.5), f1(0.5, 1.0),
-                                    f1(1.0, 0.0), f1(1.0, 0.5), f1(1.0, 1.0) };
+    struct bezierqq1f_coeff_s c = { fn1(0.0, 0.0), fn1(0.0, 0.5), fn1(0.0, 1.0),
+                                    fn1(0.5, 0.0), fn1(0.5, 0.5), fn1(0.5, 1.0),
+                                    fn1(1.0, 0.0), fn1(1.0, 0.5), fn1(1.0, 1.0) };
     double u, v;
     int i;
 
@@ -130,6 +132,7 @@ Test(bezierqq1f, f1)
     {
         u = rand_u1f(0.0, 1.0);
         v = rand_u1f(0.0, 1.0);
-        test_almost_equal(bezierqq1f_eval(&b, u, v), f1(u, v));
+
+        test_almost_equal(bezierqq1f_eval(&b, u, v), fn1(u, v));
     }
 }
