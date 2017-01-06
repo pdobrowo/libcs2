@@ -15,7 +15,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/../cmake)
 # deps: cs2 (local)
 find_package(CS2 REQUIRED)
 include_directories(${CS2_INCLUDE_DIR})
-link_directories(${CS2_LIBRARY_DIR})
 
 # deps: cmocka (local)
 set(CMOCKA_BASE_DIR ${CMAKE_SOURCE_DIR}/../deps/cmocka)
@@ -50,7 +49,6 @@ endif(COMPILER_SUPPORT_OFAST)
 
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${COMPILER_RELEASE_OPTIMIZATION} -fomit-frame-pointer -march=native")
 
-
 # output directory
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin)
 
@@ -81,7 +79,8 @@ set(unittest_SOURCES
 add_executable(unittest ${unittest_SOURCES})
 
 # deps: cs2 (local)
-target_link_libraries(unittest ${CS2_LIBRARIES})
+target_link_libraries(unittest ${CS2_STATIC_LIBRARIES})
 
 # deps: cmocka (local)
-target_link_libraries(unittest ${CMOCKA_BASE_DIR}/lib/libcmocka.so)
+target_link_libraries(unittest ${CMOCKA_BASE_DIR}/lib/libcmocka.a)
+
