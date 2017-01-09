@@ -1,7 +1,16 @@
 language: c
+
 compiler:
   - clang
   - gcc
-script: ./init.sh && ./make_release.sh
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgmp-dev
+
 install: true
+
+script:
+  - ./init.sh
+  - ./make_release.sh
 
