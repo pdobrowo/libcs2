@@ -84,11 +84,16 @@ void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *btn)
         return;
 
     beziertreenodeqq4f_clear(btn->c[0][0]);
-    beziertreenodeqq4f_clear(btn->c[0][1]);
-    beziertreenodeqq4f_clear(btn->c[1][0]);
-    beziertreenodeqq4f_clear(btn->c[1][1]);
+    MEM_FREE(btn->c[0][0]);
 
-    MEM_FREE(btn);
+    beziertreenodeqq4f_clear(btn->c[0][1]);
+    MEM_FREE(btn->c[0][1]);
+
+    beziertreenodeqq4f_clear(btn->c[1][0]);
+    MEM_FREE(btn->c[1][0]);
+
+    beziertreenodeqq4f_clear(btn->c[1][1]);
+    MEM_FREE(btn->c[1][1]);
 
     bezierqq4f_clear(&btn->b);
 }
@@ -143,6 +148,7 @@ void beziertreeqq4f_init(struct beziertreeqq4f_s *bt)
 void beziertreeqq4f_clear(struct beziertreeqq4f_s *bt)
 {
     beziertreenodeqq4f_clear(bt->r);
+    MEM_FREE(bt->r);
 }
 
 void beziertreeqq4f_from_func(struct beziertreeqq4f_s *bt, beziertreeqq4f_func_t f, void *data)
