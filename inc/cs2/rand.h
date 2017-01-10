@@ -30,7 +30,15 @@
 
 CS2_API_BEGIN
 
-CS2_API double rand_u1f(double min, double max); /* uniform rand [min; max] */
+struct rand_s
+{
+    uint64_t state[2];
+};
+
+CS2_API void rand_seed(struct rand_s *r);
+
+CS2_API double rand_1f(struct rand_s *r); /* uniform rand [0; 1] */
+CS2_API double rand_u1f(struct rand_s *r, double min, double max); /* uniform rand [min; max] */
 
 CS2_API_END
 

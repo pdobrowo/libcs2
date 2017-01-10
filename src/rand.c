@@ -23,17 +23,31 @@
  * SOFTWARE.
  */
 #include "cs2/rand.h"
-#include <stdlib.h>
-#include <time.h>
+#include "cs2/timer.h"
+#include <unistd.h>
 
-static void init_rand(void) __attribute__((constructor));
-
-void init_rand(void)
+static uint64_t xorshift128plus(struct rand_s *r)
 {
-    srand((unsigned)time(0));
+    uint64_t x = r->state[0];
+    uint64_t const y = r->state[1];
+    r->state[0] = y;
+    x ^= x << 23;
+    r->state[1] = x ^ y ^ (x >> 17) ^ (y >> 26);
+    return r->state[1] + y;
 }
 
-double rand_u1f(double min, double max)
+void rand_seed(struct rand_s *r)
 {
-    return min + (max - min) * (double)rand() / (double)RAND_MAX;
+    r->state[0] = timer_nsec();
+    r->state[1] = (uint64_t)getpid();
+}
+
+double rand_1f(struct rand_s *r)
+{
+    return (double)xorshift128plus(r) / (double)UINT64_MAX;
+}
+
+double rand_u1f(struct rand_s *r, double min, double max)
+{
+    return min + rand_1f(r) * (max - min);
 }
