@@ -123,15 +123,18 @@ TEST_CASE(bezierqq1f, func_fn1)
     struct bezierqq1f_coeff_s c = { fn1(0.0, 0.0), fn1(0.0, 0.5), fn1(0.0, 1.0),
                                     fn1(0.5, 0.0), fn1(0.5, 0.5), fn1(0.5, 1.0),
                                     fn1(1.0, 0.0), fn1(1.0, 0.5), fn1(1.0, 1.0) };
+    struct rand_s r;
     double u, v;
     int i;
+
+    rand_seed(&r);
 
     bezierqq1f_from_qq(&b, &c);
 
     for (i = 0; i < 1000; ++i)
     {
-        u = rand_u1f(0.0, 1.0);
-        v = rand_u1f(0.0, 1.0);
+        u = rand_u1f(&r, 0.0, 1.0);
+        v = rand_u1f(&r, 0.0, 1.0);
 
         test_almost_equal(bezierqq1f_eval(&b, u, v), fn1(u, v));
     }
