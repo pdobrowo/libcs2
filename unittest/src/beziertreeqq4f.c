@@ -59,38 +59,84 @@ static void create_z_barrel(struct predg3f_s *p)
 
 TEST_SUITE(beziertreeqq4f)
 
-TEST_CASE(beziertreeqq4f, predbb3f)
+TEST_CASE(beziertreeqq4f, init_and_sub)
 {
-    struct beziertreeqq4f_s bt;
+    struct beziertreeqq4f_s t;
     struct predbb_func_s f;
 
     create_z_barrel(&f.p);
 
     predg3f_param(&f.pp, &f.p);
 
-    beziertreeqq4f_init(&bt);
-    beziertreeqq4f_from_func(&bt, &predbb_func, &f);
+    /* init */
+    beziertreeqq4f_init(&t);
+    beziertreeqq4f_from_func(&t, &predbb_func, &f);
 
     /* initial tree is virtual with zero volume and zero area */
-    TEST_ASSERT(beziertreenodeqq4f_is_virt(bt.r));
-    test_almost_equal(beziertreeqq4f_vol(&bt), 0.0);
-    test_almost_equal(beziertreeqq4f_area(&bt), 0.0);
+    TEST_ASSERT(beziertreenodeqq4f_is_virt(t.rn));
+    test_almost_equal(beziertreeqq4f_vol(&t), 0.0);
+    test_almost_equal(beziertreeqq4f_area(&t), 0.0);
 
     /* do first level subdivision */
-    beziertreenodeqq4f_sub(bt.r);
+    beziertreenodeqq4f_sub(t.rn);
 
     /* first level subdivision must not be virtual and volume must not be zero */
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[0][0]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[0][1]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[1][0]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(bt.r->c[1][1]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[0][0]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[0][1]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[1][0]));
+    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[1][1]));
 
-    TEST_ASSERT(beziertreeqq4f_vol(&bt) > 0.0);
-    TEST_ASSERT(beziertreeqq4f_area(&bt) > 0.0);
+    TEST_ASSERT(beziertreeqq4f_vol(&t) > 0.0);
+    TEST_ASSERT(beziertreeqq4f_area(&t) > 0.0);
 
     /* do second level subdivision */
-    beziertreenodeqq4f_sub(bt.r->c[0][0]);
-    beziertreenodeqq4f_sub(bt.r->c[0][1]);
-    beziertreenodeqq4f_sub(bt.r->c[1][0]);
-    beziertreenodeqq4f_sub(bt.r->c[1][1]);
+    beziertreenodeqq4f_sub(t.rn->c[0][0]);
+    beziertreenodeqq4f_sub(t.rn->c[0][1]);
+    beziertreenodeqq4f_sub(t.rn->c[1][0]);
+    beziertreenodeqq4f_sub(t.rn->c[1][1]);
+
+    /* clear */
+    beziertreeqq4f_clear(&t);
+}
+
+TEST_CASE(beziertreeqq4f, sub_vol)
+{
+    struct beziertreeqq4f_s t;
+    struct beziertreeleafsqq4f_s l;
+    struct beziertreeleafqq4f_s *ll;
+    struct predbb_func_s f;
+    size_t pc, tc;
+
+    create_z_barrel(&f.p);
+
+    predg3f_param(&f.pp, &f.p);
+
+    /* init */
+    beziertreeqq4f_init(&t);
+    beziertreeqq4f_from_func(&t, &predbb_func, &f);
+
+    /* sub vol */
+    beziertreeleafsqq4f_init(&l, &t);
+
+    beziertreeleafsqq4f_sub_vol(&l, 0.0001);
+    pc = l.c;
+
+    beziertreeleafsqq4f_sub_vol(&l, 0.0001);
+
+    TEST_ASSERT(pc == l.c);
+
+    /* count */
+    tc = 0;
+    ll = l.l;
+
+    while (ll)
+    {
+        ++tc;
+        ll = ll->next;
+    }
+
+    TEST_ASSERT(pc == tc);
+
+    /* clear */
+    beziertreeqq4f_clear(&t);
 }
