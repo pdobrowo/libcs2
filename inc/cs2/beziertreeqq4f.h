@@ -55,31 +55,57 @@ struct beziertreenodeqq4f_s
     struct beziertreenodeqq4f_s *c[2][2];
 };
 
-CS2_API void beziertreenodeqq4f_init(struct beziertreenodeqq4f_s *btn, double u0, double u1, double u2, double v0, double v1, double v2,
-                                     struct beziertreeqq4f_s *r, struct beziertreenodeqq4f_s *p, int is_virt);
-CS2_API void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *btn);
+CS2_API void beziertreenodeqq4f_init(struct beziertreenodeqq4f_s *n, double u0, double u1, double u2, double v0, double v1, double v2,
+                                     struct beziertreeqq4f_s *t, struct beziertreenodeqq4f_s *pn, int is_virt);
+CS2_API void beziertreenodeqq4f_clear(struct beziertreenodeqq4f_s *n);
 
-CS2_API void beziertreenodeqq4f_sub(struct beziertreenodeqq4f_s *btn);
-CS2_API int beziertreenodeqq4f_is_virt(struct beziertreenodeqq4f_s *btn);
-CS2_API int beziertreenodeqq4f_is_leaf(struct beziertreenodeqq4f_s *btn);
-CS2_API double beziertreenodeqq4f_vol(struct beziertreenodeqq4f_s *btn);
-CS2_API double beziertreenodeqq4f_area(struct beziertreenodeqq4f_s *btn);
+CS2_API void beziertreenodeqq4f_sub(struct beziertreenodeqq4f_s *n);
+CS2_API int beziertreenodeqq4f_is_virt(struct beziertreenodeqq4f_s *n);
+CS2_API int beziertreenodeqq4f_is_leaf(struct beziertreenodeqq4f_s *n);
+CS2_API double beziertreenodeqq4f_vol(struct beziertreenodeqq4f_s *n);
+CS2_API double beziertreenodeqq4f_area(struct beziertreenodeqq4f_s *n);
 
-typedef void (*beziertreeqq4f_func_t)(struct vec4f_s *r, double u, double v, void *data);
+/**
+ * spin bezier tree func
+ */
+typedef void (*beziertreeqq4f_func_t)(struct vec4f_s *r, double u, double v, void *d);
 
+/**
+ * spin bezier tree
+ */
 struct beziertreeqq4f_s
 {
     beziertreeqq4f_func_t f;
-    void *data;
-    struct beziertreenodeqq4f_s *r; /* virtual */
+    void *d;
+    struct beziertreenodeqq4f_s *rn; /* virtual */
 };
 
-CS2_API void beziertreeqq4f_init(struct beziertreeqq4f_s *bt);
-CS2_API void beziertreeqq4f_clear(struct beziertreeqq4f_s *bt);
+CS2_API void beziertreeqq4f_init(struct beziertreeqq4f_s *t);
+CS2_API void beziertreeqq4f_clear(struct beziertreeqq4f_s *t);
 
-CS2_API void beziertreeqq4f_from_func(struct beziertreeqq4f_s *bt, beziertreeqq4f_func_t f, void *data);
-CS2_API double beziertreeqq4f_vol(struct beziertreeqq4f_s *btn);
-CS2_API double beziertreeqq4f_area(struct beziertreeqq4f_s *btn);
+CS2_API void beziertreeqq4f_from_func(struct beziertreeqq4f_s *t, beziertreeqq4f_func_t f, void *d);
+CS2_API double beziertreeqq4f_vol(struct beziertreeqq4f_s *t);
+CS2_API double beziertreeqq4f_area(struct beziertreeqq4f_s *t);
+
+/**
+ * spin bezier tree leaf
+ */
+struct beziertreeleafqq4f_s
+{
+    struct beziertreenodeqq4f_s *n;
+    struct beziertreeleafqq4f_s *next;
+};
+
+struct beziertreeleafsqq4f_s
+{
+    struct beziertreeleafqq4f_s *l;
+    size_t c;
+};
+
+CS2_API void beziertreeleafsqq4f_init(struct beziertreeleafsqq4f_s *l, struct beziertreeqq4f_s *t);
+CS2_API void beziertreeleafsqq4f_clear(struct beziertreeleafsqq4f_s *l);
+
+CS2_API void beziertreeleafsqq4f_sub_vol(struct beziertreeleafsqq4f_s *l, double vol);
 
 CS2_API_END
 
