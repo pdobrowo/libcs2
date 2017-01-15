@@ -86,9 +86,9 @@ int main()
         return 1;
     }
 
-    decomp3f_init_f pl_init = (decomp3f_init_f)plugin_fn(pl, DECOMP3F_INIT_F_SYM);
-    decomp3f_make_f pl_make = (decomp3f_make_f)plugin_fn(pl, DECOMP3F_MAKE_F_SYM);
-    decomp3f_clear_f pl_clear = (decomp3f_clear_f)plugin_fn(pl, DECOMP3F_CLEAR_F_SYM);
+    decomp3f_init_f pl_init = (decomp3f_init_f)plugin_func(pl, DECOMP3F_INIT_F_SYM);
+    decomp3f_make_f pl_make = (decomp3f_make_f)plugin_func(pl, DECOMP3F_MAKE_F_SYM);
+    decomp3f_clear_f pl_clear = (decomp3f_clear_f)plugin_func(pl, DECOMP3F_CLEAR_F_SYM);
 
     struct decomp3f_s d;
 
