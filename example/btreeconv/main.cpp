@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright (c) 2015-2017 Przemysław Dobrowolski
  *
  * This file is part of the Configuration Space Library (libcs2), a library
@@ -22,13 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/beziertreeqq4f.h"
+#include "cs2/vec3f.h"
 #include "cs2/predg3f.h"
-#include "unittest/unittest.h"
-#include <math.h>
-
-#define EPS (10e-8)
-#define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
+#include "cs2/beziertreeqq4f.h"
+#include "cs2/timer.h"
+#include <stdint.h>
+#include <cstdio>
+#include <cmath>
 
 struct predbb_func_s
 {
@@ -49,7 +49,6 @@ static void predbb_func(struct vec4f_s *r, double u, double v, void *data)
 
 static void create_z_barrel(struct predg3f_s *p)
 {
-    /* an example z-barrel */
     vec3f_set(&p->k, 1.0, 1.0, 1.0);
     vec3f_set(&p->l, 1.0, 0.0, 2.0);
     vec3f_set(&p->a, 0.0, 1.0, 1.0);
@@ -57,86 +56,33 @@ static void create_z_barrel(struct predg3f_s *p)
     p->c = 0.5;
 }
 
-TEST_SUITE(beziertreeqq4f)
-
-TEST_CASE(beziertreeqq4f, init_and_sub)
-{
-    struct beziertreeqq4f_s t;
-    struct predbb_func_s f;
-
-    create_z_barrel(&f.p);
-
-    predg3f_param(&f.pp, &f.p);
-
-    /* init */
-    beziertreeqq4f_init(&t);
-    beziertreeqq4f_from_func(&t, &predbb_func, &f);
-
-    /* initial tree is virtual with zero volume and zero area */
-    TEST_ASSERT(beziertreenodeqq4f_is_virt(t.rn));
-    test_almost_equal(beziertreeqq4f_vol(&t), 0.0);
-    test_almost_equal(beziertreeqq4f_area(&t), 0.0);
-
-    /* do first level subdivision */
-    beziertreenodeqq4f_sub(t.rn);
-
-    /* first level subdivision must not be virtual and volume must not be zero */
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[0][0]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[0][1]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[1][0]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[1][1]));
-
-    TEST_ASSERT(beziertreeqq4f_vol(&t) > 0.0);
-    TEST_ASSERT(beziertreeqq4f_area(&t) > 0.0);
-
-    /* do second level subdivision */
-    beziertreenodeqq4f_sub(t.rn->c[0][0]);
-    beziertreenodeqq4f_sub(t.rn->c[0][1]);
-    beziertreenodeqq4f_sub(t.rn->c[1][0]);
-    beziertreenodeqq4f_sub(t.rn->c[1][1]);
-
-    /* clear */
-    beziertreeqq4f_clear(&t);
-}
-
-TEST_CASE(beziertreeqq4f, sub_vol)
+int main()
 {
     struct beziertreeqq4f_s t;
     struct beziertreeleafsqq4f_s l;
-    struct beziertreeleafqq4f_s *ll;
     struct predbb_func_s f;
-    size_t pc, tc;
+    uint64_t start;
 
     create_z_barrel(&f.p);
 
     predg3f_param(&f.pp, &f.p);
 
-    /* init */
     beziertreeqq4f_init(&t);
     beziertreeqq4f_from_func(&t, &predbb_func, &f);
 
-    /* sub vol */
     beziertreeleafsqq4f_init(&l, &t);
 
-    beziertreeleafsqq4f_sub_vol(&l, 0.0001);
-    pc = l.c;
+    start = timer_msec();
 
-    beziertreeleafsqq4f_sub_vol(&l, 0.0001);
-
-    TEST_ASSERT(pc == l.c);
-
-    /* count */
-    tc = 0;
-    ll = l.l;
-
-    while (ll)
+    for (double v = 0.1; v > 0.00000001; v /= 10)
     {
-        ++tc;
-        ll = ll->next;
+        beziertreeleafsqq4f_sub_vol(&l, v);
+        printf("target hull vol: %.12f, perc: %.12f, subs: %d, time: %d ms\n",
+               v, 100 * l.c * v / (M_PI * M_PI / 2.0),
+               (int)l.c, (int)(timer_msec() - start));
     }
-
-    TEST_ASSERT(pc == tc);
 
     /* clear */
     beziertreeqq4f_clear(&t);
+    return 0;
 }

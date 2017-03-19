@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2016 Przemysław Dobrowolski
+ * Copyright (c) 2015-2017 Przemysław Dobrowolski
  *
  * This file is part of the Configuration Space Library (libcs2), a library
  * for creating configuration spaces of various motion planning problems.
@@ -11,8 +11,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
