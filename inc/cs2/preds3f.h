@@ -35,13 +35,13 @@ CS2_API_BEGIN
  *
  *    (K x L) * rot(A - B) + (K - L) * rot(A x B)
  */
-struct preds3f_s
+struct cs2_preds3f_s
 {
-    struct vec3f_s k, l, a, b;
+    struct cs2_vec3f_s k, l, a, b;
 };
 
-CS2_API void preds3f_set(struct preds3f_s *s, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b);
-CS2_API void preds3f_copy(struct preds3f_s *r, const struct preds3f_s *s);
+CS2_API void cs2_preds3f_set(struct cs2_preds3f_s *s, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
+CS2_API void cs2_preds3f_copy(struct cs2_preds3f_s *r, const struct cs2_preds3f_s *s);
 
 CS2_API_END
 

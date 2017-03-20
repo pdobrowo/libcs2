@@ -22,19 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_TIMER_H
-#define CS2_TIMER_H
+#ifndef CS2_ASSERT_H
+#define CS2_ASSERT_H
 
 #include "defs.h"
-#include <stdint.h>
 
 CS2_API_BEGIN
 
-CS2_API uint64_t cs2_timer_sec(void);
-CS2_API uint64_t cs2_timer_msec(void);
-CS2_API uint64_t cs2_timer_usec(void);
-CS2_API uint64_t cs2_timer_nsec(void);
+CS2_API void cs2_assert(int value, const char *cond, const char *file, int line);
+CS2_API void cs2_assert_msg(int value, const char *cond, const char *msg, const char *file, int line);
+CS2_API void cs2_assert_panic(const char *msg, const char *file, int line);
+
+#define CS2_ASSERT(Cond) do cs2_assert(Cond, #Cond, __FILE__, __LINE__); while (0)
+#define CS2_ASSERT_MSG(Cond, Msg) do cs2_assert_msg(Cond, #Cond, Msg, __FILE__, __LINE__); while (0)
+#define CS2_ASSERT_PANIC(Msg) do cs2_assert_panic(Msg, __FILE__, __LINE__); while (0)
 
 CS2_API_END
 
-#endif /* CS2_TIMER_H */
+#endif /* CS2_ASSERT_H */

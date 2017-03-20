@@ -22,19 +22,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_TIMER_H
-#define CS2_TIMER_H
+#include "cs2/assert.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "defs.h"
-#include <stdint.h>
+void cs2_assert(int value, const char *cond, const char *file, int line)
+{
+    if (value)
+        return;
 
-CS2_API_BEGIN
+    printf("libcs2: assertion '%s' failed at %s:%d\n", cond, file, line);
+    fflush(stdout);
 
-CS2_API uint64_t cs2_timer_sec(void);
-CS2_API uint64_t cs2_timer_msec(void);
-CS2_API uint64_t cs2_timer_usec(void);
-CS2_API uint64_t cs2_timer_nsec(void);
+    abort();
+}
 
-CS2_API_END
+void cs2_assert_msg(int value, const char *cond, const char *msg, const char *file, int line)
+{
+    if (value)
+        return;
 
-#endif /* CS2_TIMER_H */
+    printf("libcs2: assertion '%s' failed at %s:%d with message '%s'\n", cond, file, line, msg);
+    fflush(stdout);
+
+    abort();
+}
+
+void cs2_assert_panic(const char *msg, const char *file, int line)
+{
+    printf("libcs2: panic at %s:%d with message '%s'\n", file, line, msg);
+    fflush(stdout);
+
+    abort();
+}

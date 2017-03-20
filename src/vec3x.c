@@ -24,82 +24,82 @@
  */
 #include "cs2/vec3x.h"
 
-void vec3x_init(struct vec3x_s *v)
+void cs2_vec3x_init(struct cs2_vec3x_s *v)
 {
     mpz_init(v->x);
     mpz_init(v->y);
     mpz_init(v->z);
 }
 
-void vec3x_clear(struct vec3x_s *v)
+void cs2_vec3x_clear(struct cs2_vec3x_s *v)
 {
     mpz_clear(v->x);
     mpz_clear(v->y);
     mpz_clear(v->z);
 }
 
-void vec3x_set(struct vec3x_s *r, mpz_srcptr x, mpz_srcptr y, mpz_srcptr z)
+void cs2_vec3x_set(struct cs2_vec3x_s *r, mpz_srcptr x, mpz_srcptr y, mpz_srcptr z)
 {
     mpz_set(r->x, x);
     mpz_set(r->y, y);
     mpz_set(r->z, z);
 }
 
-void vec3x_set_si(struct vec3x_s *r, long x, long y, long z)
+void cs2_vec3x_set_si(struct cs2_vec3x_s *r, long x, long y, long z)
 {
     mpz_set_si(r->x, x);
     mpz_set_si(r->y, y);
     mpz_set_si(r->z, z);
 }
 
-void vec3x_zero(struct vec3x_s *r)
+void cs2_vec3x_zero(struct cs2_vec3x_s *r)
 {
     mpz_set_si(r->x, 0);
     mpz_set_si(r->y, 0);
     mpz_set_si(r->z, 0);
 }
 
-int vec3x_is_zero(const struct vec3x_s *v)
+int cs2_vec3x_is_zero(const struct cs2_vec3x_s *v)
 {
     return !mpz_sgn(v->x) && !mpz_sgn(v->y) && !mpz_sgn(v->z);
 }
 
-void vec3x_copy(struct vec3x_s *r, const struct vec3x_s *v)
+void cs2_vec3x_copy(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v)
 {
     mpz_set(r->x, v->x);
     mpz_set(r->y, v->y);
     mpz_set(r->z, v->z);
 }
 
-void vec3x_add(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b)
+void cs2_vec3x_add(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b)
 {
     mpz_add(r->x, a->x, b->x);
     mpz_add(r->y, a->y, b->y);
     mpz_add(r->z, a->z, b->z);
 }
 
-void vec3x_sub(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b)
+void cs2_vec3x_sub(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b)
 {
     mpz_sub(r->x, a->x, b->x);
     mpz_sub(r->y, a->y, b->y);
     mpz_sub(r->z, a->z, b->z);
 }
 
-void vec3x_neg(struct vec3x_s *r, const struct vec3x_s *v)
+void cs2_vec3x_neg(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v)
 {
     mpz_neg(r->x, v->x);
     mpz_neg(r->y, v->y);
     mpz_neg(r->z, v->z);
 }
 
-void vec3x_mul(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as)
+void cs2_vec3x_mul(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as)
 {
     mpz_mul(r->x, a->x, as);
     mpz_mul(r->y, a->y, as);
     mpz_mul(r->z, a->z, as);
 }
 
-void vec3x_cl(struct pin3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b)
+void cs2_vec3x_cl(struct cs2_pin3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b)
 {
     mpz_t t;
     mpz_init(t);
@@ -120,7 +120,7 @@ void vec3x_cl(struct pin3x_s *r, const struct vec3x_s *a, const struct vec3x_s *
     mpz_clear(t);
 }
 
-void vec3x_mad2(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs)
+void cs2_vec3x_mad2(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs)
 {
     mpz_t t;
     mpz_init(t);
@@ -136,7 +136,7 @@ void vec3x_mad2(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const
     mpz_clear(t);
 }
 
-void vec3x_mad3(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs)
+void cs2_vec3x_mad3(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs, const struct cs2_vec3x_s *c, mpz_srcptr cs)
 {
     mpz_t t;
     mpz_init(t);
@@ -158,7 +158,7 @@ void vec3x_mad3(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const
     mpz_clear(t);
 }
 
-void vec3x_mad4(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs, const struct vec3x_s *d, mpz_srcptr ds)
+void cs2_vec3x_mad4(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs, const struct cs2_vec3x_s *c, mpz_srcptr cs, const struct cs2_vec3x_s *d, mpz_srcptr ds)
 {
     mpz_t t;
     mpz_init(t);
@@ -186,7 +186,7 @@ void vec3x_mad4(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const
     mpz_clear(t);
 }
 
-void vec3x_mad5(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs, const struct vec3x_s *d, mpz_srcptr ds, const struct vec3x_s *e, mpz_srcptr es)
+void cs2_vec3x_mad5(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs, const struct cs2_vec3x_s *c, mpz_srcptr cs, const struct cs2_vec3x_s *d, mpz_srcptr ds, const struct cs2_vec3x_s *e, mpz_srcptr es)
 {
     mpz_t t;
     mpz_init(t);
@@ -220,7 +220,7 @@ void vec3x_mad5(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const
     mpz_clear(t);
 }
 
-void vec3x_dot(mpz_ptr r, const struct vec3x_s *a, const struct vec3x_s *b)
+void cs2_vec3x_dot(mpz_ptr r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b)
 {
     mpz_t t;
     mpz_init(t);
@@ -232,7 +232,7 @@ void vec3x_dot(mpz_ptr r, const struct vec3x_s *a, const struct vec3x_s *b)
     mpz_clear(t);
 }
 
-void vec3x_cross(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b)
+void cs2_vec3x_cross(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b)
 {
     mpz_t t;
     mpz_init(t);
@@ -248,7 +248,7 @@ void vec3x_cross(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_
     mpz_clear(t);
 }
 
-void vec3x_sqlen(mpz_ptr r, const struct vec3x_s *v)
+void cs2_vec3x_sqlen(mpz_ptr r, const struct cs2_vec3x_s *v)
 {
     mpz_t t;
     mpz_init(t);
@@ -260,7 +260,7 @@ void vec3x_sqlen(mpz_ptr r, const struct vec3x_s *v)
     mpz_clear(t);
 }
 
-void vec3x_tr(mpz_ptr r, const struct vec3x_s *v)
+void cs2_vec3x_tr(mpz_ptr r, const struct cs2_vec3x_s *v)
 {
     mpz_add(r, v->x, v->y);
     mpz_add(r, r, v->z);

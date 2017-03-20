@@ -25,7 +25,7 @@
 #include "cs2/spinquad3x.h"
 #include "cs2/vec3x.h"
 
-void spinquad3x_init(struct spinquad3x_s *sq)
+void cs2_spinquad3x_init(struct cs2_spinquad3x_s *sq)
 {
     mpz_init(sq->a11);
     mpz_init(sq->a22);
@@ -39,7 +39,7 @@ void spinquad3x_init(struct spinquad3x_s *sq)
     mpz_init(sq->a34);
 }
 
-void spinquad3x_clear(struct spinquad3x_s *sq)
+void cs2_spinquad3x_clear(struct cs2_spinquad3x_s *sq)
 {
     mpz_clear(sq->a11);
     mpz_clear(sq->a22);
@@ -53,30 +53,30 @@ void spinquad3x_clear(struct spinquad3x_s *sq)
     mpz_clear(sq->a34);
 }
 
-void spinquad3x_from_predh3x(struct spinquad3x_s *sq, const struct predh3x_s *ph)
+void cs2_spinquad3x_from_predh3x(struct cs2_spinquad3x_s *sq, const struct cs2_predh3x_s *ph)
 {
-    struct predg3x_s g;
-    predg3x_from_predh3x(&g, ph);
-    spinquad3x_from_predg3x(sq, &g);
+    struct cs2_predg3x_s g;
+    cs2_predg3x_from_predh3x(&g, ph);
+    cs2_spinquad3x_from_predg3x(sq, &g);
 }
 
-void spinquad3x_from_preds3x(struct spinquad3x_s *sq, const struct preds3x_s *ps)
+void cs2_spinquad3x_from_preds3x(struct cs2_spinquad3x_s *sq, const struct cs2_preds3x_s *ps)
 {
-    struct predg3x_s g;
-    predg3x_from_preds3x(&g, ps);
-    spinquad3x_from_predg3x(sq, &g);
+    struct cs2_predg3x_s g;
+    cs2_predg3x_from_preds3x(&g, ps);
+    cs2_spinquad3x_from_predg3x(sq, &g);
 }
 
-void spinquad3x_from_predg3x(struct spinquad3x_s *sq, const struct predg3x_s *pg)
+void cs2_spinquad3x_from_predg3x(struct cs2_spinquad3x_s *sq, const struct cs2_predg3x_s *pg)
 {
-    struct vec3x_s p, q, u, v;
+    struct cs2_vec3x_s p, q, u, v;
     mpz_t pxqx, pxqy, pxqz, pyqx, pyqy, pyqz, pzqx, pzqy, pzqz, uxvx, uxvy, uxvz, uyvx, uyvy, uyvz, uzvx, uzvy, uzvz;
 
     /* init */
-    vec3x_init(&p);
-    vec3x_init(&q);
-    vec3x_init(&u);
-    vec3x_init(&v);
+    cs2_vec3x_init(&p);
+    cs2_vec3x_init(&q);
+    cs2_vec3x_init(&u);
+    cs2_vec3x_init(&v);
     mpz_init(pxqx);
     mpz_init(pxqy);
     mpz_init(pxqz);
@@ -97,7 +97,7 @@ void spinquad3x_from_predg3x(struct spinquad3x_s *sq, const struct predg3x_s *pg
     mpz_init(uzvz);
 
     /* p, q, u, v */
-    predg3x_pquv(&p, &q, &u, &v, pg);
+    cs2_predg3x_pquv(&p, &q, &u, &v, pg);
 
     /* multiplies */
     mpz_mul(pxqx, p.x, q.x);
@@ -185,10 +185,10 @@ void spinquad3x_from_predg3x(struct spinquad3x_s *sq, const struct predg3x_s *pg
     mpz_add(sq->a44, sq->a44, pg->c);
 
     /* clear */
-    vec3x_clear(&p);
-    vec3x_clear(&q);
-    vec3x_clear(&u);
-    vec3x_clear(&v);
+    cs2_vec3x_clear(&p);
+    cs2_vec3x_clear(&q);
+    cs2_vec3x_clear(&u);
+    cs2_vec3x_clear(&v);
     mpz_clear(pxqx);
     mpz_clear(pxqy);
     mpz_clear(pxqz);
@@ -209,7 +209,7 @@ void spinquad3x_from_predg3x(struct spinquad3x_s *sq, const struct predg3x_s *pg
     mpz_clear(uzvz);
 }
 
-void spinquad3x_eval(mpz_ptr v, const struct spinquad3x_s *sq, const struct pin3x_s *p)
+void cs2_spinquad3x_eval(mpz_ptr v, const struct cs2_spinquad3x_s *sq, const struct cs2_pin3x_s *p)
 {
     mpz_t t;
     mpz_init(t);

@@ -24,14 +24,14 @@
  */
 #include "cs2/predh3f.h"
 
-void predh3f_set(struct predh3f_s *g, const struct vec3f_s *b, const struct plane3f_s *p)
+void cs2_predh3f_set(struct cs2_predh3f_s *g, const struct cs2_vec3f_s *b, const struct cs2_plane3f_s *p)
 {
-    vec3f_copy(&g->b, b);
-    plane3f_copy(&g->p, p);
+    cs2_vec3f_copy(&g->b, b);
+    cs2_plane3f_copy(&g->p, p);
 }
 
-void predh3f_copy(struct predh3f_s *r, const struct predh3f_s *h)
+void cs2_predh3f_copy(struct cs2_predh3f_s *r, const struct cs2_predh3f_s *h)
 {
-    vec3f_copy(&r->b, &h->b);
-    plane3f_copy(&r->p, &h->p);
+    cs2_vec3f_copy(&r->b, &h->b);
+    cs2_plane3f_copy(&r->p, &h->p);
 }

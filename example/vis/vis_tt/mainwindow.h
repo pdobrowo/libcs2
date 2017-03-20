@@ -61,8 +61,8 @@ private:
     void formatSliderValue(QLabel *label, double value);
     void updateSliderInformation();
 
-    QString formatVector(const struct vec3f_s *v);
-    QString formatVector(const struct vec4f_s *v);
+    QString formatVector(const struct cs2_vec3f_s *v);
+    QString formatVector(const struct cs2_vec4f_s *v);
 
     // file
     QString m_currentFile;
@@ -74,10 +74,10 @@ private:
 
     void updateWindowTitle();
 
-    void autoMesh(TriangleListPtr triangles, struct predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions);
-    void autoMeshInternal(TriangleListPtr triangles, struct predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
+    void autoMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions);
+    void autoMeshInternal(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
 
-    void simpleMesh(TriangleListPtr triangles, struct predgparam3f_s *param, double radius);
+    void simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double radius);
 
     void addTriangle(TriangleListPtr triangles, const Triangle &triangle);
 

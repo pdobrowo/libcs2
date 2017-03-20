@@ -32,17 +32,17 @@
 
 CS2_API_BEGIN
 
-struct plane4f_s
+struct cs2_plane4f_s
 {
-    struct vec4f_s n;
+    struct cs2_vec4f_s n;
     double d;
 };
 
-CS2_API void plane4f_set(struct plane4f_s *p, const struct vec4f_s *n, double d);
-CS2_API void plane4f_copy(struct plane4f_s *r, const struct plane4f_s *p);
-CS2_API double plane4f_pops(const struct plane4f_s *r, const struct vec4f_s *p);
+CS2_API void cs2_plane4f_set(struct cs2_plane4f_s *p, const struct cs2_vec4f_s *n, double d);
+CS2_API void cs2_plane4f_copy(struct cs2_plane4f_s *r, const struct cs2_plane4f_s *p);
+CS2_API double cs2_plane4f_pops(const struct cs2_plane4f_s *r, const struct cs2_vec4f_s *p);
 
-CS2_API void plane4f_print_json(const struct plane4f_s *r, FILE *f, size_t ind);
+CS2_API void cs2_plane4f_print_json(const struct cs2_plane4f_s *r, FILE *f, size_t ind);
 
 CS2_API_END
 

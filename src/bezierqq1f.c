@@ -24,7 +24,7 @@
  */
 #include "cs2/bezierqq1f.h"
 
-void bezierqq1f_from_qq(struct bezierqq1f_s *b, const struct bezierqq1f_coeff_s *c)
+void cs2_bezierqq1f_from_qq(struct cs2_bezierqq1f_s *b, const struct cs2_bezierqq1f_coeff_s *c)
 {
     /* corners */
     b->p00 = c->c00;
@@ -42,7 +42,7 @@ void bezierqq1f_from_qq(struct bezierqq1f_s *b, const struct bezierqq1f_coeff_s 
     b->p11 =  0.25 * (16.0 * c->c11 - 2.0 * (b->p01 + b->p10 + b->p12 + b->p21) - (b->p00 + b->p02 + b->p20 + b->p22));
 }
 
-double bezierqq1f_eval(const struct bezierqq1f_s *b, double u, double v)
+double cs2_bezierqq1f_eval(const struct cs2_bezierqq1f_s *b, double u, double v)
 {
     double uu = u * u;
     double cu = 1.0 - u;

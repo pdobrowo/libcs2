@@ -41,30 +41,30 @@ CS2_API_BEGIN
  *
  *    (K x L) * rot(A - B) + (K - L) * rot(A x B) + c
  */
-struct predg3x_s
+struct cs2_predg3x_s
 {
-    struct vec3x_s k, l, a, b;
+    struct cs2_vec3x_s k, l, a, b;
     mpz_t c;
 };
 
-CS2_API void predg3x_init(struct predg3x_s *g);
-CS2_API void predg3x_clear(struct predg3x_s *g);
+CS2_API void cs2_predg3x_init(struct cs2_predg3x_s *g);
+CS2_API void cs2_predg3x_clear(struct cs2_predg3x_s *g);
 
-CS2_API void predg3x_from_predh3x(struct predg3x_s *g, const struct predh3x_s *h);
-CS2_API void predg3x_from_preds3x(struct predg3x_s *g, const struct preds3x_s *s);
-CS2_API void predg3x_pquv(struct vec3x_s *p, struct vec3x_s *q, struct vec3x_s *u, struct vec3x_s *v, const struct predg3x_s *g);
+CS2_API void cs2_predg3x_from_predh3x(struct cs2_predg3x_s *g, const struct cs2_predh3x_s *h);
+CS2_API void cs2_predg3x_from_preds3x(struct cs2_predg3x_s *g, const struct cs2_preds3x_s *s);
+CS2_API void cs2_predg3x_pquv(struct cs2_vec3x_s *p, struct cs2_vec3x_s *q, struct cs2_vec3x_s *u, struct cs2_vec3x_s *v, const struct cs2_predg3x_s *g);
 
 /* type */
-enum predgtype3x_e
+enum cs2_predgtype3x_e
 {
-    predgtype3x_inproper,
-    predgtype3x_ellipsoidal,
-    predgtype3x_toroidal
+    cs2_predgtype3x_inproper,
+    cs2_predgtype3x_ellipsoidal,
+    cs2_predgtype3x_toroidal
 };
 
-CS2_API const char *predgtype3x_str(enum predgtype3x_e t);
+CS2_API const char *cs2_predgtype3x_str(enum cs2_predgtype3x_e t);
 
-CS2_API enum predgtype3x_e predg3x_type(const struct predg3x_s *g);
+CS2_API enum cs2_predgtype3x_e cs2_predg3x_type(const struct cs2_predg3x_s *g);
 
 #if 0
 

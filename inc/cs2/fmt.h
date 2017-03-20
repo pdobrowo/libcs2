@@ -30,9 +30,9 @@
 
 CS2_API_BEGIN
 
-#define FMT_DEFAULT_INDENT 4
+#define CS2_FMT_DEFAULT_INDENT 4
 
-CS2_API void fmt_indent(size_t n, FILE *f);
+CS2_API void cs2_fmt_indent(size_t n, FILE *f);
 
 CS2_API_END
 

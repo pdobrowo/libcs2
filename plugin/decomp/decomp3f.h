@@ -41,7 +41,7 @@ struct decompface3f_s
 struct decompmesh3f_s
 {
     /* vertices */
-    struct vec3f_s *v;
+    struct cs2_vec3f_s *v;
     size_t vs;
 
     /* faces */

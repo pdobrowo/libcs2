@@ -24,7 +24,7 @@
  */
 #include "cs2/pin3x.h"
 
-void pin3x_init(struct pin3x_s *p)
+void cs2_pin3x_init(struct cs2_pin3x_s *p)
 {
     mpz_init(p->p12);
     mpz_init(p->p23);
@@ -32,7 +32,7 @@ void pin3x_init(struct pin3x_s *p)
     mpz_init(p->p0);
 }
 
-void pin3x_clear(struct pin3x_s *p)
+void cs2_pin3x_clear(struct cs2_pin3x_s *p)
 {
     mpz_clear(p->p12);
     mpz_clear(p->p23);
@@ -40,7 +40,7 @@ void pin3x_clear(struct pin3x_s *p)
     mpz_clear(p->p0);
 }
 
-void pin3x_set(struct pin3x_s *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0)
+void cs2_pin3x_set(struct cs2_pin3x_s *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0)
 {
     mpz_set(p->p12, p12);
     mpz_set(p->p23, p23);
@@ -48,7 +48,7 @@ void pin3x_set(struct pin3x_s *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31
     mpz_set(p->p0, p0);
 }
 
-void pin3x_set_si(struct pin3x_s *p, long p12, long p23, long p31, long p0)
+void cs2_pin3x_set_si(struct cs2_pin3x_s *p, long p12, long p23, long p31, long p0)
 {
     mpz_set_si(p->p12, p12);
     mpz_set_si(p->p23, p23);

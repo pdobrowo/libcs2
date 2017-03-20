@@ -83,7 +83,7 @@ public:
 private:
     const struct decompmesh3f_s *m_m;
 
-    Point conv(const struct vec3f_s *v)
+    Point conv(const struct cs2_vec3f_s *v)
     {
         return Point(v->x, v->y, v->z);
     }
@@ -100,7 +100,7 @@ static void decomp3f_conv(struct decompmesh3f_s *m, const Polyhedron_3 *p)
     size_t vs = p->size_of_vertices();
     size_t fs = p->size_of_facets();
 
-    m->v = static_cast<struct vec3f_s *>(malloc(sizeof(struct vec3f_s) * vs));
+    m->v = static_cast<struct cs2_vec3f_s *>(malloc(sizeof(struct cs2_vec3f_s) * vs));
 
     if (!m->v)
         return; // todo: handle

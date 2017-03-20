@@ -31,16 +31,16 @@
 
 struct ctx
 {
-    struct vec3f_s v, v123, v357, v248, v159, v789;
+    struct cs2_vec3f_s v, v123, v357, v248, v159, v789;
 };
 
 static void ctx_init(struct ctx *c)
 {
-    vec3f_set(&c->v123, 1.0, 2.0, 3.0);
-    vec3f_set(&c->v357, 3.0, 5.0, 7.0);
-    vec3f_set(&c->v248, 2.0, 4.0, 8.0);
-    vec3f_set(&c->v159, 1.0, 5.0, 9.0);
-    vec3f_set(&c->v789, 7.0, 8.0, 9.0);
+    cs2_vec3f_set(&c->v123, 1.0, 2.0, 3.0);
+    cs2_vec3f_set(&c->v357, 3.0, 5.0, 7.0);
+    cs2_vec3f_set(&c->v248, 2.0, 4.0, 8.0);
+    cs2_vec3f_set(&c->v159, 1.0, 5.0, 9.0);
+    cs2_vec3f_set(&c->v789, 7.0, 8.0, 9.0);
 }
 
 TEST_SUITE(vec3f)
@@ -49,7 +49,7 @@ TEST_CASE(vec3f, set)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_set(&c.v, 3.0, 5.0, 7.0);
+    cs2_vec3f_set(&c.v, 3.0, 5.0, 7.0);
     test_almost_equal(c.v.x, 3.0);
     test_almost_equal(c.v.y, 5.0);
     test_almost_equal(c.v.z, 7.0);
@@ -59,7 +59,7 @@ TEST_CASE(vec3f, zero)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_zero(&c.v);
+    cs2_vec3f_zero(&c.v);
     test_almost_equal(c.v.x, 0.0);
     test_almost_equal(c.v.y, 0.0);
     test_almost_equal(c.v.z, 0.0);
@@ -69,7 +69,7 @@ TEST_CASE(vec3f, copy)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_copy(&c.v, &c.v357);
+    cs2_vec3f_copy(&c.v, &c.v357);
     test_almost_equal(c.v.x, 3.0);
     test_almost_equal(c.v.y, 5.0);
     test_almost_equal(c.v.z, 7.0);
@@ -79,7 +79,7 @@ TEST_CASE(vec3f, add)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_add(&c.v, &c.v123, &c.v357);
+    cs2_vec3f_add(&c.v, &c.v123, &c.v357);
     test_almost_equal(c.v.x, 4.0);
     test_almost_equal(c.v.y, 7.0);
     test_almost_equal(c.v.z, 10.0);
@@ -89,7 +89,7 @@ TEST_CASE(vec3f, sub)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_sub(&c.v, &c.v123, &c.v357);
+    cs2_vec3f_sub(&c.v, &c.v123, &c.v357);
     test_almost_equal(c.v.x, -2.0);
     test_almost_equal(c.v.y, -3.0);
     test_almost_equal(c.v.z, -4.0);
@@ -99,7 +99,7 @@ TEST_CASE(vec3f, neg)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_neg(&c.v, &c.v123);
+    cs2_vec3f_neg(&c.v, &c.v123);
     test_almost_equal(c.v.x, -1.0);
     test_almost_equal(c.v.y, -2.0);
     test_almost_equal(c.v.z, -3.0);
@@ -109,7 +109,7 @@ TEST_CASE(vec3f, mul)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_mul(&c.v, &c.v123, 5.0);
+    cs2_vec3f_mul(&c.v, &c.v123, 5.0);
     test_almost_equal(c.v.x, 5.0);
     test_almost_equal(c.v.y, 10.0);
     test_almost_equal(c.v.z, 15.0);
@@ -118,9 +118,9 @@ TEST_CASE(vec3f, mul)
 TEST_CASE(vec3f, cl)
 {
     struct ctx c;
-    struct pin3f_s p;
+    struct cs2_pin3f_s p;
     ctx_init(&c);
-    vec3f_cl(&p, &c.v123, &c.v357);
+    cs2_vec3f_cl(&p, &c.v123, &c.v357);
     test_almost_equal(p.p0, 34.0);
     test_almost_equal(p.p12, -1.0);
     test_almost_equal(p.p23, -1.0);
@@ -131,7 +131,7 @@ TEST_CASE(vec3f, mad2)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_mad2(&c.v, &c.v123, 4.0, &c.v357, 8.0);
+    cs2_vec3f_mad2(&c.v, &c.v123, 4.0, &c.v357, 8.0);
     test_almost_equal(c.v.x, 28.0);
     test_almost_equal(c.v.y, 48.0);
     test_almost_equal(c.v.z, 68.0);
@@ -141,7 +141,7 @@ TEST_CASE(vec3f, mad3)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_mad3(&c.v, &c.v123, 4.0, &c.v357, 8.0, &c.v248, 9.0);
+    cs2_vec3f_mad3(&c.v, &c.v123, 4.0, &c.v357, 8.0, &c.v248, 9.0);
     test_almost_equal(c.v.x, 46.0);
     test_almost_equal(c.v.y, 84.0);
     test_almost_equal(c.v.z, 140.0);
@@ -151,7 +151,7 @@ TEST_CASE(vec3f, mad4)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_mad4(&c.v, &c.v123, 4.0, &c.v357, 8.0, &c.v248, 9.0, &c.v159, 2.0);
+    cs2_vec3f_mad4(&c.v, &c.v123, 4.0, &c.v357, 8.0, &c.v248, 9.0, &c.v159, 2.0);
     test_almost_equal(c.v.x, 48.0);
     test_almost_equal(c.v.y, 94.0);
     test_almost_equal(c.v.z, 158.0);
@@ -161,7 +161,7 @@ TEST_CASE(vec3f, mad5)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_mad5(&c.v, &c.v123, 4.0, &c.v357, 8.0, &c.v248, 9.0, &c.v159, 2.0, &c.v789, 5.0);
+    cs2_vec3f_mad5(&c.v, &c.v123, 4.0, &c.v357, 8.0, &c.v248, 9.0, &c.v159, 2.0, &c.v789, 5.0);
     test_almost_equal(c.v.x, 83.0);
     test_almost_equal(c.v.y, 134.0);
     test_almost_equal(c.v.z, 203.0);
@@ -172,7 +172,7 @@ TEST_CASE(vec3f, dot)
     struct ctx c;
     double d;
     ctx_init(&c);
-    d = vec3f_dot(&c.v123, &c.v357);
+    d = cs2_vec3f_dot(&c.v123, &c.v357);
     test_almost_equal(d, 34.0);
 }
 
@@ -180,7 +180,7 @@ TEST_CASE(vec3f, cross)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_cross(&c.v, &c.v123, &c.v357);
+    cs2_vec3f_cross(&c.v, &c.v123, &c.v357);
     test_almost_equal(c.v.x, -1.0);
     test_almost_equal(c.v.y, 2.0);
     test_almost_equal(c.v.z, -1.0);
@@ -189,12 +189,12 @@ TEST_CASE(vec3f, cross)
 TEST_CASE(vec3f, cl_vs_cross_and_dot)
 {
     struct ctx c;
-    struct pin3f_s p;
+    struct cs2_pin3f_s p;
     double d;
     ctx_init(&c);
-    vec3f_cl(&p, &c.v123, &c.v357);
-    vec3f_cross(&c.v, &c.v123, &c.v357);
-    d = vec3f_dot(&c.v123, &c.v357);
+    cs2_vec3f_cl(&p, &c.v123, &c.v357);
+    cs2_vec3f_cross(&c.v, &c.v123, &c.v357);
+    d = cs2_vec3f_dot(&c.v123, &c.v357);
     test_almost_equal(p.p0, d);
     test_almost_equal(p.p12, c.v.z);
     test_almost_equal(p.p23, c.v.x);
@@ -205,7 +205,7 @@ TEST_CASE(vec3f, unit)
 {
     struct ctx c;
     ctx_init(&c);
-    vec3f_unit(&c.v, &c.v123);
+    cs2_vec3f_unit(&c.v, &c.v123);
     test_almost_equal(c.v.x, 1.0 / sqrt(14.0));
     test_almost_equal(c.v.y, 2.0 / sqrt(14.0));
     test_almost_equal(c.v.z, 3.0 / sqrt(14.0));
@@ -216,7 +216,7 @@ TEST_CASE(vec3f, len)
     struct ctx c;
     double d;
     ctx_init(&c);
-    d = vec3f_len(&c.v123);
+    d = cs2_vec3f_len(&c.v123);
     test_almost_equal(d, sqrt(14.0));
 }
 
@@ -225,7 +225,7 @@ TEST_CASE(vec3f, sqlen)
     struct ctx c;
     double d;
     ctx_init(&c);
-    d = vec3f_sqlen(&c.v123);
+    d = cs2_vec3f_sqlen(&c.v123);
     test_almost_equal(d, 14.0);
 }
 
@@ -234,6 +234,6 @@ TEST_CASE(vec3f, tr)
     struct ctx c;
     double d;
     ctx_init(&c);
-    d = vec3f_tr(&c.v123);
+    d = cs2_vec3f_tr(&c.v123);
     test_almost_equal(d, 6.0);
 }

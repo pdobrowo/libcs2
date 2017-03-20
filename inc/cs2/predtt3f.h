@@ -37,10 +37,10 @@ CS2_API_BEGIN
  *    klm - a stationary triangle
  *    abc - a rotating triangle
  */
-struct predtt3f_s
+struct cs2_predtt3f_s
 {
-    struct vec3f_s k, l, m;
-    struct vec3f_s a, b, c;
+    struct cs2_vec3f_s k, l, m;
+    struct cs2_vec3f_s a, b, c;
 };
 
 /**
@@ -55,12 +55,12 @@ struct predtt3f_s
  * [mk/ab] [mk/bc] [mk/ca]
  *
  */
-struct predttdecomp3f_s
+struct cs2_predttdecomp3f_s
 {
-    struct preds3f_s s[3][3];
+    struct cs2_preds3f_s s[3][3];
 };
 
-CS2_API void predtt3f_decomp(struct predttdecomp3f_s *d, const struct predtt3f_s *tt);
+CS2_API void cs2_predtt3f_decomp(struct cs2_predttdecomp3f_s *d, const struct cs2_predtt3f_s *tt);
 
 CS2_API_END
 

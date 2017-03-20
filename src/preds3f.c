@@ -24,18 +24,18 @@
  */
 #include "cs2/preds3f.h"
 
-void preds3f_set(struct preds3f_s *s, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b)
+void cs2_preds3f_set(struct cs2_preds3f_s *s, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
 {
-    vec3f_copy(&s->k, k);
-    vec3f_copy(&s->l, l);
-    vec3f_copy(&s->a, a);
-    vec3f_copy(&s->b, b);
+    cs2_vec3f_copy(&s->k, k);
+    cs2_vec3f_copy(&s->l, l);
+    cs2_vec3f_copy(&s->a, a);
+    cs2_vec3f_copy(&s->b, b);
 }
 
-void preds3f_copy(struct preds3f_s *r, const struct preds3f_s *s)
+void cs2_preds3f_copy(struct cs2_preds3f_s *r, const struct cs2_preds3f_s *s)
 {
-    vec3f_copy(&r->k, &s->k);
-    vec3f_copy(&r->l, &s->l);
-    vec3f_copy(&r->a, &s->a);
-    vec3f_copy(&r->b, &s->b);
+    cs2_vec3f_copy(&r->k, &s->k);
+    cs2_vec3f_copy(&r->l, &s->l);
+    cs2_vec3f_copy(&r->a, &s->a);
+    cs2_vec3f_copy(&r->b, &s->b);
 }

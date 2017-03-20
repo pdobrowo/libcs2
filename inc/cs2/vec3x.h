@@ -31,40 +31,40 @@
 
 CS2_API_BEGIN
 
-struct vec3x_s
+struct cs2_vec3x_s
 {
     mpz_t x, y, z;
 };
 
-CS2_API void vec3x_init(struct vec3x_s *v);
-CS2_API void vec3x_clear(struct vec3x_s *v);
+CS2_API void cs2_vec3x_init(struct cs2_vec3x_s *v);
+CS2_API void cs2_vec3x_clear(struct cs2_vec3x_s *v);
 
-CS2_API void vec3x_set(struct vec3x_s *r, mpz_srcptr x, mpz_srcptr y, mpz_srcptr z);
-CS2_API void vec3x_set_si(struct vec3x_s *r, long x, long y, long z);
-CS2_API void vec3x_zero(struct vec3x_s *r);
+CS2_API void cs2_vec3x_set(struct cs2_vec3x_s *r, mpz_srcptr x, mpz_srcptr y, mpz_srcptr z);
+CS2_API void cs2_vec3x_set_si(struct cs2_vec3x_s *r, long x, long y, long z);
+CS2_API void cs2_vec3x_zero(struct cs2_vec3x_s *r);
 
-CS2_API int vec3x_is_zero(const struct vec3x_s *v);
+CS2_API int cs2_vec3x_is_zero(const struct cs2_vec3x_s *v);
 
-CS2_API void vec3x_copy(struct vec3x_s *r, const struct vec3x_s *v);
+CS2_API void cs2_vec3x_copy(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v);
 
-CS2_API void vec3x_add(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b);
-CS2_API void vec3x_sub(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b);
-CS2_API void vec3x_neg(struct vec3x_s *r, const struct vec3x_s *v);
-CS2_API void vec3x_mul(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as);
+CS2_API void cs2_vec3x_add(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b);
+CS2_API void cs2_vec3x_sub(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b);
+CS2_API void cs2_vec3x_neg(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v);
+CS2_API void cs2_vec3x_mul(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as);
 
-CS2_API void vec3x_cl(struct pin3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b);
+CS2_API void cs2_vec3x_cl(struct cs2_pin3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b);
 
-CS2_API void vec3x_mad2(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs);
-CS2_API void vec3x_mad3(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs);
-CS2_API void vec3x_mad4(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs, const struct vec3x_s *d, mpz_srcptr ds);
-CS2_API void vec3x_mad5(struct vec3x_s *r, const struct vec3x_s *a, mpz_srcptr as, const struct vec3x_s *b, mpz_srcptr bs, const struct vec3x_s *c, mpz_srcptr cs, const struct vec3x_s *d, mpz_srcptr ds, const struct vec3x_s *e, mpz_srcptr es);
+CS2_API void cs2_vec3x_mad2(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs);
+CS2_API void cs2_vec3x_mad3(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs, const struct cs2_vec3x_s *c, mpz_srcptr cs);
+CS2_API void cs2_vec3x_mad4(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs, const struct cs2_vec3x_s *c, mpz_srcptr cs, const struct cs2_vec3x_s *d, mpz_srcptr ds);
+CS2_API void cs2_vec3x_mad5(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, mpz_srcptr as, const struct cs2_vec3x_s *b, mpz_srcptr bs, const struct cs2_vec3x_s *c, mpz_srcptr cs, const struct cs2_vec3x_s *d, mpz_srcptr ds, const struct cs2_vec3x_s *e, mpz_srcptr es);
 
-CS2_API void vec3x_dot(mpz_ptr r, const struct vec3x_s *a, const struct vec3x_s *b);
-CS2_API void vec3x_cross(struct vec3x_s *r, const struct vec3x_s *a, const struct vec3x_s *b);
+CS2_API void cs2_vec3x_dot(mpz_ptr r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b);
+CS2_API void cs2_vec3x_cross(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *a, const struct cs2_vec3x_s *b);
 
-CS2_API void vec3x_sqlen(mpz_ptr r, const struct vec3x_s *v);
+CS2_API void cs2_vec3x_sqlen(mpz_ptr r, const struct cs2_vec3x_s *v);
 
-CS2_API void vec3x_tr(mpz_ptr r, const struct vec3x_s *v);
+CS2_API void cs2_vec3x_tr(mpz_ptr r, const struct cs2_vec3x_s *v);
 
 CS2_API_END
 

@@ -29,14 +29,14 @@
 
 CS2_API_BEGIN
 
-typedef void (*plugin_func_t)(void);
+typedef void (*cs2_plugin_func_t)(void);
 
-CS2_API int plugin_ldpath(const char *p);
+CS2_API int cs2_plugin_ldpath(const char *p);
 
-CS2_API void *plugin_load(const char *f);
-CS2_API void *plugin_sym(void *p, const char *s);
-CS2_API plugin_func_t plugin_func(void *p, const char *s);
-CS2_API void plugin_unload(void *p);
+CS2_API void *cs2_plugin_load(const char *f);
+CS2_API void *cs2_plugin_sym(void *p, const char *s);
+CS2_API cs2_plugin_func_t cs2_plugin_func(void *p, const char *s);
+CS2_API void cs2_plugin_unload(void *p);
 
 CS2_API_END
 

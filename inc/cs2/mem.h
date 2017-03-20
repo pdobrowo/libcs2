@@ -31,33 +31,33 @@
 
 CS2_API_BEGIN
 
-typedef void (*mem_error_func_t)(const char *file, int line, size_t size, const char *type);
+typedef void (*cs2_mem_error_func_t)(const char *file, int line, size_t size, const char *type);
 
-CS2_API mem_error_func_t mem_at_error(mem_error_func_t f);
-CS2_API void mem_default_error_func(const char *file, int line, size_t size, const char *type);
-CS2_API void mem_trigger_error(const char *file, int line, size_t size, const char *type);
+CS2_API cs2_mem_error_func_t cs2_mem_at_error(cs2_mem_error_func_t f);
+CS2_API void cs2_mem_default_error_func(const char *file, int line, size_t size, const char *type);
+CS2_API void cs2_mem_trigger_error(const char *file, int line, size_t size, const char *type);
 
-#define MEM_MALLOC(Type) \
+#define CS2_MEM_MALLOC(Type) \
     (__extension__( \
         { \
             void *ptr; \
             while (!(ptr = malloc(sizeof(Type)))) \
-                mem_trigger_error(__FILE__, __LINE__, sizeof(Type), #Type); \
+                cs2_mem_trigger_error(__FILE__, __LINE__, sizeof(Type), #Type); \
             (Type *)ptr; \
         } \
     ))
 
-#define MEM_MALLOC_N(Type, N) \
+#define CS2_MEM_MALLOC_N(Type, N) \
     (__extension__( \
         { \
             void *ptr; \
             while (!(ptr = malloc(sizeof(Type) * N))) \
-                mem_trigger_error(__FILE__, __LINE__, sizeof(Type), #Type); \
+                cs2_mem_trigger_error(__FILE__, __LINE__, sizeof(Type), #Type); \
             (Type *)ptr; \
         } \
     ))
 
-#define MEM_FREE(Ptr) \
+#define CS2_MEM_FREE(Ptr) \
     do { if (Ptr) free(Ptr); } while (0)
 
 CS2_API_END

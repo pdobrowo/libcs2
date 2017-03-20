@@ -26,7 +26,7 @@
 #include "cs2/fmt.h"
 #include <math.h>
 
-void vec4f_set(struct vec4f_s *r, double x, double y, double z, double w)
+void cs2_vec4f_set(struct cs2_vec4f_s *r, double x, double y, double z, double w)
 {
     r->x = x;
     r->y = y;
@@ -34,12 +34,12 @@ void vec4f_set(struct vec4f_s *r, double x, double y, double z, double w)
     r->w = w;
 }
 
-void vec4f_zero(struct vec4f_s *r)
+void cs2_vec4f_zero(struct cs2_vec4f_s *r)
 {
-    vec4f_set(r, 0, 0, 0, 0);
+    cs2_vec4f_set(r, 0, 0, 0, 0);
 }
 
-void vec4f_copy(struct vec4f_s *r, const struct vec4f_s *v)
+void cs2_vec4f_copy(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *v)
 {
     r->x = v->x;
     r->y = v->y;
@@ -47,7 +47,7 @@ void vec4f_copy(struct vec4f_s *r, const struct vec4f_s *v)
     r->w = v->w;
 }
 
-void vec4f_add(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b)
+void cs2_vec4f_add(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, const struct cs2_vec4f_s *b)
 {
     r->x = a->x + b->x;
     r->y = a->y + b->y;
@@ -55,7 +55,7 @@ void vec4f_add(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s 
     r->w = a->w + b->w;
 }
 
-void vec4f_sub(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s *b)
+void cs2_vec4f_sub(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, const struct cs2_vec4f_s *b)
 {
     r->x = a->x - b->x;
     r->y = a->y - b->y;
@@ -63,7 +63,7 @@ void vec4f_sub(struct vec4f_s *r, const struct vec4f_s *a, const struct vec4f_s 
     r->w = a->w - b->w;
 }
 
-void vec4f_neg(struct vec4f_s *r, const struct vec4f_s *v)
+void cs2_vec4f_neg(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *v)
 {
     r->x = -v->x;
     r->y = -v->y;
@@ -71,7 +71,7 @@ void vec4f_neg(struct vec4f_s *r, const struct vec4f_s *v)
     r->w = -v->w;
 }
 
-void vec4f_mul(struct vec4f_s *r, const struct vec4f_s *a, double as)
+void cs2_vec4f_mul(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, double as)
 {
     r->x = a->x * as;
     r->y = a->y * as;
@@ -79,7 +79,7 @@ void vec4f_mul(struct vec4f_s *r, const struct vec4f_s *a, double as)
     r->w = a->w * as;
 }
 
-void vec4f_mad2(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs)
+void cs2_vec4f_mad2(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, double as, const struct cs2_vec4f_s *b, double bs)
 {
     r->x = a->x * as + b->x * bs;
     r->y = a->y * as + b->y * bs;
@@ -87,7 +87,7 @@ void vec4f_mad2(struct vec4f_s *r, const struct vec4f_s *a, double as, const str
     r->w = a->w * as + b->w * bs;
 }
 
-void vec4f_mad3(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs, const struct vec4f_s *c, double cs)
+void cs2_vec4f_mad3(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, double as, const struct cs2_vec4f_s *b, double bs, const struct cs2_vec4f_s *c, double cs)
 {
     r->x = a->x * as + b->x * bs + c->x * cs;
     r->y = a->y * as + b->y * bs + c->y * cs;
@@ -95,7 +95,7 @@ void vec4f_mad3(struct vec4f_s *r, const struct vec4f_s *a, double as, const str
     r->w = a->w * as + b->w * bs + c->w * cs;
 }
 
-void vec4f_mad4(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs, const struct vec4f_s *c, double cs, const struct vec4f_s *d, double ds)
+void cs2_vec4f_mad4(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, double as, const struct cs2_vec4f_s *b, double bs, const struct cs2_vec4f_s *c, double cs, const struct cs2_vec4f_s *d, double ds)
 {
     r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds;
     r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds;
@@ -103,7 +103,7 @@ void vec4f_mad4(struct vec4f_s *r, const struct vec4f_s *a, double as, const str
     r->w = a->w * as + b->w * bs + c->w * cs + d->w * ds;
 }
 
-void vec4f_mad5(struct vec4f_s *r, const struct vec4f_s *a, double as, const struct vec4f_s *b, double bs, const struct vec4f_s *c, double cs, const struct vec4f_s *d, double ds, const struct vec4f_s *e, double es)
+void cs2_vec4f_mad5(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, double as, const struct cs2_vec4f_s *b, double bs, const struct cs2_vec4f_s *c, double cs, const struct cs2_vec4f_s *d, double ds, const struct cs2_vec4f_s *e, double es)
 {
     r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds + e->x * es;
     r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds + e->y * es;
@@ -111,27 +111,27 @@ void vec4f_mad5(struct vec4f_s *r, const struct vec4f_s *a, double as, const str
     r->w = a->w * as + b->w * bs + c->w * cs + d->w * ds + e->w * es;
 }
 
-double vec4f_dot(const struct vec4f_s *a, const struct vec4f_s *b)
+double cs2_vec4f_dot(const struct cs2_vec4f_s *a, const struct cs2_vec4f_s *b)
 {
     return a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
 }
 
-double vec4f_len(const struct vec4f_s *v)
+double cs2_vec4f_len(const struct cs2_vec4f_s *v)
 {
     return sqrt(v->x * v->x + v->y * v->y + v->z * v->z + v->w * v->w);
 }
 
-double vec4f_sqlen(const struct vec4f_s *v)
+double cs2_vec4f_sqlen(const struct cs2_vec4f_s *v)
 {
     return v->x * v->x + v->y * v->y + v->z * v->z + v->w * v->w;
 }
 
-double vec4f_tr(const struct vec4f_s *v)
+double cs2_vec4f_tr(const struct cs2_vec4f_s *v)
 {
     return v->x + v->y + v->z + v->w;
 }
 
-void vec4f_from_pin3f(struct vec4f_s *r, const struct pin3f_s *p)
+void cs2_vec4f_from_pin3f(struct cs2_vec4f_s *r, const struct cs2_pin3f_s *p)
 {
     r->x = p->p12;
     r->y = p->p23;
@@ -139,8 +139,8 @@ void vec4f_from_pin3f(struct vec4f_s *r, const struct pin3f_s *p)
     r->w = p->p0;
 }
 
-void vec4f_print_json(const struct vec4f_s *r, FILE *f, size_t ind)
+void cs2_vec4f_print_json(const struct cs2_vec4f_s *r, FILE *f, size_t ind)
 {
-    fmt_indent(ind, f);
+    cs2_fmt_indent(ind, f);
     fprintf(f, "{ \"x\": %.2f, \"y\": %.2f, \"z\": %.2f, \"w\": %.2f }", r->x, r->y, r->z, r->w);
 }

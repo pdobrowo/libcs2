@@ -24,7 +24,7 @@
  */
 #include "cs2/fmt.h"
 
-void fmt_indent(size_t n, FILE *f)
+void cs2_fmt_indent(size_t n, FILE *f)
 {
     size_t i;
 

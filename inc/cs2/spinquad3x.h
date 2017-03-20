@@ -51,19 +51,19 @@ CS2_API_BEGIN
  *
  *    s12^2 + s23^2 + s31^2 + s0^2 = 1
  */
-struct spinquad3x_s
+struct cs2_spinquad3x_s
 {
     mpz_t a11, a22, a33, a44, a12, a13, a14, a23, a24, a34;
 };
 
-CS2_API void spinquad3x_init(struct spinquad3x_s *sq);
-CS2_API void spinquad3x_clear(struct spinquad3x_s *sq);
+CS2_API void cs2_spinquad3x_init(struct cs2_spinquad3x_s *sq);
+CS2_API void cs2_spinquad3x_clear(struct cs2_spinquad3x_s *sq);
 
-CS2_API void spinquad3x_from_predh3x(struct spinquad3x_s *sq, const struct predh3x_s *ph);
-CS2_API void spinquad3x_from_preds3x(struct spinquad3x_s *sq, const struct preds3x_s *ps);
-CS2_API void spinquad3x_from_predg3x(struct spinquad3x_s *sq, const struct predg3x_s *pg);
+CS2_API void cs2_spinquad3x_from_predh3x(struct cs2_spinquad3x_s *sq, const struct cs2_predh3x_s *ph);
+CS2_API void cs2_spinquad3x_from_preds3x(struct cs2_spinquad3x_s *sq, const struct cs2_preds3x_s *ps);
+CS2_API void cs2_spinquad3x_from_predg3x(struct cs2_spinquad3x_s *sq, const struct cs2_predg3x_s *pg);
 
-CS2_API void spinquad3x_eval(mpz_ptr v, const struct spinquad3x_s *sq, const struct pin3x_s *p);
+CS2_API void cs2_spinquad3x_eval(mpz_ptr v, const struct cs2_spinquad3x_s *sq, const struct cs2_pin3x_s *p);
 
 CS2_API_END
 

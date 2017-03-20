@@ -25,7 +25,7 @@
 #include "cs2/mat44f.h"
 #include <stddef.h>
 
-void mat44f_zero(struct mat44f_s *m)
+void cs2_mat44f_zero(struct cs2_mat44f_s *m)
 {
     size_t i, j;
 
@@ -34,7 +34,7 @@ void mat44f_zero(struct mat44f_s *m)
             m->m[i][j] = 0;
 }
 
-void mat44f_identity(struct mat44f_s *m)
+void cs2_mat44f_identity(struct cs2_mat44f_s *m)
 {
     size_t i, j;
 

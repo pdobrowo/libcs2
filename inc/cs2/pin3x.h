@@ -30,16 +30,16 @@
 
 CS2_API_BEGIN
 
-struct pin3x_s
+struct cs2_pin3x_s
 {
     mpz_t p12, p23, p31, p0;
 };
 
-CS2_API void pin3x_init(struct pin3x_s *p);
-CS2_API void pin3x_clear(struct pin3x_s *p);
+CS2_API void cs2_pin3x_init(struct cs2_pin3x_s *p);
+CS2_API void cs2_pin3x_clear(struct cs2_pin3x_s *p);
 
-CS2_API void pin3x_set(struct pin3x_s *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0);
-CS2_API void pin3x_set_si(struct pin3x_s *p, long p12, long p23, long p31, long p0);
+CS2_API void cs2_pin3x_set(struct cs2_pin3x_s *p, mpz_srcptr p12, mpz_srcptr p23, mpz_srcptr p31, mpz_srcptr p0);
+CS2_API void cs2_pin3x_set_si(struct cs2_pin3x_s *p, long p12, long p23, long p31, long p0);
 
 CS2_API_END
 

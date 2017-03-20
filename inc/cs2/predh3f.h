@@ -36,14 +36,14 @@ CS2_API_BEGIN
  *
  *    P.N * Rot(B) + P.d
  */
-struct predh3f_s
+struct cs2_predh3f_s
 {
-    struct vec3f_s b;
-    struct plane3f_s p;
+    struct cs2_vec3f_s b;
+    struct cs2_plane3f_s p;
 };
 
-CS2_API void predh3f_set(struct predh3f_s *g, const struct vec3f_s *b, const struct plane3f_s *p);
-CS2_API void predh3f_copy(struct predh3f_s *r, const struct predh3f_s *h);
+CS2_API void cs2_predh3f_set(struct cs2_predh3f_s *g, const struct cs2_vec3f_s *b, const struct cs2_plane3f_s *p);
+CS2_API void cs2_predh3f_copy(struct cs2_predh3f_s *r, const struct cs2_predh3f_s *h);
 
 CS2_API_END
 

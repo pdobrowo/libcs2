@@ -24,18 +24,18 @@
  */
 #include "cs2/preds3x.h"
 
-void preds3x_init(struct preds3x_s *s)
+void cs2_preds3x_init(struct cs2_preds3x_s *s)
 {
-    vec3x_init(&s->k);
-    vec3x_init(&s->l);
-    vec3x_init(&s->a);
-    vec3x_init(&s->b);
+    cs2_vec3x_init(&s->k);
+    cs2_vec3x_init(&s->l);
+    cs2_vec3x_init(&s->a);
+    cs2_vec3x_init(&s->b);
 }
 
-void preds3x_clear(struct preds3x_s *s)
+void cs2_preds3x_clear(struct cs2_preds3x_s *s)
 {
-    vec3x_clear(&s->k);
-    vec3x_clear(&s->l);
-    vec3x_clear(&s->a);
-    vec3x_clear(&s->b);
+    cs2_vec3x_clear(&s->k);
+    cs2_vec3x_clear(&s->l);
+    cs2_vec3x_clear(&s->a);
+    cs2_vec3x_clear(&s->b);
 }

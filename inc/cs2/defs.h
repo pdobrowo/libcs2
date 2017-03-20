@@ -40,4 +40,6 @@
 
 #endif /* __cplusplus */
 
+#define CS2_NORETURN __attribute__((noreturn))
+
 #endif /* CS2_DEFS_H */

@@ -24,15 +24,15 @@
  */
 #include "cs2/predtt3f.h"
 
-void predtt3f_decomp(struct predttdecomp3f_s *d, const struct predtt3f_s *tt)
+void cs2_predtt3f_decomp(struct cs2_predttdecomp3f_s *d, const struct cs2_predtt3f_s *tt)
 {
-    preds3f_set(&d->s[0][0], &tt->k, &tt->l, &tt->a, &tt->b);
-    preds3f_set(&d->s[0][1], &tt->k, &tt->l, &tt->b, &tt->c);
-    preds3f_set(&d->s[0][2], &tt->k, &tt->l, &tt->c, &tt->a);
-    preds3f_set(&d->s[1][0], &tt->l, &tt->m, &tt->a, &tt->b);
-    preds3f_set(&d->s[1][1], &tt->l, &tt->m, &tt->b, &tt->c);
-    preds3f_set(&d->s[1][2], &tt->l, &tt->m, &tt->c, &tt->a);
-    preds3f_set(&d->s[2][0], &tt->m, &tt->k, &tt->a, &tt->b);
-    preds3f_set(&d->s[2][1], &tt->m, &tt->k, &tt->b, &tt->c);
-    preds3f_set(&d->s[2][2], &tt->m, &tt->k, &tt->c, &tt->a);
+    cs2_preds3f_set(&d->s[0][0], &tt->k, &tt->l, &tt->a, &tt->b);
+    cs2_preds3f_set(&d->s[0][1], &tt->k, &tt->l, &tt->b, &tt->c);
+    cs2_preds3f_set(&d->s[0][2], &tt->k, &tt->l, &tt->c, &tt->a);
+    cs2_preds3f_set(&d->s[1][0], &tt->l, &tt->m, &tt->a, &tt->b);
+    cs2_preds3f_set(&d->s[1][1], &tt->l, &tt->m, &tt->b, &tt->c);
+    cs2_preds3f_set(&d->s[1][2], &tt->l, &tt->m, &tt->c, &tt->a);
+    cs2_preds3f_set(&d->s[2][0], &tt->m, &tt->k, &tt->a, &tt->b);
+    cs2_preds3f_set(&d->s[2][1], &tt->m, &tt->k, &tt->b, &tt->c);
+    cs2_preds3f_set(&d->s[2][2], &tt->m, &tt->k, &tt->c, &tt->a);
 }

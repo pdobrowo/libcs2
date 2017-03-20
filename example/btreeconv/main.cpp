@@ -32,57 +32,57 @@
 
 struct predbb_func_s
 {
-    struct predg3f_s p;
-    struct predgparam3f_s pp;
+    struct cs2_predg3f_s p;
+    struct cs2_predgparam3f_s pp;
 };
 
-static void predbb_func(struct vec4f_s *r, double u, double v, void *data)
+static void predbb_func(struct cs2_vec4f_s *r, double u, double v, void *data)
 {
     struct predbb_func_s *f = (struct predbb_func_s *)data;
-    struct spin3f_s s;
-    predgparam3f_eval(&s, &f->pp, u, v, 0);
+    struct cs2_spin3f_s s;
+    cs2_predgparam3f_eval(&s, &f->pp, u, v, 0);
     r->x = s.s12;
     r->y = s.s23;
     r->z = s.s31;
     r->w = s.s0;
 }
 
-static void create_z_barrel(struct predg3f_s *p)
+static void create_z_barrel(struct cs2_predg3f_s *p)
 {
-    vec3f_set(&p->k, 1.0, 1.0, 1.0);
-    vec3f_set(&p->l, 1.0, 0.0, 2.0);
-    vec3f_set(&p->a, 0.0, 1.0, 1.0);
-    vec3f_set(&p->b, 0.0, 2.0, 1.0);
+    cs2_vec3f_set(&p->k, 1.0, 1.0, 1.0);
+    cs2_vec3f_set(&p->l, 1.0, 0.0, 2.0);
+    cs2_vec3f_set(&p->a, 0.0, 1.0, 1.0);
+    cs2_vec3f_set(&p->b, 0.0, 2.0, 1.0);
     p->c = 0.5;
 }
 
 int main()
 {
-    struct beziertreeqq4f_s t;
-    struct beziertreeleafsqq4f_s l;
+    struct cs2_beziertreeqq4f_s t;
+    struct cs2_beziertreeleafsqq4f_s l;
     struct predbb_func_s f;
     uint64_t start;
 
     create_z_barrel(&f.p);
 
-    predg3f_param(&f.pp, &f.p);
+    cs2_predg3f_param(&f.pp, &f.p);
 
-    beziertreeqq4f_init(&t);
-    beziertreeqq4f_from_func(&t, &predbb_func, &f);
+    cs2_beziertreeqq4f_init(&t);
+    cs2_beziertreeqq4f_from_func(&t, &predbb_func, &f);
 
-    beziertreeleafsqq4f_init(&l, &t);
+    cs2_beziertreeleafsqq4f_init(&l, &t);
 
-    start = timer_msec();
+    start = cs2_timer_msec();
 
     for (double v = 0.1; v > 0.00000001; v /= 10)
     {
-        beziertreeleafsqq4f_sub_vol(&l, v);
+        cs2_beziertreeleafsqq4f_sub_vol(&l, v);
         printf("target hull vol: %.12f, perc: %.12f, subs: %d, time: %d ms\n",
                v, 100 * l.c * v / (M_PI * M_PI / 2.0),
-               (int)l.c, (int)(timer_msec() - start));
+               (int)l.c, (int)(cs2_timer_msec() - start));
     }
 
     /* clear */
-    beziertreeqq4f_clear(&t);
+    cs2_beziertreeqq4f_clear(&t);
     return 0;
 }

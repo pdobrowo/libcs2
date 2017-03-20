@@ -26,14 +26,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dlfcn.h>
-#include <assert.h>
+#include <cs2/assert.h>
 
 #define PLUGIN_MAXPATH 1024
 
 static char g_ldpath[PLUGIN_MAXPATH] = "";
 static size_t g_ldpathlen = 0;
 
-int plugin_ldpath(const char *p)
+int cs2_plugin_ldpath(const char *p)
 {
     size_t l = strlen(p);
 
@@ -46,7 +46,7 @@ int plugin_ldpath(const char *p)
     return 0;
 }
 
-void *plugin_load(const char *f)
+void *cs2_plugin_load(const char *f)
 {
     size_t pl, fl;
     char *p, *r;
@@ -84,21 +84,21 @@ void *plugin_load(const char *f)
     return d;
 }
 
-void *plugin_sym(void *p, const char *s)
+void *cs2_plugin_sym(void *p, const char *s)
 {
     return dlsym(p, s);
 }
 
-void plugin_unload(void *p)
+void cs2_plugin_unload(void *p)
 {
     (void)dlclose(p);
 }
 
-plugin_func_t plugin_func(void *p, const char *s)
+cs2_plugin_func_t cs2_plugin_func(void *p, const char *s)
 {
-    plugin_func_t fn;
-    void *sym = plugin_sym(p, s);
-    assert(sizeof(fn) == sizeof(sym));
+    cs2_plugin_func_t fn;
+    void *sym = cs2_plugin_sym(p, s);
+    CS2_ASSERT(sizeof(fn) == sizeof(sym));
     memcpy(&fn, &sym, sizeof(fn));
     return fn;
 }

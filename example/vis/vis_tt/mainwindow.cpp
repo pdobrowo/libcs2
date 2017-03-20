@@ -41,9 +41,9 @@ namespace // anonymous
 {
 static double CUTOFF_DISTANCE = 10;
 
-double projectedDistance(const struct spin3f_s *a, const struct spin3f_s *b)
+double projectedDistance(const struct cs2_spin3f_s *a, const struct cs2_spin3f_s *b)
 {
-    struct vec3f_s pa, pb, pc;
+    struct cs2_vec3f_s pa, pb, pc;
 
     pa.x = a->s12 / (1.0 - a->s0);
     pa.y = a->s23 / (1.0 - a->s0);
@@ -53,9 +53,9 @@ double projectedDistance(const struct spin3f_s *a, const struct spin3f_s *b)
     pb.y = b->s23 / (1.0 - b->s0);
     pb.z = b->s31 / (1.0 - b->s0);
 
-    vec3f_sub(&pc, &pa, &pb);
+    cs2_vec3f_sub(&pc, &pa, &pb);
 
-    return vec3f_len(&pc);
+    return cs2_vec3f_len(&pc);
 }
 } // namespace anonymous
 
@@ -99,7 +99,7 @@ void MainWindow::updatePredicateInformation()
     updateWindowTitle();
 
     // predicate tt
-    struct predtt3f_s tt =
+    struct cs2_predtt3f_s tt =
         {
             { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
             { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
@@ -110,8 +110,8 @@ void MainWindow::updatePredicateInformation()
         };
 
     // decompose tt->s
-    struct predttdecomp3f_s ttd;
-    predtt3f_decomp(&ttd, &tt);
+    struct cs2_predttdecomp3f_s ttd;
+    cs2_predtt3f_decomp(&ttd, &tt);
 
     // visual
     m_rv->removeAllObjects();
@@ -120,17 +120,17 @@ void MainWindow::updatePredicateInformation()
     {
         for (int j = 0; j < 3; ++j)
         {
-            struct preds3f_s *s = &ttd.s[i][j];
-            struct predg3f_s g;
+            struct cs2_preds3f_s *s = &ttd.s[i][j];
+            struct cs2_predg3f_s g;
 
-            predg3f_from_preds3f(&g, s);
+            cs2_predg3f_from_preds3f(&g, s);
 
             // param g
-            struct predgparam3f_s param;
-            predg3f_param(&param, &g);
+            struct cs2_predgparam3f_s param;
+            cs2_predg3f_param(&param, &g);
 
             // only 2-dimensional
-            if (predgparamtype3f_dim(param.t) == 2)
+            if (cs2_predgparamtype3f_dim(param.t) == 2)
             {
                 TriangleListPtr triangles(new TriangleList());
 
@@ -188,12 +188,12 @@ void MainWindow::updateSliderInformation()
     formatSliderValue(ui->labelSliderCZ, ui->verticalSliderCZ->value());
 }
 
-QString MainWindow::formatVector(const struct vec3f_s *v)
+QString MainWindow::formatVector(const struct cs2_vec3f_s *v)
 {
     return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + "]";
 }
 
-QString MainWindow::formatVector(const struct vec4f_s *v)
+QString MainWindow::formatVector(const struct cs2_vec4f_s *v)
 {
     return "[" + QString::number(v->x, 'f', 2) + ", " + QString::number(v->y, 'f', 2) + ", " + QString::number(v->z, 'f', 2) + ", " + QString::number(v->w, 'f', 2) + "]";
 }
@@ -300,9 +300,9 @@ void MainWindow::updateWindowTitle()
     setWindowTitle(fileName + ": vis" + (m_currentChanged ? " *" : ""));
 }
 
-void MainWindow::autoMesh(TriangleListPtr triangles, struct predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions)
+void MainWindow::autoMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions)
 {
-    int number_of_components = predgparamtype3f_components(param->t);
+    int number_of_components = cs2_predgparamtype3f_components(param->t);
 
     for (int component = 0; component < number_of_components; ++component)
         for (double u = 0; u <= 1 - initialRadius; u += initialRadius)
@@ -310,14 +310,14 @@ void MainWindow::autoMesh(TriangleListPtr triangles, struct predgparam3f_s *para
                 autoMeshInternal(triangles, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
 }
 
-void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
+void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
 {
-    struct spin3f_s sp00, sp01, sp10, sp11;
+    struct cs2_spin3f_s sp00, sp01, sp10, sp11;
 
-    predgparam3f_eval(&sp00, param, minU, minV, component);
-    predgparam3f_eval(&sp01, param, minU, maxV, component);
-    predgparam3f_eval(&sp10, param, maxU, minV, component);
-    predgparam3f_eval(&sp11, param, maxU, maxV, component);
+    cs2_predgparam3f_eval(&sp00, param, minU, minV, component);
+    cs2_predgparam3f_eval(&sp01, param, minU, maxV, component);
+    cs2_predgparam3f_eval(&sp10, param, maxU, minV, component);
+    cs2_predgparam3f_eval(&sp11, param, maxU, maxV, component);
 
     if (subdivision == maxSubdivisions || (projectedDistance(&sp00, &sp01) <= targetRadius && projectedDistance(&sp00, &sp10) <= targetRadius && projectedDistance(&sp00, &sp11) <= targetRadius &&
                                            projectedDistance(&sp01, &sp10) <= targetRadius && projectedDistance(&sp01, &sp11) <= targetRadius && projectedDistance(&sp10, &sp11) <= targetRadius))
@@ -339,20 +339,20 @@ void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct predgparam3f
     }
 }
 
-void MainWindow::simpleMesh(TriangleListPtr triangles, struct predgparam3f_s *param, double radius)
+void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double radius)
 {
-    int number_of_components = predgparamtype3f_components(param->t);
+    int number_of_components = cs2_predgparamtype3f_components(param->t);
 
     for (int c = 0; c < number_of_components; ++c)
     {
         for (double pu = 0; pu < 1 - radius; pu += radius) for (double pv = 0; pv < 1 - radius; pv += radius)
         {
-            struct spin3f_s sp00, sp01, sp10, sp11;
+            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
 
-            predgparam3f_eval(&sp00, param, pu, pv, c);
-            predgparam3f_eval(&sp01, param, pu, pv + radius, c);
-            predgparam3f_eval(&sp10, param, pu + radius, pv, c);
-            predgparam3f_eval(&sp11, param, pu + radius, pv + radius, c);
+            cs2_predgparam3f_eval(&sp00, param, pu, pv, c);
+            cs2_predgparam3f_eval(&sp01, param, pu, pv + radius, c);
+            cs2_predgparam3f_eval(&sp10, param, pu + radius, pv, c);
+            cs2_predgparam3f_eval(&sp11, param, pu + radius, pv + radius, c);
 
             QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
             QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
@@ -366,12 +366,12 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct predgparam3f_s *pa
         // last u
         for (double pu = 0; pu < 1 - radius; pu += radius)
         {
-            struct spin3f_s sp00, sp01, sp10, sp11;
+            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
 
-            predgparam3f_eval(&sp00, param, pu, 1.0 - radius, c);
-            predgparam3f_eval(&sp01, param, pu, 1.0, c);
-            predgparam3f_eval(&sp10, param, pu + radius, 1.0 - radius, c);
-            predgparam3f_eval(&sp11, param, pu + radius, 1.0, c);
+            cs2_predgparam3f_eval(&sp00, param, pu, 1.0 - radius, c);
+            cs2_predgparam3f_eval(&sp01, param, pu, 1.0, c);
+            cs2_predgparam3f_eval(&sp10, param, pu + radius, 1.0 - radius, c);
+            cs2_predgparam3f_eval(&sp11, param, pu + radius, 1.0, c);
 
             QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
             QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
@@ -385,12 +385,12 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct predgparam3f_s *pa
         // last v
         for (double pv = 0; pv < 1 - radius; pv += radius)
         {
-            struct spin3f_s sp00, sp01, sp10, sp11;
+            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
 
-            predgparam3f_eval(&sp00, param, 1.0 - radius, pv, c);
-            predgparam3f_eval(&sp01, param, 1.0 - radius, pv + radius, c);
-            predgparam3f_eval(&sp10, param, 1.0, pv, c);
-            predgparam3f_eval(&sp11, param, 1.0, pv + radius, c);
+            cs2_predgparam3f_eval(&sp00, param, 1.0 - radius, pv, c);
+            cs2_predgparam3f_eval(&sp01, param, 1.0 - radius, pv + radius, c);
+            cs2_predgparam3f_eval(&sp10, param, 1.0, pv, c);
+            cs2_predgparam3f_eval(&sp11, param, 1.0, pv + radius, c);
 
             QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
             QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
@@ -403,12 +403,12 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct predgparam3f_s *pa
 
         // last uv
         {
-            struct spin3f_s sp00, sp01, sp10, sp11;
+            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
 
-            predgparam3f_eval(&sp00, param, 1.0 - radius, 1.0 - radius, c);
-            predgparam3f_eval(&sp01, param, 1.0 - radius, 1.0, c);
-            predgparam3f_eval(&sp10, param, 1.0, 1.0 - radius, c);
-            predgparam3f_eval(&sp11, param, 1.0, 1.0, c);
+            cs2_predgparam3f_eval(&sp00, param, 1.0 - radius, 1.0 - radius, c);
+            cs2_predgparam3f_eval(&sp01, param, 1.0 - radius, 1.0, c);
+            cs2_predgparam3f_eval(&sp10, param, 1.0, 1.0 - radius, c);
+            cs2_predgparam3f_eval(&sp11, param, 1.0, 1.0, c);
 
             QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
             QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));

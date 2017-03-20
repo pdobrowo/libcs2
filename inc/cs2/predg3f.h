@@ -40,70 +40,70 @@ CS2_API_BEGIN
  *
  *    (K x L) * rot(A - B) + (K - L) * rot(A x B) + c
  */
-struct predg3f_s
+struct cs2_predg3f_s
 {
-    struct vec3f_s k, l, a, b;
+    struct cs2_vec3f_s k, l, a, b;
     double c;
 };
 
-CS2_API void predg3f_set(struct predg3f_s *g, const struct vec3f_s *k, const struct vec3f_s *l, const struct vec3f_s *a, const struct vec3f_s *b, double c);
-CS2_API void predg3f_copy(struct predg3f_s *r, const struct predg3f_s *g);
+CS2_API void cs2_predg3f_set(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b, double c);
+CS2_API void cs2_predg3f_copy(struct cs2_predg3f_s *r, const struct cs2_predg3f_s *g);
 
-CS2_API void predg3f_from_predh3f(struct predg3f_s *g, const struct predh3f_s *h);
-CS2_API void predg3f_from_preds3f(struct predg3f_s *g, const struct preds3f_s *s);
-CS2_API void predg3f_pquv(struct vec3f_s *p, struct vec3f_s *q, struct vec3f_s *u, struct vec3f_s *v, const struct predg3f_s *g);
+CS2_API void cs2_predg3f_from_predh3f(struct cs2_predg3f_s *g, const struct cs2_predh3f_s *h);
+CS2_API void cs2_predg3f_from_preds3f(struct cs2_predg3f_s *g, const struct cs2_preds3f_s *s);
+CS2_API void cs2_predg3f_pquv(struct cs2_vec3f_s *p, struct cs2_vec3f_s *q, struct cs2_vec3f_s *u, struct cs2_vec3f_s *v, const struct cs2_predg3f_s *g);
 
 /* type */
-enum predgtype3f_e
+enum cs2_predgtype3f_e
 {
-    predgtype3f_inproper,
-    predgtype3f_ellipsoidal,
-    predgtype3f_toroidal
+    cs2_predgtype3f_inproper,
+    cs2_predgtype3f_ellipsoidal,
+    cs2_predgtype3f_toroidal
 };
 
-CS2_API const char *predgtype3f_str(enum predgtype3f_e t);
+CS2_API const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t);
 
-CS2_API enum predgtype3f_e predg3f_type(const struct predg3f_s *g);
+CS2_API enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g);
 
 /* parametrization */
-enum predgparamtype3f_e
+enum cs2_predgparamtype3f_e
 {
     /* common */
-    predgparamtype3f_an_empty_set,
+    cs2_predgparamtype3f_an_empty_set,
 
     /* ellipsoidal */
-    predgparamtype3f_a_pair_of_points,
-    predgparamtype3f_a_pair_of_separate_ellipsoids,
-    predgparamtype3f_a_pair_of_y_touching_ellipsoids,
-    predgparamtype3f_a_pair_of_yz_crossed_ellipsoids,
-    predgparamtype3f_a_pair_of_z_touching_ellipsoids,
-    predgparamtype3f_a_y_barrel,
-    predgparamtype3f_a_z_barrel,
-    predgparamtype3f_a_notched_y_barrel,
-    predgparamtype3f_a_notched_z_barrel,
-    predgparamtype3f_a_pair_of_separate_yz_caps,
+    cs2_predgparamtype3f_a_pair_of_points,
+    cs2_predgparamtype3f_a_pair_of_separate_ellipsoids,
+    cs2_predgparamtype3f_a_pair_of_y_touching_ellipsoids,
+    cs2_predgparamtype3f_a_pair_of_yz_crossed_ellipsoids,
+    cs2_predgparamtype3f_a_pair_of_z_touching_ellipsoids,
+    cs2_predgparamtype3f_a_y_barrel,
+    cs2_predgparamtype3f_a_z_barrel,
+    cs2_predgparamtype3f_a_notched_y_barrel,
+    cs2_predgparamtype3f_a_notched_z_barrel,
+    cs2_predgparamtype3f_a_pair_of_separate_yz_caps,
 
     /* toroidal */
-    predgparamtype3f_a_torus
+    cs2_predgparamtype3f_a_torus
 };
 
-CS2_API const char *predgparamtype3f_str(enum predgparamtype3f_e pt);
+CS2_API const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt);
 
-CS2_API int predgparamtype3f_dim(enum predgparamtype3f_e pt);
-CS2_API int predgparamtype3f_components(enum predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_components(enum cs2_predgparamtype3f_e pt);
 
-struct predgparam3f_s
+struct cs2_predgparam3f_s
 {
-    enum predgparamtype3f_e t;
-    struct mat44f_s q;
+    enum cs2_predgparamtype3f_e t;
+    struct cs2_mat44f_s q;
     double a, b, c;
 };
 
-CS2_API void predg3f_param(struct predgparam3f_s *pp, const struct predg3f_s *g);
-CS2_API void predgparam3f_eval(struct spin3f_s *s, const struct predgparam3f_s *pp, double u, double v, int component);
+CS2_API void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g);
+CS2_API void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int component);
 
 /* special */
-CS2_API void predg3f_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3f_s *g);
+CS2_API void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const struct cs2_predg3f_s *g);
 
 CS2_API_END
 

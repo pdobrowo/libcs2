@@ -26,7 +26,7 @@
 #include "cs2/timer.h"
 #include <unistd.h>
 
-static uint64_t xorshift128plus(struct rand_s *r)
+static uint64_t xorshift128plus(struct cs2_rand_s *r)
 {
     uint64_t x = r->state[0];
     uint64_t const y = r->state[1];
@@ -36,18 +36,18 @@ static uint64_t xorshift128plus(struct rand_s *r)
     return r->state[1] + y;
 }
 
-void rand_seed(struct rand_s *r)
+void cs2_rand_seed(struct cs2_rand_s *r)
 {
-    r->state[0] = timer_nsec();
+    r->state[0] = cs2_timer_nsec();
     r->state[1] = (uint64_t)getpid();
 }
 
-double rand_1f(struct rand_s *r)
+double cs2_rand_1f(struct cs2_rand_s *r)
 {
     return (double)xorshift128plus(r) / (double)UINT64_MAX;
 }
 
-double rand_u1f(struct rand_s *r, double min, double max)
+double cs2_rand_u1f(struct cs2_rand_s *r, double min, double max)
 {
-    return min + rand_1f(r) * (max - min);
+    return min + cs2_rand_1f(r) * (max - min);
 }

@@ -26,54 +26,54 @@
 #include "cs2/fmt.h"
 #include <math.h>
 
-void vec3f_set(struct vec3f_s *r, double x, double y, double z)
+void cs2_vec3f_set(struct cs2_vec3f_s *r, double x, double y, double z)
 {
     r->x = x;
     r->y = y;
     r->z = z;
 }
 
-void vec3f_zero(struct vec3f_s *r)
+void cs2_vec3f_zero(struct cs2_vec3f_s *r)
 {
-    vec3f_set(r, 0, 0, 0);
+    cs2_vec3f_set(r, 0, 0, 0);
 }
 
-void vec3f_copy(struct vec3f_s *r, const struct vec3f_s *v)
+void cs2_vec3f_copy(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
 {
     r->x = v->x;
     r->y = v->y;
     r->z = v->z;
 }
 
-void vec3f_add(struct vec3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
+void cs2_vec3f_add(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
 {
     r->x = a->x + b->x;
     r->y = a->y + b->y;
     r->z = a->z + b->z;
 }
 
-void vec3f_sub(struct vec3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
+void cs2_vec3f_sub(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
 {
     r->x = a->x - b->x;
     r->y = a->y - b->y;
     r->z = a->z - b->z;
 }
 
-void vec3f_neg(struct vec3f_s *r, const struct vec3f_s *v)
+void cs2_vec3f_neg(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
 {
     r->x = -v->x;
     r->y = -v->y;
     r->z = -v->z;
 }
 
-void vec3f_mul(struct vec3f_s *r, const struct vec3f_s *a, double as)
+void cs2_vec3f_mul(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as)
 {
     r->x = a->x * as;
     r->y = a->y * as;
     r->z = a->z * as;
 }
 
-void vec3f_cl(struct pin3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
+void cs2_vec3f_cl(struct cs2_pin3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
 {
     r->p12 = a->x * b->y - a->y * b->x;
     r->p23 = a->y * b->z - a->z * b->y;
@@ -81,68 +81,68 @@ void vec3f_cl(struct pin3f_s *r, const struct vec3f_s *a, const struct vec3f_s *
     r->p0 = a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
-void vec3f_mad2(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs)
+void cs2_vec3f_mad2(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs)
 {
     r->x = a->x * as + b->x * bs;
     r->y = a->y * as + b->y * bs;
     r->z = a->z * as + b->z * bs;
 }
 
-void vec3f_mad3(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs, const struct vec3f_s *c, double cs)
+void cs2_vec3f_mad3(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs)
 {
     r->x = a->x * as + b->x * bs + c->x * cs;
     r->y = a->y * as + b->y * bs + c->y * cs;
     r->z = a->z * as + b->z * bs + c->z * cs;
 }
 
-void vec3f_mad4(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs, const struct vec3f_s *c, double cs, const struct vec3f_s *d, double ds)
+void cs2_vec3f_mad4(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs, const struct cs2_vec3f_s *d, double ds)
 {
     r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds;
     r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds;
     r->z = a->z * as + b->z * bs + c->z * cs + d->z * ds;
 }
 
-void vec3f_mad5(struct vec3f_s *r, const struct vec3f_s *a, double as, const struct vec3f_s *b, double bs, const struct vec3f_s *c, double cs, const struct vec3f_s *d, double ds, const struct vec3f_s *e, double es)
+void cs2_vec3f_mad5(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs, const struct cs2_vec3f_s *d, double ds, const struct cs2_vec3f_s *e, double es)
 {
     r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds + e->x * es;
     r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds + e->y * es;
     r->z = a->z * as + b->z * bs + c->z * cs + d->z * ds + e->z * es;
 }
 
-double vec3f_dot(const struct vec3f_s *a, const struct vec3f_s *b)
+double cs2_vec3f_dot(const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
 {
     return a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
-void vec3f_cross(struct vec3f_s *r, const struct vec3f_s *a, const struct vec3f_s *b)
+void cs2_vec3f_cross(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
 {
     r->x = a->y * b->z - a->z * b->y;
     r->y = a->z * b->x - a->x * b->z;
     r->z = a->x * b->y - a->y * b->x;
 }
 
-void vec3f_unit(struct vec3f_s *r, const struct vec3f_s *v)
+void cs2_vec3f_unit(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
 {
-    vec3f_mul(r, v, 1.0 / vec3f_len(v));
+    cs2_vec3f_mul(r, v, 1.0 / cs2_vec3f_len(v));
 }
 
-double vec3f_len(const struct vec3f_s *v)
+double cs2_vec3f_len(const struct cs2_vec3f_s *v)
 {
     return sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
 }
 
-double vec3f_sqlen(const struct vec3f_s *v)
+double cs2_vec3f_sqlen(const struct cs2_vec3f_s *v)
 {
     return v->x * v->x + v->y * v->y + v->z * v->z;
 }
 
-double vec3f_tr(const struct vec3f_s *v)
+double cs2_vec3f_tr(const struct cs2_vec3f_s *v)
 {
     return v->x + v->y + v->z;
 }
 
-void vec3f_print_json(const struct vec3f_s *r, FILE *f, size_t ind)
+void cs2_vec3f_print_json(const struct cs2_vec3f_s *r, FILE *f, size_t ind)
 {
-    fmt_indent(ind, f);
+    cs2_fmt_indent(ind, f);
     fprintf(f, "{ \"x\": %.2f, \"y\": %.2f, \"z\": %.2f }", r->x, r->y, r->z);
 }

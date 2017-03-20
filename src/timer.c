@@ -25,28 +25,28 @@
 #include "cs2/timer.h"
 #include <time.h>
 
-uint64_t timer_sec(void)
+uint64_t cs2_timer_sec(void)
 {
     struct timespec ts;
     (void)clock_gettime(CLOCK_REALTIME, &ts);
     return (uint64_t)ts.tv_sec;
 }
 
-uint64_t timer_msec(void)
+uint64_t cs2_timer_msec(void)
 {
     struct timespec ts;
     (void)clock_gettime(CLOCK_REALTIME, &ts);
     return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
 }
 
-uint64_t timer_usec(void)
+uint64_t cs2_timer_usec(void)
 {
     struct timespec ts;
     (void)clock_gettime(CLOCK_REALTIME, &ts);
     return (uint64_t)ts.tv_sec * 1000000 + (uint64_t)ts.tv_nsec / 1000;
 }
 
-uint64_t timer_nsec(void)
+uint64_t cs2_timer_nsec(void)
 {
     struct timespec ts;
     (void)clock_gettime(CLOCK_REALTIME, &ts);

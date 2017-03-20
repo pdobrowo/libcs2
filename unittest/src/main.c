@@ -66,7 +66,7 @@ static struct CMUnitTest *test_suite_fill_tests_cases(struct test_suite_s *test_
 
     while (test_case)
     {
-        char *name = MEM_MALLOC_N(char, strlen(test_suite->name) + 2 + strlen(test_case->name) + 1);
+        char *name = CS2_MEM_MALLOC_N(char, strlen(test_suite->name) + 2 + strlen(test_case->name) + 1);
 
         strcpy(name, test_suite->name);
         strcat(name, "::");
@@ -90,7 +90,7 @@ static struct CMUnitTest *test_suite_fill_tests_cases(struct test_suite_s *test_
 static struct CMUnitTest *cm_tests_alloc()
 {
     size_t count = cm_tests_count();
-    struct CMUnitTest *cm_tests = MEM_MALLOC_N(struct CMUnitTest, count);
+    struct CMUnitTest *cm_tests = CS2_MEM_MALLOC_N(struct CMUnitTest, count);
     struct CMUnitTest *cm_test = cm_tests;
     struct test_suite_s *suite = test_suites();
 
@@ -109,9 +109,9 @@ static void cm_tests_free(struct CMUnitTest *cm_tests)
     size_t i;
 
     for (i = 0; i < count; ++i)
-        MEM_FREE((char *)cm_tests[i].name);
+        CS2_MEM_FREE((char *)cm_tests[i].name);
 
-    MEM_FREE(cm_tests);
+    CS2_MEM_FREE(cm_tests);
 }
 
 int invalid_usage(const char *msg)

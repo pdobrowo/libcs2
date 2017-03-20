@@ -25,37 +25,37 @@
 #include "cs2/plane4f.h"
 #include "cs2/fmt.h"
 
-void plane4f_set(struct plane4f_s *p, const struct vec4f_s *n, double d)
+void cs2_plane4f_set(struct cs2_plane4f_s *p, const struct cs2_vec4f_s *n, double d)
 {
-    vec4f_copy(&p->n, n);
+    cs2_vec4f_copy(&p->n, n);
     p->d = d;
 }
 
-void plane4f_copy(struct plane4f_s *r, const struct plane4f_s *p)
+void cs2_plane4f_copy(struct cs2_plane4f_s *r, const struct cs2_plane4f_s *p)
 {
-    vec4f_copy(&r->n, &p->n);
+    cs2_vec4f_copy(&r->n, &p->n);
     r->d = p->d;
 }
 
-double plane4f_pops(const struct plane4f_s *r, const struct vec4f_s *p)
+double cs2_plane4f_pops(const struct cs2_plane4f_s *r, const struct cs2_vec4f_s *p)
 {
-    return vec4f_dot(&r->n, p) + r->d;
+    return cs2_vec4f_dot(&r->n, p) + r->d;
 }
 
-void plane4f_print_json(const struct plane4f_s *r, FILE *f, size_t ind)
+void cs2_plane4f_print_json(const struct cs2_plane4f_s *r, FILE *f, size_t ind)
 {
-    fmt_indent(ind, f);
+    cs2_fmt_indent(ind, f);
     fprintf(f, "{\n");
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "\"n\": ");
-    vec4f_print_json(&r->n, f, 0);
+    cs2_vec4f_print_json(&r->n, f, 0);
 
     fprintf(f, ",\n");
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "\"d\": %.2f\n", r->d);
 
-    fmt_indent(ind, f);
+    cs2_fmt_indent(ind, f);
     fprintf(f, "}");
 }

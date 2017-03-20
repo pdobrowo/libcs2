@@ -84,6 +84,7 @@ set(cs2_HEADERS
     inc/cs2/rand.h
     inc/cs2/mem.h
     inc/cs2/fmt.h
+    inc/cs2/assert.h
 )
 
 # src
@@ -126,6 +127,7 @@ set(cs2_SOURCES
     src/rand.c
     src/mem.c
     src/fmt.c
+    src/assert.c
 )
 
 add_library(cs2 SHARED ${cs2_SOURCES})

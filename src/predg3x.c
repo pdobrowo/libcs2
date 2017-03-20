@@ -23,26 +23,26 @@
  * SOFTWARE.
  */
 #include "cs2/predg3x.h"
-#include <assert.h>
+#include <cs2/assert.h>
 
-static void calc_r(struct vec3x_s *r, const struct vec3x_s *v)
+static void calc_r(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v)
 {
     if (mpz_sgn(v->x))
     {
         /* take x-y plane */
-        vec3x_set(r, v->y, v->x, v->z);
+        cs2_vec3x_set(r, v->y, v->x, v->z);
         mpz_neg(r->x, r->x);
     }
     else if (mpz_sgn(v->y))
     {
         /* take y-z plane */
-        vec3x_set(r, v->x, v->z, v->y);
+        cs2_vec3x_set(r, v->x, v->z, v->y);
         mpz_neg(r->y, r->y);
     }
     else
     {
         /* take z-x plane */
-        vec3x_set(r, v->z, v->y, v->x);
+        cs2_vec3x_set(r, v->z, v->y, v->x);
         mpz_neg(r->z, r->z);
     }
 }
@@ -139,86 +139,86 @@ static void calc_w(struct vec4f_s *w, const struct vec3x_s *p, const struct vec3
 
 #endif
 
-void predg3x_init(struct predg3x_s *g)
+void cs2_predg3x_init(struct cs2_predg3x_s *g)
 {
-    vec3x_init(&g->k);
-    vec3x_init(&g->l);
-    vec3x_init(&g->a);
-    vec3x_init(&g->b);
+    cs2_vec3x_init(&g->k);
+    cs2_vec3x_init(&g->l);
+    cs2_vec3x_init(&g->a);
+    cs2_vec3x_init(&g->b);
     mpz_init(g->c);
 }
 
-void predg3x_clear(struct predg3x_s *g)
+void cs2_predg3x_clear(struct cs2_predg3x_s *g)
 {
-    vec3x_clear(&g->k);
-    vec3x_clear(&g->l);
-    vec3x_clear(&g->a);
-    vec3x_clear(&g->b);
+    cs2_vec3x_clear(&g->k);
+    cs2_vec3x_clear(&g->l);
+    cs2_vec3x_clear(&g->a);
+    cs2_vec3x_clear(&g->b);
     mpz_clear(g->c);
 }
 
-void predg3x_from_predh3x(struct predg3x_s *g, const struct predh3x_s *h)
+void cs2_predg3x_from_predh3x(struct cs2_predg3x_s *g, const struct cs2_predh3x_s *h)
 {
     calc_r(&g->l, &h->p.n);
-    vec3x_cross(&g->k, &h->p.n, &g->l);
-    vec3x_cross(&g->l, &h->p.n, &g->k);
-    vec3x_copy(&g->a, &h->b);
-    vec3x_neg(&g->b, &h->b);
-    vec3x_sqlen(g->c, &g->k);
+    cs2_vec3x_cross(&g->k, &h->p.n, &g->l);
+    cs2_vec3x_cross(&g->l, &h->p.n, &g->k);
+    cs2_vec3x_copy(&g->a, &h->b);
+    cs2_vec3x_neg(&g->b, &h->b);
+    cs2_vec3x_sqlen(g->c, &g->k);
     mpz_mul(g->c, g->c, h->p.d);
     mpz_mul_2exp(g->c, g->c, 1);
 }
 
-void predg3x_from_preds3x(struct predg3x_s *g, const struct preds3x_s *s)
+void cs2_predg3x_from_preds3x(struct cs2_predg3x_s *g, const struct cs2_preds3x_s *s)
 {
-    vec3x_copy(&g->k, &s->k);
-    vec3x_copy(&g->l, &s->l);
-    vec3x_copy(&g->a, &s->a);
-    vec3x_copy(&g->b, &s->b);
+    cs2_vec3x_copy(&g->k, &s->k);
+    cs2_vec3x_copy(&g->l, &s->l);
+    cs2_vec3x_copy(&g->a, &s->a);
+    cs2_vec3x_copy(&g->b, &s->b);
     mpz_set_si(g->c, 0);
 }
 
-void predg3x_pquv(struct vec3x_s *p, struct vec3x_s *q, struct vec3x_s *u, struct vec3x_s *v, const struct predg3x_s *g)
+void cs2_predg3x_pquv(struct cs2_vec3x_s *p, struct cs2_vec3x_s *q, struct cs2_vec3x_s *u, struct cs2_vec3x_s *v, const struct cs2_predg3x_s *g)
 {
-    vec3x_cross(p, &g->k, &g->l);
-    vec3x_sub(q, &g->a, &g->b);
-    vec3x_sub(u, &g->k, &g->l);
-    vec3x_cross(v, &g->a, &g->b);
+    cs2_vec3x_cross(p, &g->k, &g->l);
+    cs2_vec3x_sub(q, &g->a, &g->b);
+    cs2_vec3x_sub(u, &g->k, &g->l);
+    cs2_vec3x_cross(v, &g->a, &g->b);
 }
 
-const char *predgtype3x_str(enum predgtype3x_e t)
+const char *cs2_predgtype3x_str(enum cs2_predgtype3x_e t)
 {
     switch (t)
     {
-    case predgtype3x_inproper: return "inproper";
-    case predgtype3x_ellipsoidal: return "ellipsoidal";
-    case predgtype3x_toroidal: return "toroidal";
+    case cs2_predgtype3x_inproper: return "inproper";
+    case cs2_predgtype3x_ellipsoidal: return "ellipsoidal";
+    case cs2_predgtype3x_toroidal: return "toroidal";
     default: return 0;
     }
 }
 
-enum predgtype3x_e predg3x_type(const struct predg3x_s *g)
+enum cs2_predgtype3x_e cs2_predg3x_type(const struct cs2_predg3x_s *g)
 {
-    struct vec3x_s p, q, u, v;
+    struct cs2_vec3x_s p, q, u, v;
     int pq, uv;
-    enum predgtype3x_e t;
-    vec3x_init(&p);
-    vec3x_init(&q);
-    vec3x_init(&u);
-    vec3x_init(&v);
-    predg3x_pquv(&p, &q, &u, &v, g);
-    pq = !vec3x_is_zero(&p) && !vec3x_is_zero(&q);
-    uv = !vec3x_is_zero(&u) && !vec3x_is_zero(&v);
+    enum cs2_predgtype3x_e t;
+    cs2_vec3x_init(&p);
+    cs2_vec3x_init(&q);
+    cs2_vec3x_init(&u);
+    cs2_vec3x_init(&v);
+    cs2_predg3x_pquv(&p, &q, &u, &v, g);
+    pq = !cs2_vec3x_is_zero(&p) && !cs2_vec3x_is_zero(&q);
+    uv = !cs2_vec3x_is_zero(&u) && !cs2_vec3x_is_zero(&v);
     if (pq && uv)
-        t = predgtype3x_ellipsoidal;
+        t = cs2_predgtype3x_ellipsoidal;
     else if (pq || uv)
-        t = predgtype3x_toroidal;
+        t = cs2_predgtype3x_toroidal;
     else
-        t = predgtype3x_inproper;
-    vec3x_clear(&p);
-    vec3x_clear(&q);
-    vec3x_clear(&u);
-    vec3x_clear(&v);
+        t = cs2_predgtype3x_inproper;
+    cs2_vec3x_clear(&p);
+    cs2_vec3x_clear(&q);
+    cs2_vec3x_clear(&u);
+    cs2_vec3x_clear(&v);
     return t;
 }
 
@@ -287,7 +287,7 @@ void predg3x_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3x_s
     if (m)
     {
         /* only ellipsoidal param for now */
-        /*assert(struct predg3x_sype(g) == predgtype3x_ellipsoidal);*/
+        /*CS2_ASSERT(struct predg3x_sype(g) == predgtype3x_ellipsoidal);*/
 
         if (struct predg3x_sype(g) != predgtype3x_ellipsoidal)
         {

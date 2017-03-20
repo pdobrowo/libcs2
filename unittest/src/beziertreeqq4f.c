@@ -32,28 +32,28 @@
 
 struct predbb_func_s
 {
-    struct predg3f_s p;
-    struct predgparam3f_s pp;
+    struct cs2_predg3f_s p;
+    struct cs2_predgparam3f_s pp;
 };
 
-static void predbb_func(struct vec4f_s *r, double u, double v, void *data)
+static void predbb_func(struct cs2_vec4f_s *r, double u, double v, void *data)
 {
     struct predbb_func_s *f = (struct predbb_func_s *)data;
-    struct spin3f_s s;
-    predgparam3f_eval(&s, &f->pp, u, v, 0);
+    struct cs2_spin3f_s s;
+    cs2_predgparam3f_eval(&s, &f->pp, u, v, 0);
     r->x = s.s12;
     r->y = s.s23;
     r->z = s.s31;
     r->w = s.s0;
 }
 
-static void create_z_barrel(struct predg3f_s *p)
+static void create_z_barrel(struct cs2_predg3f_s *p)
 {
     /* an example z-barrel */
-    vec3f_set(&p->k, 1.0, 1.0, 1.0);
-    vec3f_set(&p->l, 1.0, 0.0, 2.0);
-    vec3f_set(&p->a, 0.0, 1.0, 1.0);
-    vec3f_set(&p->b, 0.0, 2.0, 1.0);
+    cs2_vec3f_set(&p->k, 1.0, 1.0, 1.0);
+    cs2_vec3f_set(&p->l, 1.0, 0.0, 2.0);
+    cs2_vec3f_set(&p->a, 0.0, 1.0, 1.0);
+    cs2_vec3f_set(&p->b, 0.0, 2.0, 1.0);
     p->c = 0.5;
 }
 
@@ -61,67 +61,67 @@ TEST_SUITE(beziertreeqq4f)
 
 TEST_CASE(beziertreeqq4f, init_and_sub)
 {
-    struct beziertreeqq4f_s t;
+    struct cs2_beziertreeqq4f_s t;
     struct predbb_func_s f;
 
     create_z_barrel(&f.p);
 
-    predg3f_param(&f.pp, &f.p);
+    cs2_predg3f_param(&f.pp, &f.p);
 
     /* init */
-    beziertreeqq4f_init(&t);
-    beziertreeqq4f_from_func(&t, &predbb_func, &f);
+    cs2_beziertreeqq4f_init(&t);
+    cs2_beziertreeqq4f_from_func(&t, &predbb_func, &f);
 
     /* initial tree is virtual with zero volume and zero area */
-    TEST_ASSERT(beziertreenodeqq4f_is_virt(t.rn));
-    test_almost_equal(beziertreeqq4f_vol(&t), 0.0);
-    test_almost_equal(beziertreeqq4f_area(&t), 0.0);
+    TEST_ASSERT(cs2_beziertreenodeqq4f_is_virt(t.rn));
+    test_almost_equal(cs2_beziertreeqq4f_vol(&t), 0.0);
+    test_almost_equal(cs2_beziertreeqq4f_area(&t), 0.0);
 
     /* do first level subdivision */
-    beziertreenodeqq4f_sub(t.rn);
+    cs2_beziertreenodeqq4f_sub(t.rn);
 
     /* first level subdivision must not be virtual and volume must not be zero */
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[0][0]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[0][1]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[1][0]));
-    TEST_ASSERT(!beziertreenodeqq4f_is_virt(t.rn->c[1][1]));
+    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[0][0]));
+    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[0][1]));
+    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[1][0]));
+    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[1][1]));
 
-    TEST_ASSERT(beziertreeqq4f_vol(&t) > 0.0);
-    TEST_ASSERT(beziertreeqq4f_area(&t) > 0.0);
+    TEST_ASSERT(cs2_beziertreeqq4f_vol(&t) > 0.0);
+    TEST_ASSERT(cs2_beziertreeqq4f_area(&t) > 0.0);
 
     /* do second level subdivision */
-    beziertreenodeqq4f_sub(t.rn->c[0][0]);
-    beziertreenodeqq4f_sub(t.rn->c[0][1]);
-    beziertreenodeqq4f_sub(t.rn->c[1][0]);
-    beziertreenodeqq4f_sub(t.rn->c[1][1]);
+    cs2_beziertreenodeqq4f_sub(t.rn->c[0][0]);
+    cs2_beziertreenodeqq4f_sub(t.rn->c[0][1]);
+    cs2_beziertreenodeqq4f_sub(t.rn->c[1][0]);
+    cs2_beziertreenodeqq4f_sub(t.rn->c[1][1]);
 
     /* clear */
-    beziertreeqq4f_clear(&t);
+    cs2_beziertreeqq4f_clear(&t);
 }
 
 TEST_CASE(beziertreeqq4f, sub_vol)
 {
-    struct beziertreeqq4f_s t;
-    struct beziertreeleafsqq4f_s l;
-    struct beziertreeleafqq4f_s *ll;
+    struct cs2_beziertreeqq4f_s t;
+    struct cs2_beziertreeleafsqq4f_s l;
+    struct cs2_beziertreeleafqq4f_s *ll;
     struct predbb_func_s f;
     size_t pc, tc;
 
     create_z_barrel(&f.p);
 
-    predg3f_param(&f.pp, &f.p);
+    cs2_predg3f_param(&f.pp, &f.p);
 
     /* init */
-    beziertreeqq4f_init(&t);
-    beziertreeqq4f_from_func(&t, &predbb_func, &f);
+    cs2_beziertreeqq4f_init(&t);
+    cs2_beziertreeqq4f_from_func(&t, &predbb_func, &f);
 
     /* sub vol */
-    beziertreeleafsqq4f_init(&l, &t);
+    cs2_beziertreeleafsqq4f_init(&l, &t);
 
-    beziertreeleafsqq4f_sub_vol(&l, 0.0001);
+    cs2_beziertreeleafsqq4f_sub_vol(&l, 0.0001);
     pc = l.c;
 
-    beziertreeleafsqq4f_sub_vol(&l, 0.0001);
+    cs2_beziertreeleafsqq4f_sub_vol(&l, 0.0001);
 
     TEST_ASSERT(pc == l.c);
 
@@ -138,5 +138,5 @@ TEST_CASE(beziertreeqq4f, sub_vol)
     TEST_ASSERT(pc == tc);
 
     /* clear */
-    beziertreeqq4f_clear(&t);
+    cs2_beziertreeqq4f_clear(&t);
 }

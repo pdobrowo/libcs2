@@ -35,7 +35,7 @@ CS2_API_BEGIN
  *
  *    .
  */
-struct predbb3f_s
+struct cs2_predbb3f_s
 {
     int a;
 };

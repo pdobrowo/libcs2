@@ -51,16 +51,16 @@ CS2_API_BEGIN
  *
  *    s12^2 + s23^2 + s31^2 + s0^2 = 1
  */
-struct spinquad3f_s
+struct cs2_spinquad3f_s
 {
     double a11, a22, a33, a44, a12, a13, a14, a23, a24, a34;
 };
 
-CS2_API void spinquad3f_from_predh3f(struct spinquad3f_s *sq, const struct predh3f_s *ph);
-CS2_API void spinquad3f_from_preds3f(struct spinquad3f_s *sq, const struct preds3f_s *ps);
-CS2_API void spinquad3f_from_predg3f(struct spinquad3f_s *sq, const struct predg3f_s *pg);
+CS2_API void cs2_spinquad3f_from_predh3f(struct cs2_spinquad3f_s *sq, const struct cs2_predh3f_s *ph);
+CS2_API void cs2_spinquad3f_from_preds3f(struct cs2_spinquad3f_s *sq, const struct cs2_preds3f_s *ps);
+CS2_API void cs2_spinquad3f_from_predg3f(struct cs2_spinquad3f_s *sq, const struct cs2_predg3f_s *pg);
 
-CS2_API double spinquad3f_eval(const struct spinquad3f_s *sq, const struct spin3f_s *s);
+CS2_API double cs2_spinquad3f_eval(const struct cs2_spinquad3f_s *sq, const struct cs2_spin3f_s *s);
 
 CS2_API_END
 

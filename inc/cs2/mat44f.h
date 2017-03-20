@@ -29,13 +29,13 @@
 
 CS2_API_BEGIN
 
-struct mat44f_s
+struct cs2_mat44f_s
 {
     double m[4][4];
 };
 
-CS2_API void mat44f_zero(struct mat44f_s *m);
-CS2_API void mat44f_identity(struct mat44f_s *m);
+CS2_API void cs2_mat44f_zero(struct cs2_mat44f_s *m);
+CS2_API void cs2_mat44f_identity(struct cs2_mat44f_s *m);
 
 CS2_API_END
 

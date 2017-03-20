@@ -39,7 +39,7 @@ void load_mesh(struct decompmesh3f_s *m, const char *fp)
     if (fscanf(f, "%*s%d%d%*d",&vs,&fs) != 2)
         return;
 
-    m->v = (struct vec3f_s *)malloc(sizeof(struct vec3f_s) * vs);
+    m->v = (struct cs2_vec3f_s *)malloc(sizeof(struct cs2_vec3f_s) * vs);
     m->vs = vs;
 
     for (i = 0; i < vs; ++i)
@@ -76,9 +76,9 @@ void load_mesh(struct decompmesh3f_s *m, const char *fp)
 int main()
 {
     // decomp
-    plugin_ldpath(".");
+    cs2_plugin_ldpath(".");
 
-    void *pl = plugin_load("libdecomp.so");
+    void *pl = cs2_plugin_load("libdecomp.so");
 
     if (!pl)
     {
@@ -86,9 +86,9 @@ int main()
         return 1;
     }
 
-    decomp3f_init_f pl_init = (decomp3f_init_f)plugin_func(pl, DECOMP3F_INIT_F_SYM);
-    decomp3f_make_f pl_make = (decomp3f_make_f)plugin_func(pl, DECOMP3F_MAKE_F_SYM);
-    decomp3f_clear_f pl_clear = (decomp3f_clear_f)plugin_func(pl, DECOMP3F_CLEAR_F_SYM);
+    decomp3f_init_f pl_init = (decomp3f_init_f)cs2_plugin_func(pl, DECOMP3F_INIT_F_SYM);
+    decomp3f_make_f pl_make = (decomp3f_make_f)cs2_plugin_func(pl, DECOMP3F_MAKE_F_SYM);
+    decomp3f_clear_f pl_clear = (decomp3f_clear_f)cs2_plugin_func(pl, DECOMP3F_CLEAR_F_SYM);
 
     struct decomp3f_s d;
 
@@ -97,17 +97,17 @@ int main()
 
     pl_init(&d);
 
-    uint64_t start = timer_usec();
+    uint64_t start = cs2_timer_usec();
 
     pl_make(&d, &dm);
 
-    uint64_t end = timer_usec();
+    uint64_t end = cs2_timer_usec();
 
     printf("decomposition took %lu usecs; sub-meshes: %d\n", static_cast<unsigned long>(end - start), static_cast<int>(d.ms));
 
     pl_clear(&d);
 
-    plugin_unload(pl);
+    cs2_plugin_unload(pl);
 
     free(dm.f);
     free(dm.v);

@@ -30,29 +30,29 @@
 
 CS2_API_BEGIN
 
-struct pin3f_s
+struct cs2_pin3f_s
 {
     double p12, p23, p31, p0;
 };
 
-CS2_API const struct pin3f_s PIN3F_ZERO;
-CS2_API const struct pin3f_s PIN3F_ONE;
+CS2_API const struct cs2_pin3f_s CS2_PIN3F_ZERO;
+CS2_API const struct cs2_pin3f_s CS2_PIN3F_ONE;
 
-CS2_API void pin3f_set(struct pin3f_s *r, double p12, double p23, double p31, double p0);
-CS2_API void pin3f_zero(struct pin3f_s *r);
+CS2_API void cs2_pin3f_set(struct cs2_pin3f_s *r, double p12, double p23, double p31, double p0);
+CS2_API void cs2_pin3f_zero(struct cs2_pin3f_s *r);
 
-CS2_API void pin3f_add(struct pin3f_s *r, const struct pin3f_s *a, const struct pin3f_s *b);
-CS2_API void pin3f_sub(struct pin3f_s *r, const struct pin3f_s *a, const struct pin3f_s *b);
-CS2_API void pin3f_neg(struct pin3f_s *r, const struct pin3f_s *v);
-CS2_API void pin3f_mul(struct pin3f_s *r, const struct pin3f_s *a, double as);
+CS2_API void cs2_pin3f_add(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, const struct cs2_pin3f_s *b);
+CS2_API void cs2_pin3f_sub(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, const struct cs2_pin3f_s *b);
+CS2_API void cs2_pin3f_neg(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *v);
+CS2_API void cs2_pin3f_mul(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as);
 
-CS2_API void pin3f_mad2(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs);
-CS2_API void pin3f_mad3(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs, const struct pin3f_s *c, double cs);
-CS2_API void pin3f_mad4(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs, const struct pin3f_s *c, double cs, const struct pin3f_s *d, double ds);
-CS2_API void pin3f_mad5(struct pin3f_s *r, const struct pin3f_s *a, double as, const struct pin3f_s *b, double bs, const struct pin3f_s *c, double cs, const struct pin3f_s *d, double ds, const struct pin3f_s *e, double es);
+CS2_API void cs2_pin3f_mad2(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs);
+CS2_API void cs2_pin3f_mad3(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs);
+CS2_API void cs2_pin3f_mad4(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs, const struct cs2_pin3f_s *d, double ds);
+CS2_API void cs2_pin3f_mad5(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs, const struct cs2_pin3f_s *d, double ds, const struct cs2_pin3f_s *e, double es);
 
-CS2_API double pin3f_len(const struct pin3f_s *v);
-CS2_API double pin3f_sqlen(const struct pin3f_s *v);
+CS2_API double cs2_pin3f_len(const struct cs2_pin3f_s *v);
+CS2_API double cs2_pin3f_sqlen(const struct cs2_pin3f_s *v);
 
 CS2_API_END
 

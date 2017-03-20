@@ -27,16 +27,16 @@
 #include <string.h>
 #include <unistd.h>
 
-static mem_error_func_t g_mem_error_func = &mem_default_error_func;
+static cs2_mem_error_func_t g_mem_error_func = &cs2_mem_default_error_func;
 
-mem_error_func_t mem_at_error(mem_error_func_t f)
+cs2_mem_error_func_t cs2_mem_at_error(cs2_mem_error_func_t f)
 {
-    mem_error_func_t pf = g_mem_error_func;
+    cs2_mem_error_func_t pf = g_mem_error_func;
     g_mem_error_func = f;
     return pf;
 }
 
-void mem_default_error_func(const char *file, int line, size_t size, const char *type)
+void cs2_mem_default_error_func(const char *file, int line, size_t size, const char *type)
 {
     const char *name = strrchr(file, '/');
 
@@ -52,7 +52,7 @@ void mem_default_error_func(const char *file, int line, size_t size, const char 
     usleep(1 * 1000 * 1000);
 }
 
-void mem_trigger_error(const char *file, int line, size_t size, const char *type)
+void cs2_mem_trigger_error(const char *file, int line, size_t size, const char *type)
 {
     g_mem_error_func(file, line, size, type);
 }

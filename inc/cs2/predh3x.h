@@ -36,14 +36,14 @@ CS2_API_BEGIN
  *
  *    P.N * Rot(B) + P.d
  */
-struct predh3x_s
+struct cs2_predh3x_s
 {
-    struct vec3x_s b;
-    struct plane3x_s p;
+    struct cs2_vec3x_s b;
+    struct cs2_plane3x_s p;
 };
 
-CS2_API void predh3x_init(struct predh3x_s *h);
-CS2_API void predh3x_clear(struct predh3x_s *h);
+CS2_API void cs2_predh3x_init(struct cs2_predh3x_s *h);
+CS2_API void cs2_predh3x_clear(struct cs2_predh3x_s *h);
 
 CS2_API_END
 

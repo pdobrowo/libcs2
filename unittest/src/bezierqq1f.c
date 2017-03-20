@@ -39,103 +39,103 @@ TEST_SUITE(bezierqq1f)
 
 TEST_CASE(bezierqq1f, bump_1)
 {
-    struct bezierqq1f_s b;
-    struct bezierqq1f_coeff_s c = { 0, 0, 0,
+    struct cs2_bezierqq1f_s b;
+    struct cs2_bezierqq1f_coeff_s c = { 0, 0, 0,
                                     0, 1, 0,
                                     0, 0, 0 };
-    bezierqq1f_from_qq(&b, &c);
+    cs2_bezierqq1f_from_qq(&b, &c);
 
     /* control points */
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.5, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.5), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.5, 0.5), 1.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.5), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 1.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.5, 1.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.5, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.5), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.5, 0.5), 1.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.5), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.5, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 1.0), 0.0);
 
     /* border */
-    test_almost_equal(bezierqq1f_eval(&b, 0.1, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.4, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.6, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.9, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.1, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.4, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.6, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.9, 0.0), 0.0);
 
-    test_almost_equal(bezierqq1f_eval(&b, 0.1, 1.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.4, 1.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.6, 1.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.9, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.1, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.4, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.6, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.9, 1.0), 0.0);
 
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.1), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.4), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.6), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.9), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.1), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.4), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.6), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.9), 0.0);
 
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.1), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.4), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.6), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.9), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.1), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.4), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.6), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.9), 0.0);
 
     /* middle */
-    test_almost_equal(bezierqq1f_eval(&b, 0.25, 0.25), 9.0 / 16.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.25, 0.25), 9.0 / 16.0);
 }
 
 TEST_CASE(bezierqq1f, bump_2)
 {
-    struct bezierqq1f_s b;
-    struct bezierqq1f_coeff_s c = { 0, 1, 0,
+    struct cs2_bezierqq1f_s b;
+    struct cs2_bezierqq1f_coeff_s c = { 0, 1, 0,
                                     1, 1, 1,
                                     0, 1, 0 };
-    bezierqq1f_from_qq(&b, &c);
+    cs2_bezierqq1f_from_qq(&b, &c);
 
     /* control points */
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.5, 0.0), 1.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.5), 1.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.5, 0.5), 1.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.5), 1.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 1.0), 0.0);
-    test_almost_equal(bezierqq1f_eval(&b, 0.5, 1.0), 1.0);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.5, 0.0), 1.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.5), 1.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.5, 0.5), 1.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.5), 1.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 1.0), 0.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.5, 1.0), 1.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 1.0), 0.0);
 
     /* border */
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.25), 0.75);
-    test_almost_equal(bezierqq1f_eval(&b, 0.0, 0.75), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.25), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.0, 0.75), 0.75);
 
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.25), 0.75);
-    test_almost_equal(bezierqq1f_eval(&b, 1.0, 0.75), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.25), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 1.0, 0.75), 0.75);
 
-    test_almost_equal(bezierqq1f_eval(&b, 0.25, 0.0), 0.75);
-    test_almost_equal(bezierqq1f_eval(&b, 0.75, 0.0), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.25, 0.0), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.75, 0.0), 0.75);
 
-    test_almost_equal(bezierqq1f_eval(&b, 0.25, 1.0), 0.75);
-    test_almost_equal(bezierqq1f_eval(&b, 0.75, 1.0), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.25, 1.0), 0.75);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.75, 1.0), 0.75);
 
     /* middle */
-    test_almost_equal(bezierqq1f_eval(&b, 0.25, 0.25), 15.0 / 16.0);
+    test_almost_equal(cs2_bezierqq1f_eval(&b, 0.25, 0.25), 15.0 / 16.0);
 }
 
 TEST_CASE(bezierqq1f, func_fn1)
 {
-    struct bezierqq1f_s b;
-    struct bezierqq1f_coeff_s c = { fn1(0.0, 0.0), fn1(0.0, 0.5), fn1(0.0, 1.0),
+    struct cs2_bezierqq1f_s b;
+    struct cs2_bezierqq1f_coeff_s c = { fn1(0.0, 0.0), fn1(0.0, 0.5), fn1(0.0, 1.0),
                                     fn1(0.5, 0.0), fn1(0.5, 0.5), fn1(0.5, 1.0),
                                     fn1(1.0, 0.0), fn1(1.0, 0.5), fn1(1.0, 1.0) };
-    struct rand_s r;
+    struct cs2_rand_s r;
     double u, v;
     int i;
 
-    rand_seed(&r);
+    cs2_rand_seed(&r);
 
-    bezierqq1f_from_qq(&b, &c);
+    cs2_bezierqq1f_from_qq(&b, &c);
 
     for (i = 0; i < 1000; ++i)
     {
-        u = rand_u1f(&r, 0.0, 1.0);
-        v = rand_u1f(&r, 0.0, 1.0);
+        u = cs2_rand_u1f(&r, 0.0, 1.0);
+        v = cs2_rand_u1f(&r, 0.0, 1.0);
 
-        test_almost_equal(bezierqq1f_eval(&b, u, v), fn1(u, v));
+        test_almost_equal(cs2_bezierqq1f_eval(&b, u, v), fn1(u, v));
     }
 }

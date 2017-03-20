@@ -25,23 +25,24 @@
 #include "cs2/hull4f.h"
 #include "cs2/mem.h"
 #include "cs2/fmt.h"
+#include "cs2/assert.h"
 #include "libqhull_r/qhull_ra.h"
 #include <setjmp.h>
-#include <assert.h>
+#include <cs2/assert.h>
 #include <stdio.h>
 
-static int hull4f_sep(const struct hull4f_s *h, const struct plane4f_s *p)
+static int hull4f_sep(const struct cs2_hull4f_s *h, const struct cs2_plane4f_s *p)
 {
     size_t vi;
 
     for (vi = 0; vi < h->nvr; ++vi)
-        if (plane4f_pops(p, &h->vr[vi]) < 0.0)
+        if (cs2_plane4f_pops(p, &h->vr[vi]) < 0.0)
             return 0;
 
     return 1;
 }
 
-void hull4f_init(struct hull4f_s *h)
+void cs2_hull4f_init(struct cs2_hull4f_s *h)
 {
     h->hr = NULL;
     h->nhr = 0;
@@ -51,19 +52,19 @@ void hull4f_init(struct hull4f_s *h)
     h->area = 0.0;
 }
 
-void hull4f_clear(struct hull4f_s *h)
+void cs2_hull4f_clear(struct cs2_hull4f_s *h)
 {
-    MEM_FREE(h->hr);
-    MEM_FREE(h->vr);
+    CS2_MEM_FREE(h->hr);
+    CS2_MEM_FREE(h->vr);
 }
 
-void hull4f_from_arr(struct hull4f_s *h, const struct vec4f_s *v, size_t c)
+void cs2_hull4f_from_arr(struct cs2_hull4f_s *h, const struct cs2_vec4f_s *v, size_t c)
 {
     int curlong, totlong, exitcode;
-    double *pts;
+    double *pts = 0;
     char opt[] = "qhull";
     struct qhT qh;
-    struct vec4f_s n;
+    struct cs2_vec4f_s n;
     facetT *fi;
     vertexT *vi;
     int i;
@@ -72,7 +73,7 @@ void hull4f_from_arr(struct hull4f_s *h, const struct vec4f_s *v, size_t c)
     QHULL_LIB_CHECK
 
     /* pts */
-    assert(sizeof(struct vec4f_s) == sizeof(double) * 4);
+    CS2_ASSERT(sizeof(struct cs2_vec4f_s) == sizeof(double) * 4);
     pts = (double *)v;
 
     /* init */
@@ -88,29 +89,29 @@ void hull4f_from_arr(struct hull4f_s *h, const struct vec4f_s *v, size_t c)
         qh_check_output(&qh);
 
         /* extra checks */
-        assert(qh.hull_dim == 4);
+        CS2_ASSERT(qh.hull_dim == 4);
 
         /* hull */
         h->nhr = (size_t)qh.num_facets;
-        h->hr = MEM_MALLOC_N(struct plane4f_s, h->nhr);
+        h->hr = CS2_MEM_MALLOC_N(struct cs2_plane4f_s, h->nhr);
 
         i = 0;
 
         for (fi = qh.facet_list; fi && fi->next; fi = fi->next)
         {
-            vec4f_set(&n, fi->normal[0], fi->normal[1], fi->normal[2], fi->normal[3]);
-            plane4f_set(&h->hr[i], &n, fi->offset);
+            cs2_vec4f_set(&n, fi->normal[0], fi->normal[1], fi->normal[2], fi->normal[3]);
+            cs2_plane4f_set(&h->hr[i], &n, fi->offset);
             ++i;
         }
 
         h->nvr = (size_t)qh.num_vertices;
-        h->vr = MEM_MALLOC_N(struct vec4f_s, h->nvr);
+        h->vr = CS2_MEM_MALLOC_N(struct cs2_vec4f_s, h->nvr);
 
         i = 0;
 
         for (vi = qh.vertex_list; vi && vi->next; vi = vi->next)
         {
-            vec4f_set(&h->vr[i], vi->point[0], vi->point[1], vi->point[2], vi->point[3]);
+            cs2_vec4f_set(&h->vr[i], vi->point[0], vi->point[1], vi->point[2], vi->point[3]);
             ++i;
         }
 
@@ -122,17 +123,17 @@ void hull4f_from_arr(struct hull4f_s *h, const struct vec4f_s *v, size_t c)
     }
     else
     {
-        assert(0 && "qhull error - see stderr for details");
+        CS2_ASSERT_PANIC("qhull error - see stderr for details");
     }
 
     qh.NOerrexit = True;
     qh_freeqhull(&qh, !qh_ALL);
     qh_memfreeshort(&qh, &curlong, &totlong);
 
-    assert(!curlong && !totlong && "qhull mem leak");
+    CS2_ASSERT(!curlong && !totlong && "qhull mem leak");
 }
 
-int hull4f_inter(const struct hull4f_s *p, const struct hull4f_s *q)
+int cs2_hull4f_inter(const struct cs2_hull4f_s *p, const struct cs2_hull4f_s *q)
 {
     size_t hi;
 
@@ -151,22 +152,22 @@ int hull4f_inter(const struct hull4f_s *p, const struct hull4f_s *q)
     return 1;
 }
 
-CS2_API void hull4f_print_json(struct hull4f_s *h, FILE *f, size_t ind)
+void cs2_hull4f_print_json(struct cs2_hull4f_s *h, FILE *f, size_t ind)
 {
     size_t i;
 
-    fmt_indent(ind, f);
+    cs2_fmt_indent(ind, f);
     fprintf(f, "{\n");
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "\"h\":\n");
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "[\n");
 
     for (i = 0; i < h->nhr; ++i)
     {
-        plane4f_print_json(&h->hr[i], f, ind + FMT_DEFAULT_INDENT * 2);
+        cs2_plane4f_print_json(&h->hr[i], f, ind + CS2_FMT_DEFAULT_INDENT * 2);
 
         if (i != h->nhr - 1)
             fprintf(f, ",");
@@ -174,18 +175,18 @@ CS2_API void hull4f_print_json(struct hull4f_s *h, FILE *f, size_t ind)
         fprintf(f, "\n");
     }
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "],\n");
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "\"v\":\n");
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "[\n");
 
     for (i = 0; i < h->nvr; ++i)
     {
-        vec4f_print_json(&h->vr[i], f, ind + FMT_DEFAULT_INDENT * 2);
+        cs2_vec4f_print_json(&h->vr[i], f, ind + CS2_FMT_DEFAULT_INDENT * 2);
 
         if (i != h->nvr - 1)
             fprintf(f, ",");
@@ -193,9 +194,9 @@ CS2_API void hull4f_print_json(struct hull4f_s *h, FILE *f, size_t ind)
         fprintf(f, "\n");
     }
 
-    fmt_indent(ind + FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "]\n");
 
-    fmt_indent(ind, f);
+    cs2_fmt_indent(ind, f);
     fprintf(f, "}");
 }

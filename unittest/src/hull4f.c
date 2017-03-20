@@ -29,7 +29,7 @@
 #define EPS (10e-8)
 #define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
 
-const struct vec4f_s SIMPLEX_A[] = {
+const struct cs2_vec4f_s SIMPLEX_A[] = {
     { 0.0, 0.0, 0.0, 0.0 },
     { 1.0, 0.0, 0.0, 0.0 },
     { 0.0, 1.0, 0.0, 0.0 },
@@ -39,7 +39,7 @@ const struct vec4f_s SIMPLEX_A[] = {
 
 static const size_t SIMPLEX_A_SIZE = sizeof(SIMPLEX_A) / sizeof(SIMPLEX_A[0]);
 
-const struct vec4f_s SIMPLEX_B[] = {
+const struct cs2_vec4f_s SIMPLEX_B[] = {
     { 0.5, 0.0, 0.0, 0.0 },
     { 1.5, 0.0, 0.0, 0.0 },
     { 0.5, 1.0, 0.0, 0.0 },
@@ -49,7 +49,7 @@ const struct vec4f_s SIMPLEX_B[] = {
 
 static const size_t SIMPLEX_B_SIZE = sizeof(SIMPLEX_B) / sizeof(SIMPLEX_B[0]);
 
-const struct vec4f_s SIMPLEX_C[] = {
+const struct cs2_vec4f_s SIMPLEX_C[] = {
     { 2.0, 0.0, 0.0, 0.0 },
     { 3.0, 0.0, 0.0, 0.0 },
     { 2.0, 1.0, 0.0, 0.0 },
@@ -59,7 +59,7 @@ const struct vec4f_s SIMPLEX_C[] = {
 
 static const size_t SIMPLEX_C_SIZE = sizeof(SIMPLEX_C) / sizeof(SIMPLEX_C[0]);
 
-const struct vec4f_s CUBE_A[] = {
+const struct cs2_vec4f_s CUBE_A[] = {
     { 0.0, 0.0, 0.0, 0.0 },
     { 1.0, 0.0, 0.0, 0.0 },
     { 0.0, 1.0, 0.0, 0.0 },
@@ -80,7 +80,7 @@ const struct vec4f_s CUBE_A[] = {
 
 static const size_t CUBE_A_SIZE = sizeof(CUBE_A) / sizeof(CUBE_A[0]);
 
-const struct vec4f_s CUBE_B[] = {
+const struct cs2_vec4f_s CUBE_B[] = {
     { 0.5, 0.0, 0.0, 0.0 },
     { 1.5, 0.0, 0.0, 0.0 },
     { 0.5, 1.0, 0.0, 0.0 },
@@ -101,7 +101,7 @@ const struct vec4f_s CUBE_B[] = {
 
 static const size_t CUBE_B_SIZE = sizeof(CUBE_B) / sizeof(CUBE_B[0]);
 
-const struct vec4f_s CUBE_C[] = {
+const struct cs2_vec4f_s CUBE_C[] = {
     { 2.0, 0.0, 0.0, 0.0 },
     { 3.0, 0.0, 0.0, 0.0 },
     { 2.0, 1.0, 0.0, 0.0 },
@@ -126,90 +126,90 @@ TEST_SUITE(hull4f)
 
 TEST_CASE(hull4f, vol_simplex_a)
 {
-    struct hull4f_s hsa;
+    struct cs2_hull4f_s hsa;
 
-    hull4f_init(&hsa);
-    hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
+    cs2_hull4f_init(&hsa);
+    cs2_hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
 
     test_almost_equal(hsa.vol, 1.0 / 24.0);
 
-    hull4f_clear(&hsa);
+    cs2_hull4f_clear(&hsa);
 }
 
 TEST_CASE(hull4f, area_simplex_a)
 {
-    struct hull4f_s hsa;
+    struct cs2_hull4f_s hsa;
 
-    hull4f_init(&hsa);
-    hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
+    cs2_hull4f_init(&hsa);
+    cs2_hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
 
     test_almost_equal(hsa.area, 1.0);
 
-    hull4f_clear(&hsa);
+    cs2_hull4f_clear(&hsa);
 }
 
 TEST_CASE(hull4f, vol_cube_a)
 {
-    struct hull4f_s hca;
+    struct cs2_hull4f_s hca;
 
-    hull4f_init(&hca);
-    hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
+    cs2_hull4f_init(&hca);
+    cs2_hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
 
     test_almost_equal(hca.vol, 1.0);
 
-    hull4f_clear(&hca);
+    cs2_hull4f_clear(&hca);
 }
 
 TEST_CASE(hull4f, area_cube_a)
 {
-    struct hull4f_s hca;
+    struct cs2_hull4f_s hca;
 
-    hull4f_init(&hca);
-    hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
+    cs2_hull4f_init(&hca);
+    cs2_hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
 
     test_almost_equal(hca.area, 8.0);
 
-    hull4f_clear(&hca);
+    cs2_hull4f_clear(&hca);
 }
 
 TEST_CASE(hull4f, sep_cube_abc)
 {
-    struct hull4f_s hca, hcb, hcc;
+    struct cs2_hull4f_s hca, hcb, hcc;
 
-    hull4f_init(&hca);
-    hull4f_init(&hcb);
-    hull4f_init(&hcc);
+    cs2_hull4f_init(&hca);
+    cs2_hull4f_init(&hcb);
+    cs2_hull4f_init(&hcc);
 
-    hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
-    hull4f_from_arr(&hcb, CUBE_B, CUBE_B_SIZE);
-    hull4f_from_arr(&hcc, CUBE_C, CUBE_C_SIZE);
+    cs2_hull4f_from_arr(&hca, CUBE_A, CUBE_A_SIZE);
+    cs2_hull4f_from_arr(&hcb, CUBE_B, CUBE_B_SIZE);
+    cs2_hull4f_from_arr(&hcc, CUBE_C, CUBE_C_SIZE);
 
-    TEST_ASSERT(hull4f_inter(&hca, &hcb));
-    TEST_ASSERT(!hull4f_inter(&hca, &hcc));
-    TEST_ASSERT(!hull4f_inter(&hcb, &hcc));
+    TEST_ASSERT(cs2_hull4f_inter(&hca, &hcb));
+    TEST_ASSERT(!cs2_hull4f_inter(&hca, &hcc));
+    TEST_ASSERT(!cs2_hull4f_inter(&hcb, &hcc));
 
-    hull4f_clear(&hca);
-    hull4f_clear(&hcb);
-    hull4f_clear(&hcc);
+    cs2_hull4f_clear(&hca);
+    cs2_hull4f_clear(&hcb);
+    cs2_hull4f_clear(&hcc);
 }
 
 TEST_CASE(hull4f, sep_simplex_abc)
 {
-    struct hull4f_s hsa, hsb, hsc;
+    struct cs2_hull4f_s hsa, hsb, hsc;
 
-    hull4f_init(&hsa);
-    hull4f_init(&hsb);
-    hull4f_init(&hsc);
+    cs2_hull4f_init(&hsa);
+    cs2_hull4f_init(&hsb);
+    cs2_hull4f_init(&hsc);
 
-    hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
-    hull4f_from_arr(&hsb, SIMPLEX_B, SIMPLEX_B_SIZE);
-    hull4f_from_arr(&hsc, SIMPLEX_C, SIMPLEX_C_SIZE);
+    cs2_hull4f_from_arr(&hsa, SIMPLEX_A, SIMPLEX_A_SIZE);
+    cs2_hull4f_from_arr(&hsb, SIMPLEX_B, SIMPLEX_B_SIZE);
+    cs2_hull4f_from_arr(&hsc, SIMPLEX_C, SIMPLEX_C_SIZE);
 
-    TEST_ASSERT(hull4f_inter(&hsa, &hsb));
-    TEST_ASSERT(!hull4f_inter(&hsa, &hsc));
-    TEST_ASSERT(!hull4f_inter(&hsb, &hsc));
+    TEST_ASSERT(cs2_hull4f_inter(&hsa, &hsb));
+    TEST_ASSERT(!cs2_hull4f_inter(&hsa, &hsc));
+    TEST_ASSERT(!cs2_hull4f_inter(&hsb, &hsc));
 
-    hull4f_clear(&hsa);
-    hull4f_clear(&hsb);
-    hull4f_clear(&hsc);
+    cs2_hull4f_clear(&hsa);
+    cs2_hull4f_clear(&hsb);
+    cs2_hull4f_clear(&hsc);
 }

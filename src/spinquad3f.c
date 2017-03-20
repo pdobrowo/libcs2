@@ -25,27 +25,27 @@
 #include "cs2/spinquad3f.h"
 #include "cs2/vec3f.h"
 
-void spinquad3f_from_predh3f(struct spinquad3f_s *sq, const struct predh3f_s *ph)
+void cs2_spinquad3f_from_predh3f(struct cs2_spinquad3f_s *sq, const struct cs2_predh3f_s *ph)
 {
-    struct predg3f_s g;
-    predg3f_from_predh3f(&g, ph);
-    spinquad3f_from_predg3f(sq, &g);
+    struct cs2_predg3f_s g;
+    cs2_predg3f_from_predh3f(&g, ph);
+    cs2_spinquad3f_from_predg3f(sq, &g);
 }
 
-void spinquad3f_from_preds3f(struct spinquad3f_s *sq, const struct preds3f_s *ps)
+void cs2_spinquad3f_from_preds3f(struct cs2_spinquad3f_s *sq, const struct cs2_preds3f_s *ps)
 {
-    struct predg3f_s g;
-    predg3f_from_preds3f(&g, ps);
-    spinquad3f_from_predg3f(sq, &g);
+    struct cs2_predg3f_s g;
+    cs2_predg3f_from_preds3f(&g, ps);
+    cs2_spinquad3f_from_predg3f(sq, &g);
 }
 
-void spinquad3f_from_predg3f(struct spinquad3f_s *sq, const struct predg3f_s *pg)
+void cs2_spinquad3f_from_predg3f(struct cs2_spinquad3f_s *sq, const struct cs2_predg3f_s *pg)
 {
-    struct vec3f_s p, q, u, v;
+    struct cs2_vec3f_s p, q, u, v;
     double pxqx, pxqy, pxqz, pyqx, pyqy, pyqz, pzqx, pzqy, pzqz, uxvx, uxvy, uxvz, uyvx, uyvy, uyvz, uzvx, uzvy, uzvz;
 
     /* p, q, u, v */
-    predg3f_pquv(&p, &q, &u, &v, pg);
+    cs2_predg3f_pquv(&p, &q, &u, &v, pg);
 
     /* multiplies */
     pxqx = p.x * q.x;
@@ -86,7 +86,7 @@ void spinquad3f_from_predg3f(struct spinquad3f_s *sq, const struct predg3f_s *pg
     sq->a44 += pg->c;
 }
 
-double spinquad3f_eval(const struct spinquad3f_s *sq, const struct spin3f_s *s)
+double cs2_spinquad3f_eval(const struct cs2_spinquad3f_s *sq, const struct cs2_spin3f_s *s)
 {
     return sq->a11 * s->s12 * s->s12 +
            sq->a22 * s->s23 * s->s23 +

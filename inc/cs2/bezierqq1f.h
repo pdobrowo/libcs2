@@ -38,14 +38,14 @@ CS2_API_BEGIN
  * 10 11 12
  * 20 21 22
  */
-struct bezierqq1f_s
+struct cs2_bezierqq1f_s
 {
     double p00, p01, p02;
     double p10, p11, p12;
     double p20, p21, p22;
 };
 
-struct bezierqq1f_coeff_s
+struct cs2_bezierqq1f_coeff_s
 {
     /* coeffs at 0.0 - 0.5 - 1.0 */
     double c00, c01, c02;
@@ -53,8 +53,8 @@ struct bezierqq1f_coeff_s
     double c20, c21, c22;
 };
 
-CS2_API void bezierqq1f_from_qq(struct bezierqq1f_s *b, const struct bezierqq1f_coeff_s *c);
-CS2_API double bezierqq1f_eval(const struct bezierqq1f_s *b, double u, double v);
+CS2_API void cs2_bezierqq1f_from_qq(struct cs2_bezierqq1f_s *b, const struct cs2_bezierqq1f_coeff_s *c);
+CS2_API double cs2_bezierqq1f_eval(const struct cs2_bezierqq1f_s *b, double u, double v);
 
 CS2_API_END
 

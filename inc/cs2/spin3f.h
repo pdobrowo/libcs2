@@ -29,12 +29,12 @@
 
 CS2_API_BEGIN
 
-struct spin3f_s
+struct cs2_spin3f_s
 {
     double s12, s23, s31, s0;
 };
 
-CS2_API void spin3f_set(struct spin3f_s *s, double s12, double s23, double s31, double s0);
+CS2_API void cs2_spin3f_set(struct cs2_spin3f_s *s, double s12, double s23, double s31, double s0);
 
 CS2_API_END
 

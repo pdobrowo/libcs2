@@ -24,20 +24,20 @@
  */
 #include "cs2/plane3x.h"
 
-void plane3x_init(struct plane3x_s *p)
+void cs2_plane3x_init(struct cs2_plane3x_s *p)
 {
-    vec3x_init(&p->n);
+    cs2_vec3x_init(&p->n);
     mpz_init(p->d);
 }
 
-void plane3x_clear(struct plane3x_s *p)
+void cs2_plane3x_clear(struct cs2_plane3x_s *p)
 {
-    vec3x_clear(&p->n);
+    cs2_vec3x_clear(&p->n);
     mpz_clear(p->d);
 }
 
-void plane3x_pops(mpz_ptr d, struct plane3x_s *r, struct vec3x_s *p)
+void cs2_plane3x_pops(mpz_ptr d, struct cs2_plane3x_s *r, struct cs2_vec3x_s *p)
 {
-    vec3x_dot(d, &r->n, p);
+    cs2_vec3x_dot(d, &r->n, p);
     mpz_add(d, d, r->d);
 }
