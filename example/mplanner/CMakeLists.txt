@@ -4,7 +4,7 @@
  # Copyright 2015 Przemyslaw Dobrowolski <przemyslaw.dobrowolski@xtb.com>
  #
  ##
-project(btreeconv)
+project(mplanner)
 cmake_minimum_required(VERSION 2.6)
 
 include(CheckCXXCompilerFlag)
@@ -44,21 +44,21 @@ endif(COMPILER_SUPPORT_OFAST)
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_RELEASE_OPTIMIZATION} -fomit-frame-pointer -march=native")
 
-set(btreeconv_HEADERS
+set(mplanner_HEADERS
     # prefabs
     ${CS2_PREFABS_DIR}/prefabs.h
 )
 
-set(btreeconv_SOURCES
-    ${btreeconv_HEADERS}
+set(mplanner_SOURCES
+    ${mplanner_HEADERS}
     main.cpp
 
     # prefabs
     ${CS2_PREFABS_DIR}/prefabs.c
 )
 
-add_executable(btreeconv ${btreeconv_SOURCES})
+add_executable(mplanner ${mplanner_SOURCES})
 
-target_link_libraries(btreeconv
+target_link_libraries(mplanner
     ${CS2_LIBRARIES}
 )
