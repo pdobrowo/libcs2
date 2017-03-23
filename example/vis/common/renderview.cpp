@@ -111,7 +111,7 @@ void RenderView::ctor()
     QTimer *t = new QTimer(this);
     connect(t, SIGNAL(timeout()), this, SLOT(updateGL()));
     t->setSingleShot(false);
-    t->start(1000 / 25); // 25 fps
+    t->start(1000 / 60); // display at most 60 fps
 }
 
 RenderView::~RenderView()
@@ -219,31 +219,38 @@ void RenderView::initializeGL()
     // Somewhere in the initialization part of your program?
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
 
     // Create light components
-    GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_position[] = { 5.0, 5.0, 5.0, 1.0 };
+    GLfloat lightAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
+    GLfloat lightDiffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat lightSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat lightPositionA[] = { 5.0, 5.0, 5.0, 1.0 };
+    GLfloat lightPositionB[] = { -5.0, -5.0, -5.0, 1.0 };
 
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPositionA);
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
+    glLightfv(GL_LIGHT1, GL_POSITION, lightPositionB);
 
     //glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
     // Material
-    GLfloat material_shininess[] = { 50 };
+    GLfloat materialShininess[] = { 50 };
 
     //GLfloat material_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
-    GLfloat material_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-    GLfloat material_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat materialAmbient[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat materialSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
 
     //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material_ambient);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material_specular);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, material_shininess);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, materialAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, materialSpecular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, materialShininess);
 
     // Nice perspective
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);

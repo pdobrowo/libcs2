@@ -57,6 +57,17 @@ double projectedDistance(const struct cs2_spin3f_s *a, const struct cs2_spin3f_s
 
     return cs2_vec3f_len(&pc);
 }
+
+double clamp01(double x)
+{
+    while (x < 0.0)
+        x += 1.0;
+
+    while (x > 1.0)
+        x -= 1.0;
+
+    return x;
+}
 } // namespace anonymous
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -326,9 +337,10 @@ void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct cs2_predgpar
         QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
         QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
         QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
+/*
         addTriangle(triangles, Triangle(v00, v01, v11));
         addTriangle(triangles, Triangle(v00, v11, v10));
+*/
     }
     else
     {
@@ -342,83 +354,99 @@ void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct cs2_predgpar
 void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double radius)
 {
     int number_of_components = cs2_predgparamtype3f_components(param->t);
+    QVector2D controls[4][4];
 
-    for (int c = 0; c < number_of_components; ++c)
+    for (double pu = 0.0; pu < 1.0 - radius; pu += radius)
     {
-        for (double pu = 0; pu < 1 - radius; pu += radius) for (double pv = 0; pv < 1 - radius; pv += radius)
+        for (double pv = 0.0; pv < 1.0 - radius; pv += radius)
         {
-            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
+            for (int u = 0; u < 4; ++u)
+                for (int v = 0; v < 4; ++v)
+                    controls[u][v] = QVector2D(clamp01(pu + static_cast<double>(u - 1) * radius), clamp01(pv + static_cast<double>(v - 1) * radius));
 
-            cs2_predgparam3f_eval(&sp00, param, pu, pv, c);
-            cs2_predgparam3f_eval(&sp01, param, pu, pv + radius, c);
-            cs2_predgparam3f_eval(&sp10, param, pu + radius, pv, c);
-            cs2_predgparam3f_eval(&sp11, param, pu + radius, pv + radius, c);
-
-            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
-            addTriangle(triangles, Triangle(v00, v01, v11));
-            addTriangle(triangles, Triangle(v00, v11, v10));
-        }
-
-        // last u
-        for (double pu = 0; pu < 1 - radius; pu += radius)
-        {
-            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
-
-            cs2_predgparam3f_eval(&sp00, param, pu, 1.0 - radius, c);
-            cs2_predgparam3f_eval(&sp01, param, pu, 1.0, c);
-            cs2_predgparam3f_eval(&sp10, param, pu + radius, 1.0 - radius, c);
-            cs2_predgparam3f_eval(&sp11, param, pu + radius, 1.0, c);
-
-            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
-            addTriangle(triangles, Triangle(v00, v01, v11));
-            addTriangle(triangles, Triangle(v00, v11, v10));
-        }
-
-        // last v
-        for (double pv = 0; pv < 1 - radius; pv += radius)
-        {
-            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
-
-            cs2_predgparam3f_eval(&sp00, param, 1.0 - radius, pv, c);
-            cs2_predgparam3f_eval(&sp01, param, 1.0 - radius, pv + radius, c);
-            cs2_predgparam3f_eval(&sp10, param, 1.0, pv, c);
-            cs2_predgparam3f_eval(&sp11, param, 1.0, pv + radius, c);
-
-            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
-            addTriangle(triangles, Triangle(v00, v01, v11));
-            addTriangle(triangles, Triangle(v00, v11, v10));
-        }
-
-        // last uv
-        {
-            struct cs2_spin3f_s sp00, sp01, sp10, sp11;
-
-            cs2_predgparam3f_eval(&sp00, param, 1.0 - radius, 1.0 - radius, c);
-            cs2_predgparam3f_eval(&sp01, param, 1.0 - radius, 1.0, c);
-            cs2_predgparam3f_eval(&sp10, param, 1.0, 1.0 - radius, c);
-            cs2_predgparam3f_eval(&sp11, param, 1.0, 1.0, c);
-
-            QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-            QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-            QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-            QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-
-            addTriangle(triangles, Triangle(v00, v01, v11));
-            addTriangle(triangles, Triangle(v00, v11, v10));
+            for (int c = 0; c < number_of_components; ++c)
+                simpleMeshGenPatch(triangles, param, c, controls);
         }
     }
+
+    for (double pu = 0.0; pu < 1.0 - radius; pu += radius)
+    {
+        for (int u = 0; u < 4; ++u)
+            for (int v = 0; v < 4; ++v)
+                controls[u][v] = QVector2D(clamp01(pu + static_cast<double>(u - 1) * radius), clamp01(1.0 + static_cast<double>(v - 2) * radius));
+
+        for (int c = 0; c < number_of_components; ++c)
+            simpleMeshGenPatch(triangles, param, c, controls);
+    }
+
+    for (double pv = 0.0; pv < 1.0 - radius; pv += radius)
+    {
+        for (int u = 0; u < 4; ++u)
+            for (int v = 0; v < 4; ++v)
+                controls[u][v] = QVector2D(clamp01(1.0 + static_cast<double>(u - 2) * radius), clamp01(pv + static_cast<double>(v - 1) * radius));
+
+        for (int c = 0; c < number_of_components; ++c)
+            simpleMeshGenPatch(triangles, param, c, controls);
+    }
+
+    {
+        for (int u = 0; u < 4; ++u)
+            for (int v = 0; v < 4; ++v)
+                controls[u][v] = QVector2D(clamp01(1.0 + static_cast<double>(u - 2) * radius), clamp01(1.0 + static_cast<double>(v - 2) * radius));
+
+        for (int c = 0; c < number_of_components; ++c)
+            simpleMeshGenPatch(triangles, param, c, controls);
+    }
+}
+
+void MainWindow::simpleMeshGenPatch(TriangleListPtr triangles, cs2_predgparam3f_s *param, int c, QVector2D controls[4][4])
+{
+    // ----
+    // |\ |
+    // | \|
+    // ----
+    //
+    // 00 u 01 u 02 u 03
+    //   l    l    l
+    // 10 u 11 u 12 u 13
+    //   l    l    l
+    // 20 u 21 u 22 u 23
+    //   l    l    l
+    // 30   31   32   33
+    struct cs2_spin3f_s sp[4][4]; // (u, v)
+    QVector3D vp[4][4]; // (u, v)
+    QVector3D vn[3][3][2]; // (u, v, [u, l])
+    QVector3D vs[2][2]; // central (u, v)
+
+    for (int u = 0; u < 4; ++u)
+    {
+        for (int v = 0; v < 4; ++v)
+        {
+            cs2_predgparam3f_eval(&sp[u][v], param, controls[u][v].x(), controls[u][v].y(), c);
+            vp[u][v] = QVector3D(sp[u][v].s12 / (1.0 - sp[u][v].s0), sp[u][v].s23 / (1.0 - sp[u][v].s0), sp[u][v].s31 / (1.0 - sp[u][v].s0));
+        }
+    }
+
+    for (int u = 0; u < 3; ++u)
+        for (int v = 0; v < 3; ++v)
+            vn[u][v][0] = QVector3D::crossProduct(vp[u + 1][v] - vp[u + 1][v + 1], vp[u][v] - vp[u + 1][v + 1]).normalized();
+
+    for (int u = 0; u < 3; ++u)
+        for (int v = 0; v < 3; ++v)
+            vn[u][v][1] = QVector3D::crossProduct(vp[u][v] - vp[u + 1][v + 1], vp[u][v + 1] - vp[u + 1][v + 1]).normalized();
+
+    vs[0][0] = (vn[1][1][0] + vn[1][1][1] + vn[0][1][1] + vn[1][0][0] + vn[0][0][0] + vn[0][0][1]).normalized();
+    vs[0][1] = (vn[1][2][0] + vn[1][2][1] + vn[0][2][1] + vn[1][1][0] + vn[0][1][0] + vn[0][1][1]).normalized();
+    vs[1][0] = (vn[2][1][0] + vn[2][1][1] + vn[1][1][1] + vn[2][0][0] + vn[1][0][0] + vn[1][0][1]).normalized();
+    vs[1][1] = (vn[2][2][0] + vn[2][2][1] + vn[1][2][1] + vn[2][1][0] + vn[1][1][0] + vn[1][1][1]).normalized();
+
+    addTriangle(triangles, Triangle(vp[1][1], vp[2][2], vp[1][2],
+                                    vn[1][1][0], vn[1][1][0], vn[1][1][0],
+                                    vs[0][0], vs[1][1], vs[0][1]));
+
+    addTriangle(triangles, Triangle(vp[1][1], vp[2][1], vp[2][2],
+                                    vn[1][1][1], vn[1][1][1], vn[1][1][1],
+                                    vs[0][0], vs[1][0], vs[1][1]));
 }
 
 void MainWindow::addTriangle(TriangleListPtr triangles, const Triangle &triangle)
@@ -432,7 +460,9 @@ TriangleListPtr MainWindow::backface(const TriangleListPtr triangles) const
     TriangleListPtr result(new TriangleList());
 
     for (TriangleList::const_iterator it = triangles->begin(); it != triangles->end(); ++it)
-        result->push_back(Triangle(it->vertex(2), it->vertex(1), it->vertex(0)));
+        result->push_back(Triangle(it->vertex(2), it->vertex(1), it->vertex(0),
+                                   -it->normal(2), -it->normal(1), -it->normal(0),
+                                   -it->sharedNormal(2), -it->sharedNormal(1), -it->sharedNormal(0)));
 
     return result;
 }

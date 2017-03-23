@@ -35,37 +35,42 @@ class Triangle
 public:
     Triangle()
     {
-        m_vertexA = m_vertexB = m_vertexC = QVector3D(0, 0, 0);
-        m_normal = QVector3D::crossProduct(m_vertexB - m_vertexA, m_vertexC - m_vertexA);
     }
 
-    Triangle(const QVector3D &vertexA, const QVector3D &vertexB, const QVector3D &vertexC)
+    Triangle(const QVector3D &vertexA, const QVector3D &vertexB, const QVector3D &vertexC,
+             const QVector3D &normalA, const QVector3D &normalB, const QVector3D &normalC,
+             const QVector3D &sharedNormalA, const QVector3D &sharedNormalB, const QVector3D &sharedNormalC)
     {
-        m_vertexA = vertexA;
-        m_vertexB = vertexB;
-        m_vertexC = vertexC;
-        m_normal = QVector3D::crossProduct(m_vertexB - m_vertexA, m_vertexC - m_vertexA);
+        m_vertex[0] = vertexA;
+        m_vertex[1] = vertexB;
+        m_vertex[2] = vertexC;
+
+        m_normal[0] = normalA;
+        m_normal[1] = normalB;
+        m_normal[2] = normalC;
+
+        m_sharedNormal[0] = sharedNormalA;
+        m_sharedNormal[1] = sharedNormalB;
+        m_sharedNormal[2] = sharedNormalC;
     }
 
-    const QVector3D &   vertex(int i) const
+    const QVector3D &vertex(size_t i) const
     {
-        switch (i)
-        {
-        case 0: return m_vertexA;
-        case 1: return m_vertexB;
-        case 2: return m_vertexC;
-        default: assert(0); return m_vertexA;
-        }
+        return m_vertex[i];
     }
 
-    const QVector3D &   normal() const
+    const QVector3D &normal(size_t i) const
     {
-        return m_normal;
+        return m_normal[i];
+    }
+
+    const QVector3D &sharedNormal(size_t i) const
+    {
+        return m_sharedNormal[i];
     }
 
 private:
-    QVector3D m_vertexA, m_vertexB, m_vertexC;
-    QVector3D m_normal;
+    QVector3D m_vertex[3], m_normal[3], m_sharedNormal[3];
 };
 
 typedef std::vector<Triangle> TriangleList;

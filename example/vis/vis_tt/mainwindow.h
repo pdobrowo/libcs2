@@ -78,6 +78,7 @@ private:
     void autoMeshInternal(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
 
     void simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double radius);
+    void simpleMeshGenPatch(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, int c, QVector2D controls[4][4]);
 
     void addTriangle(TriangleListPtr triangles, const Triangle &triangle);
 

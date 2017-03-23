@@ -384,10 +384,8 @@ static void predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, double 
     a = u * 2.0 * PI;
     b = v * PI;
 
-    sa = sin(a);
-    ca = cos(a);
-    sb = sin(b);
-    cb = cos(b);
+    sincos(a, &sa, &ca);
+    sincos(b, &sb, &cb);
 
     *t12 = sqrt(r / (pp->a + pp->b)) * sb * ca;
     *t23 = sqrt(r / pp->a) * sb * sa;
@@ -471,8 +469,7 @@ static void predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *t31, 
 
     a = u * 2 * PI;
     h = 2.0 * v - 1.0;
-    sa = sin(a);
-    ca = cos(a);
+    sincos(a, &sa, &ca);
 
     x = sqrt((pp->b - pp->a + pp->c) / (2.0 * pp->b)) * ca;
     z = sqrt((pp->b - pp->a + pp->c) / (2.0 * (pp->b - pp->a))) * sa;
@@ -507,8 +504,7 @@ static void predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *t31, 
 
     a = u * 2 * PI;
     h = 2.0 * v - 1.0;
-    sa = sin(a);
-    ca = cos(a);
+    sincos(a, &sa, &ca);
 
     x = sqrt((pp->a - pp->b + pp->c) / (2.0 * pp->a)) * ca;
     y = sqrt((pp->a - pp->b + pp->c) / (2.0 * (pp->a - pp->b))) * sa;
@@ -592,8 +588,7 @@ static void predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t2
     }
 
     a = u * 2 * PI;
-    sa = sin(a);
-    ca = cos(a);
+    sincos(a, &sa, &ca);
 
     y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
     z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;

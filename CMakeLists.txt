@@ -28,6 +28,9 @@ add_definitions(
     -Wno-long-long
 )
 
+# standard
+add_definitions(-D_GNU_SOURCE)
+
 # optimizations
 check_c_compiler_flag(-Ofast COMPILER_SUPPORT_OFAST)
 
