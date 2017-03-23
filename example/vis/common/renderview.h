@@ -41,6 +41,7 @@
 #include <QImage>
 #include <QGLWidget>
 #include <boost/scoped_ptr.hpp>
+#include <boost/cstdint.hpp>
 #include <map>
 #include <set>
 
@@ -91,6 +92,22 @@ private:
 typedef boost::shared_ptr<TriangleListData> TriangleListDataPtr;
 typedef std::map<TriangleListPtr, TriangleListDataPtr> TriangleLists;
 
+class ViewMode
+{
+public:
+    enum Option
+    {
+        Wireframe       = 1, // 000001
+        Culling         = 2, // 000010
+        ModelOnly    = 4, // 000100
+        Outlines        = 8, // 001000
+        Normals         = 16, // 010000
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+};
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ViewMode::Options)
+
 class RenderView
     : public QGLWidget
 {
@@ -113,88 +130,90 @@ private:
     boost::scoped_ptr<GridMesh> m_grid;
 
     // axies
-    void                        drawAxies();
+    void drawAxies();
 
     // gradient background
-    void                        drawGradientBackground();
+    void drawGradientBackground();
 
     // render objects
-    TriangleLists               m_triangleLists;
+    TriangleLists m_triangleLists;
 
-    size_t                      m_nextSuggestedColor;
+    size_t m_nextSuggestedColor;
 
     // meshes
-    void                        renderMeshes();
+    void renderMeshes();
 
-    // view options
-    bool                        m_wireframe;
-    bool                        m_cullingEnabled;
-    bool                        m_modelOnly;
+    // view modes
+    ViewMode::Options m_viewModeOptions;
 
-    boost::scoped_ptr<Shader>   m_perPixelLightingShader;
+    // shaders
+    boost::scoped_ptr<Shader> m_perPixelLightingShader;
 
-    void                        ctor();
+    void ctor();
 
 protected:
-    virtual void                mouseMoveEvent(QMouseEvent *event);
-    virtual void                mousePressEvent(QMouseEvent *event);
-    virtual void                mouseReleaseEvent(QMouseEvent *event);
-    virtual void                wheelEvent(QWheelEvent *event);
-    virtual void                keyPressEvent(QKeyEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void wheelEvent(QWheelEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
 
-    virtual void                mouseDoubleClickEvent(QMouseEvent *event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
 
-    virtual void                initializeGL();
-    virtual void                resizeGL(int w, int h);
-    virtual void                paintGL();
+    virtual void initializeGL();
+    virtual void resizeGL(int w, int h);
+    virtual void paintGL();
 
 public:
-    explicit                    RenderView(QWidget* parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
-    explicit                    RenderView(QGLContext *context, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
-    explicit                    RenderView(const QGLFormat &format, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
-    virtual                     ~RenderView();
+    explicit RenderView(QWidget* parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
+    explicit RenderView(QGLContext *context, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
+    explicit RenderView(const QGLFormat &format, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
+    virtual ~RenderView();
 
-    void                        setModelOnlyView(bool flag);
+    // properties
+    void setCaption(const QString& value);
+    QString caption() const;
 
-    void                        setCaption(const QString& value);
-    QString                     caption() const;
+    void setTextFont(const QFont& value);
+    QFont textFont() const;
 
-    void                        setTextFont(const QFont& value);
-    QFont                       textFont() const;
-
-    QColor                      nextSuggestedColor();
+    // colors
+    QColor nextSuggestedColor();
 
     // triangle lists
-    void                        addTriangleList(TriangleListPtr triangleList, QColor color);
-    void                        removeTriangleList(TriangleListPtr triangleList);
+    void addTriangleList(TriangleListPtr triangleList, QColor color);
+    void removeTriangleList(TriangleListPtr triangleList);
 
-    void                        setTriangleListVisible(TriangleListPtr triangleList, bool visible);
-    bool                        isTriangleListVisible(TriangleListPtr triangleList);
+    void setTriangleListVisible(TriangleListPtr triangleList, bool visible);
+    bool isTriangleListVisible(TriangleListPtr triangleList);
 
-    void                        setTriangleListTranslation(TriangleListPtr triangleList, const QVector3D &translation);
-    QVector3D                   TriangleListTranslation(TriangleListPtr triangleList);
+    void setTriangleListTranslation(TriangleListPtr triangleList, const QVector3D &translation);
+    QVector3D TriangleListTranslation(TriangleListPtr triangleList);
 
-    void                        setTriangleListQuaternion(TriangleListPtr triangleList, const QQuaternion &rotation);
-    QQuaternion                 TriangleListQuaternion(TriangleListPtr triangleList);
+    void setTriangleListQuaternion(TriangleListPtr triangleList, const QQuaternion &rotation);
+    QQuaternion TriangleListQuaternion(TriangleListPtr triangleList);
 
-    void                        setTriangleListColor(TriangleListPtr triangleList, const QColor &color);
-    QColor                      TriangleListColor(TriangleListPtr triangleList);
+    void setTriangleListColor(TriangleListPtr triangleList, const QColor &color);
+    QColor TriangleListColor(TriangleListPtr triangleList);
 
     // cleanup
-    void                        removeAllObjects();
+    void removeAllObjects();
 
     // camera
-    void                        setRenderViewCamera(RenderViewCamera *camera);
+    void setRenderViewCamera(RenderViewCamera *camera);
 
-    // other
-    bool                        isCullingEnabled() const;
-    void                        setCullingEnabled(bool enabled);
+    // view modes
+    ViewMode::Options viewModeOptions() const;
+    void setViewModeOptions(ViewMode::Options options);
 
-    bool                        isWireframe() const;
-    void                        setWireframe(bool wireframe);
+    bool isViewModeOption(ViewMode::Option option) const;
+    void enableViewModeOption(ViewMode::Option option);
+    void disableViewModeOption(ViewMode::Option option);
+    void setViewModeOption(ViewMode::Option option, bool state);
+    void toogleViewModeOption(ViewMode::Option option);
 
 signals:
-    void                        toggleFullScreenTriggered();
+    void toggleFullScreenTriggered();
 };
 
 #endif // RENDERVIEW_H

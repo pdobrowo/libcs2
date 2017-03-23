@@ -11,5 +11,7 @@
         <file>res/automesh.png</file>
         <file>res/screenshot.png</file>
         <file>res/modelonly.png</file>
+        <file>res/normals.png</file>
+        <file>res/outline.png</file>
     </qresource>
 </RCC>

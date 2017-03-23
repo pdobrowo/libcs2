@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_rv = new RenderView();
 
     m_rv->setCaption("cspace");
-    m_rv->setCullingEnabled(true);
+    m_rv->enableViewModeOption(ViewMode::Culling);
 
     ui->widgetView->layout()->addWidget(m_rv);
 
@@ -639,7 +639,7 @@ void MainWindow::on_labelZeroC_linkActivated(const QString &link)
 
 void MainWindow::on_actionWireframe_triggered()
 {
-    m_rv->setWireframe(ui->actionWireframe->isChecked());
+    m_rv->setViewModeOption(ViewMode::Wireframe, ui->actionWireframe->isChecked());
 }
 
 void MainWindow::on_actionQuit_triggered()
@@ -769,5 +769,15 @@ void MainWindow::on_actionTakeScreenshot_triggered()
 
 void MainWindow::on_actionModelOnlyView_triggered()
 {
-    m_rv->setModelOnlyView(ui->actionModelOnlyView->isChecked());
+    m_rv->setViewModeOption(ViewMode::ModelOnly, ui->actionModelOnlyView->isChecked());
+}
+
+void MainWindow::on_actionOutlines_triggered()
+{
+    m_rv->setViewModeOption(ViewMode::Outlines, ui->actionOutlines->isChecked());
+}
+
+void MainWindow::on_actionNormals_triggered()
+{
+    m_rv->setViewModeOption(ViewMode::Normals, ui->actionNormals->isChecked());
 }

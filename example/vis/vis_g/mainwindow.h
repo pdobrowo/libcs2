@@ -108,8 +108,9 @@ private slots:
     void on_actionSaveAs_triggered();
     void on_actionAutoMesh_triggered();
     void on_actionTakeScreenshot_triggered();
-
     void on_actionModelOnlyView_triggered();
+    void on_actionOutlines_triggered();
+    void on_actionNormals_triggered();
 
 private:
     Ui::MainWindow *ui;

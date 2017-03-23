@@ -74,6 +74,8 @@
     </property>
     <addaction name="actionWireframe"/>
     <addaction name="actionAutoMesh"/>
+    <addaction name="actionOutlines"/>
+    <addaction name="actionNormals"/>
     <addaction name="separator"/>
     <addaction name="actionTakeScreenshot"/>
     <addaction name="actionModelOnlyView"/>
@@ -1136,7 +1138,7 @@
     <string>toolBar</string>
    </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -1154,10 +1156,12 @@
    <addaction name="actionAutoCamera"/>
    <addaction name="separator"/>
    <addaction name="actionWireframe"/>
-   <addaction name="actionAutoMesh"/>
+   <addaction name="actionOutlines"/>
+   <addaction name="actionNormals"/>
    <addaction name="separator"/>
-   <addaction name="actionTakeScreenshot"/>
+   <addaction name="actionAutoMesh"/>
    <addaction name="actionModelOnlyView"/>
+   <addaction name="actionTakeScreenshot"/>
   </widget>
   <action name="actionArcballCamera">
    <property name="checkable">
@@ -1276,6 +1280,30 @@
    </property>
    <property name="text">
     <string>Model-only view</string>
+   </property>
+  </action>
+  <action name="actionOutlines">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/outline.png</normaloff>:/res/outline.png</iconset>
+   </property>
+   <property name="text">
+    <string>Outlines</string>
+   </property>
+  </action>
+  <action name="actionNormals">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/normals.png</normaloff>:/res/normals.png</iconset>
+   </property>
+   <property name="text">
+    <string>Normals</string>
    </property>
   </action>
  </widget>

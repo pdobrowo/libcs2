@@ -95,9 +95,7 @@ RenderView::RenderView(const QGLFormat &format, QWidget *parent, const QGLWidget
 void RenderView::ctor()
 {
     m_nextSuggestedColor = 0;
-    m_wireframe = false;
-    m_cullingEnabled = false;
-    m_modelOnly = false;
+    m_viewModeOptions = 0;
 
     setMouseTracking(true);
 
@@ -120,33 +118,22 @@ RenderView::~RenderView()
 {
 }
 
-void RenderView::setModelOnlyView(bool flag)
-{
-    m_modelOnly = flag;
-}
-
 void RenderView::mousePressEvent(QMouseEvent *event)
 {
     QWidget::mousePressEvent(event);
-
     m_camera->mouseButtonPressed(rect(), event->button(), event->pos());
-    //updateGL();
 }
 
 void RenderView::mouseMoveEvent(QMouseEvent *event)
 {
     QWidget::mouseMoveEvent(event);
-
     m_camera->mouseMoved(rect(), event->pos());
-    //updateGL();
 }
 
 void RenderView::mouseReleaseEvent(QMouseEvent *event)
 {
     QWidget::mouseReleaseEvent(event);
-
     m_camera->mouseButtonReleased(rect(), event->button(), event->pos());
-    //updateGL();
 }
 
 void RenderView::wheelEvent(QWheelEvent *event)
@@ -158,7 +145,6 @@ void RenderView::wheelEvent(QWheelEvent *event)
     int numSteps = numDegrees / 15;
 
     m_camera->mouseWheelMoved(rect(), numSteps);
-    //updateGL();
 }
 
 QString RenderView::caption() const
@@ -300,18 +286,18 @@ void RenderView::paintGL()
     glLoadIdentity();
 
     // draw gradient background
-    if (!m_modelOnly)
+    if (!isViewModeOption(ViewMode::ModelOnly))
         drawGradientBackground();
 
     // setup camera
     m_camera->applyTransformGL();
 
     // draw axies
-    if (!m_modelOnly)
+    if (!isViewModeOption(ViewMode::ModelOnly))
         drawAxies();
 
     // culling enabled for conf-spaces, but not for scenes
-    if (m_cullingEnabled)
+    if (isViewModeOption(ViewMode::Culling))
         glEnable(GL_CULL_FACE);
     else
         glDisable(GL_CULL_FACE);
@@ -320,7 +306,7 @@ void RenderView::paintGL()
     renderMeshes();
 
     // Draw panel name
-    if (!m_modelOnly)
+    if (!isViewModeOption(ViewMode::ModelOnly))
     {
         qglColor(m_textColor);
         renderText(5, 15, m_caption, m_textFont);
@@ -344,13 +330,13 @@ void RenderView::drawGradientBackground()
 
     // Autodesk Maya 2011 background
     glBegin(GL_QUADS);
-        glColor3ub(125, 145, 165);
-        glVertex2i( 1, 1);
-        glVertex2i(-1, 1);
+    glColor3ub(125, 145, 165);
+    glVertex2i( 1, 1);
+    glVertex2i(-1, 1);
 
-        glColor3ub(26, 27, 29);
-        glVertex2i(-1, -1);
-        glVertex2i( 1, -1);
+    glColor3ub(26, 27, 29);
+    glVertex2i(-1, -1);
+    glVertex2i( 1, -1);
     glEnd();
 
     glPopMatrix();
@@ -380,14 +366,12 @@ void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)
 
     TriangleListDataPtr data(new TriangleListData(this, triangleList, color));
     m_triangleLists[triangleList] = data;
-
-    //updateGL();
 }
 
 void RenderView::renderMeshes()
 {
     // draw bodies
-    if (m_wireframe)
+    if (isViewModeOption(ViewMode::Wireframe))
     {
         // wireframe rendering
         glDisable(GL_LIGHTING);
@@ -399,11 +383,11 @@ void RenderView::renderMeshes()
         m_perPixelLightingShader->bind();
     }
 
-    // draw triangle soups
+    // draw triangle lists
     for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
-        it->second->render(m_wireframe);
+        it->second->render(isViewModeOption(ViewMode::Wireframe));
 
-    if (m_wireframe)
+    if (isViewModeOption(ViewMode::Wireframe))
     {
         glEnable(GL_LIGHTING);
         m_perPixelLightingShader->bind();
@@ -412,12 +396,15 @@ void RenderView::renderMeshes()
     m_perPixelLightingShader->unbind();
     glDisable(GL_LIGHTING);
 
-    // draw unlit attributes: outlines, normals etc.
-    for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
-    {
-        //it->second->renderOutlines();
-        //it->second->renderNormals();
-    }
+    // draw outlines
+    if (isViewModeOption(ViewMode::Outlines))
+        for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
+            it->second->renderOutlines();
+
+    // draw normals
+    if (isViewModeOption(ViewMode::Normals))
+        for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
+            it->second->renderNormals();
 }
 
 void RenderView::setTriangleListVisible(TriangleListPtr triangleList, bool visible)
@@ -426,8 +413,6 @@ void RenderView::setTriangleListVisible(TriangleListPtr triangleList, bool visib
         return;
 
     m_triangleLists[triangleList]->setVisible(visible);
-
-    //updateGL();
 }
 
 void RenderView::keyPressEvent(QKeyEvent *event)
@@ -464,29 +449,47 @@ void RenderView::keyPressEvent(QKeyEvent *event)
 void RenderView::setRenderViewCamera(RenderViewCamera *camera)
 {
     m_camera.reset(camera);
-    //updateGL();
 }
 
-bool RenderView::isCullingEnabled() const
+ViewMode::Options RenderView::viewModeOptions() const
 {
-    return m_cullingEnabled;
+    return m_viewModeOptions;
 }
 
-void RenderView::setCullingEnabled(bool enabled)
+void RenderView::setViewModeOptions(ViewMode::Options options)
 {
-    m_cullingEnabled = enabled;
-    //updateGL();
+    m_viewModeOptions = options;
 }
 
-bool RenderView::isWireframe() const
+bool RenderView::isViewModeOption(ViewMode::Option option) const
 {
-    return m_wireframe;
+    return !!(m_viewModeOptions & option);
 }
 
-void RenderView::setWireframe(bool wireframe)
+void RenderView::enableViewModeOption(ViewMode::Option option)
 {
-    m_wireframe = wireframe;
-    //updateGL();
+    m_viewModeOptions |= option;
+}
+
+void RenderView::disableViewModeOption(ViewMode::Option option)
+{
+    m_viewModeOptions &= ~option;
+}
+
+void RenderView::setViewModeOption(ViewMode::Option option, bool state)
+{
+    if (state)
+        enableViewModeOption(option);
+    else
+        disableViewModeOption(option);
+}
+
+void RenderView::toogleViewModeOption(ViewMode::Option option)
+{
+    if (isViewModeOption(option))
+        disableViewModeOption(option);
+    else
+        enableViewModeOption(option);
 }
 
 void RenderView::removeTriangleList(TriangleListPtr triangleList)
@@ -497,8 +500,6 @@ void RenderView::removeTriangleList(TriangleListPtr triangleList)
         return;
 
     m_triangleLists.erase(it);
-
-    //updateGL();
 }
 
 bool RenderView::isTriangleListVisible(TriangleListPtr triangleList)
@@ -515,8 +516,6 @@ void RenderView::setTriangleListTranslation(TriangleListPtr triangleList, const 
         return;
 
     m_triangleLists[triangleList]->setTranslation(translation);
-
-    //updateGL();
 }
 
 QVector3D RenderView::TriangleListTranslation(TriangleListPtr triangleList)
@@ -533,8 +532,6 @@ void RenderView::setTriangleListQuaternion(TriangleListPtr triangleList, const Q
         return;
 
     m_triangleLists[triangleList]->setQuaternion(quaternion);
-
-    //updateGL();
 }
 
 QQuaternion RenderView::TriangleListQuaternion(TriangleListPtr triangleList)
@@ -551,8 +548,6 @@ void RenderView::setTriangleListColor(TriangleListPtr triangleList, const QColor
         return;
 
     m_triangleLists[triangleList]->setColor(color);
-
-    //updateGL();
 }
 
 QColor RenderView::TriangleListColor(TriangleListPtr triangleList)
@@ -565,11 +560,7 @@ QColor RenderView::TriangleListColor(TriangleListPtr triangleList)
 
 void RenderView::removeAllObjects()
 {
-    // remove render objects
     m_triangleLists.clear();
-
-    // update all
-    //updateGL();
 }
 
 TriangleListData::TriangleListData(QGLWidget *gl, TriangleListPtr triangleList, QColor color)
@@ -594,9 +585,9 @@ void TriangleListData::render(bool wireframe)
 
     // draw geometry
     glPushMatrix();
-        glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
-        applyRotationGL(m_quaternion);
-        m_renderObject.render();
+    glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+    applyRotationGL(m_quaternion);
+    m_renderObject.render();
     glPopMatrix();
 
     if (wireframe)
@@ -611,9 +602,9 @@ void TriangleListData::renderOutlines()
 
     // draw outlines
     glPushMatrix();
-        glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
-        applyRotationGL(m_quaternion);
-        m_renderObject.renderOutlines();
+    glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+    applyRotationGL(m_quaternion);
+    m_renderObject.renderOutlines();
     glPopMatrix();
 }
 
@@ -625,9 +616,9 @@ void TriangleListData::renderNormals()
 
     // draw normals
     glPushMatrix();
-        glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
-        applyRotationGL(m_quaternion);
-        m_renderObject.renderNormals();
+    glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+    applyRotationGL(m_quaternion);
+    m_renderObject.renderNormals();
     glPopMatrix();
 }
 
