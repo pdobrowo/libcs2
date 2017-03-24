@@ -26,7 +26,8 @@
 #include <QVector3D>
 #include <GL/gl.h>
 
-const double SCALE = 0.05;
+const double NORMAL_VECTOR_LENGTH = 0.1;
+const double SHARED_NORMAL_VECTOR_LENGTH = 0.12;
 
 TriangleListMesh::TriangleListMesh(QGLWidget *gl, TriangleListPtr triangleList)
     : Mesh(gl),
@@ -36,9 +37,16 @@ TriangleListMesh::TriangleListMesh(QGLWidget *gl, TriangleListPtr triangleList)
 
 void TriangleListMesh::renderOutlines()
 {
-    glColor3ub(100, 100, 100);
+    glColor3ub(255, 255, 255);
 
-    glBegin(GL_LINES);
+    GLint polygonMode;
+    glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    glPolygonOffset(-1, 1);
+    glEnable(GL_POLYGON_OFFSET_LINE);
+
+    glBegin(GL_TRIANGLES);
 
     for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
     {
@@ -46,20 +54,21 @@ void TriangleListMesh::renderOutlines()
 
         glVertex3d(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
         glVertex3d(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
-        glVertex3d(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
         glVertex3d(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
-        glVertex3d(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
-        glVertex3d(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
     }
 
     glEnd();
+
+    glDisable(GL_POLYGON_OFFSET_LINE);
+
+    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 }
 
 void TriangleListMesh::renderNormals()
 {
-    glColor3ub(255, 127, 0);
-
     glBegin(GL_LINES);
+
+    glColor3ub(255, 127, 0);
 
     for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
     {
@@ -71,9 +80,27 @@ void TriangleListMesh::renderNormals()
                        triangle.vertex(i).y(),
                        triangle.vertex(i).z());
 
-            glVertex3d(triangle.vertex(i).x() + SCALE * triangle.normal(i).x(),
-                       triangle.vertex(i).y() + SCALE * triangle.normal(i).y(),
-                       triangle.vertex(i).z() + SCALE * triangle.normal(i).z());
+            glVertex3d(triangle.vertex(i).x() + NORMAL_VECTOR_LENGTH * triangle.normal(i).x(),
+                       triangle.vertex(i).y() + NORMAL_VECTOR_LENGTH * triangle.normal(i).y(),
+                       triangle.vertex(i).z() + NORMAL_VECTOR_LENGTH * triangle.normal(i).z());
+        }
+    }
+
+    glColor3ub(127, 127, 255);
+
+    for (TriangleList::const_iterator iterator = m_triangleList->begin(); iterator != m_triangleList->end(); ++iterator)
+    {
+        const Triangle &triangle = *iterator;
+
+        for (size_t i = 0; i < 3; ++i)
+        {
+            glVertex3d(triangle.vertex(i).x(),
+                       triangle.vertex(i).y(),
+                       triangle.vertex(i).z());
+
+            glVertex3d(triangle.vertex(i).x() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).x(),
+                       triangle.vertex(i).y() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).y(),
+                       triangle.vertex(i).z() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).z());
         }
     }
 

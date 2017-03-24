@@ -34,6 +34,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QImage>
+#include <boost/scoped_array.hpp>
 #include <cassert>
 #include <cmath>
 
@@ -57,16 +58,16 @@ double projectedDistance(const struct cs2_spin3f_s *a, const struct cs2_spin3f_s
 
     return cs2_vec3f_len(&pc);
 }
-
-double clamp01(double x)
+int clamp(int x, int upper)
 {
-    while (x < 0.0)
-        x += 1.0;
+    if (x < 0)
+        x += upper;
 
-    while (x > 1.0)
-        x -= 1.0;
+    if (x > upper)
+        x -= upper;
 
     return x;
+
 }
 } // namespace anonymous
 
@@ -353,53 +354,100 @@ void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct cs2_predgpar
 
 void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double radius)
 {
-    int number_of_components = cs2_predgparamtype3f_components(param->t);
-    QVector2D controls[4][4];
+    int numOfComponents = cs2_predgparamtype3f_components(param->t);
+    QPair<int, int> controls[4][4];
 
-    for (double pu = 0.0; pu < 1.0 - radius; pu += radius)
+    // build eval cache
+    int evalCacheSize = 0;
+
+    for (double cs = 0.0; cs < 1.0 - radius; cs += radius, evalCacheSize++);
+
+    boost::scoped_array<QVector3D> evalCache(new QVector3D[evalCacheSize * evalCacheSize * numOfComponents]); // (u, v, c)
+    struct cs2_spin3f_s spin;
+    int u, v;
+
+    for (int c = 0; c < numOfComponents; ++c)
     {
-        for (double pv = 0.0; pv < 1.0 - radius; pv += radius)
+        u = 0;
+
+        for (double pu = 0.0; pu < 1.0 - radius; pu += radius, ++u)
+        {
+            v = 0;
+
+            for (double pv = 0.0; pv < 1.0 - radius; pv += radius, ++v)
+            {
+                cs2_predgparam3f_eval(&spin, param, pu, pv, c);
+                evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * v + u] =
+                    QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
+            }
+        }
+
+        u = 0;
+
+        for (double pu = 0.0; pu < 1.0 - radius; pu += radius, ++u)
+        {
+            cs2_predgparam3f_eval(&spin, param, pu, 1.0 - radius, c);
+            evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * (evalCacheSize - 1) + u] =
+                QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
+        }
+
+        v = 0;
+
+        for (double pv = 0.0; pv < 1.0 - radius; pv += radius, ++v)
+        {
+            cs2_predgparam3f_eval(&spin, param, 1.0 - radius, pv, c);
+            evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * v + evalCacheSize - 1] =
+                QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
+        }
+
+        cs2_predgparam3f_eval(&spin, param, 1.0 - radius, 1.0 - radius, c);
+        evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * (evalCacheSize - 1) + evalCacheSize - 1] =
+            QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
+    }
+
+    // perform meshing
+    for (int pu = 0; pu < evalCacheSize - 1; ++pu)
+    {
+        for (int pv = 0; pv < evalCacheSize - 1; ++pv)
         {
             for (int u = 0; u < 4; ++u)
                 for (int v = 0; v < 4; ++v)
-                    controls[u][v] = QVector2D(clamp01(pu + static_cast<double>(u - 1) * radius), clamp01(pv + static_cast<double>(v - 1) * radius));
+                    controls[u][v] = QPair<int, int>(clamp(pu + u - 1, evalCacheSize - 1), clamp(pv + v - 1, evalCacheSize - 1));
 
-            for (int c = 0; c < number_of_components; ++c)
-                simpleMeshGenPatch(triangles, param, c, controls);
+            for (int c = 0; c < numOfComponents; ++c)
+                simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
         }
     }
 
-    for (double pu = 0.0; pu < 1.0 - radius; pu += radius)
+    for (int pu = 0; pu < evalCacheSize - 1; ++pu)
     {
         for (int u = 0; u < 4; ++u)
             for (int v = 0; v < 4; ++v)
-                controls[u][v] = QVector2D(clamp01(pu + static_cast<double>(u - 1) * radius), clamp01(1.0 + static_cast<double>(v - 2) * radius));
+                controls[u][v] = QPair<int, int>(clamp(pu + u - 1, evalCacheSize - 1), clamp(evalCacheSize + v - 2, evalCacheSize - 1));
 
-        for (int c = 0; c < number_of_components; ++c)
-            simpleMeshGenPatch(triangles, param, c, controls);
+        for (int c = 0; c < numOfComponents; ++c)
+            simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
     }
 
-    for (double pv = 0.0; pv < 1.0 - radius; pv += radius)
+    for (int pv = 0; pv < evalCacheSize - 1; ++pv)
     {
         for (int u = 0; u < 4; ++u)
             for (int v = 0; v < 4; ++v)
-                controls[u][v] = QVector2D(clamp01(1.0 + static_cast<double>(u - 2) * radius), clamp01(pv + static_cast<double>(v - 1) * radius));
+                controls[u][v] = QPair<int, int>(clamp(evalCacheSize + u - 2, evalCacheSize - 1), clamp(pv + v - 1, evalCacheSize - 1));
 
-        for (int c = 0; c < number_of_components; ++c)
-            simpleMeshGenPatch(triangles, param, c, controls);
+        for (int c = 0; c < numOfComponents; ++c)
+            simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
     }
 
-    {
-        for (int u = 0; u < 4; ++u)
-            for (int v = 0; v < 4; ++v)
-                controls[u][v] = QVector2D(clamp01(1.0 + static_cast<double>(u - 2) * radius), clamp01(1.0 + static_cast<double>(v - 2) * radius));
+    for (int u = 0; u < 4; ++u)
+        for (int v = 0; v < 4; ++v)
+            controls[u][v] = QPair<int, int>(clamp(evalCacheSize + u - 2, evalCacheSize - 1), clamp(evalCacheSize + v - 2, evalCacheSize - 1));
 
-        for (int c = 0; c < number_of_components; ++c)
-            simpleMeshGenPatch(triangles, param, c, controls);
-    }
+    for (int c = 0; c < numOfComponents; ++c)
+        simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
 }
 
-void MainWindow::simpleMeshGenPatch(TriangleListPtr triangles, cs2_predgparam3f_s *param, int c, QVector2D controls[4][4])
+void MainWindow::simpleMeshGenPatch(TriangleListPtr triangles, int c, QPair<int, int> controls[4][4], int evalCacheSize, QVector3D *evalCache)
 {
     // ----
     // |\ |
@@ -413,19 +461,13 @@ void MainWindow::simpleMeshGenPatch(TriangleListPtr triangles, cs2_predgparam3f_
     // 20 u 21 u 22 u 23
     //   l    l    l
     // 30   31   32   33
-    struct cs2_spin3f_s sp[4][4]; // (u, v)
     QVector3D vp[4][4]; // (u, v)
     QVector3D vn[3][3][2]; // (u, v, [u, l])
     QVector3D vs[2][2]; // central (u, v)
 
     for (int u = 0; u < 4; ++u)
-    {
         for (int v = 0; v < 4; ++v)
-        {
-            cs2_predgparam3f_eval(&sp[u][v], param, controls[u][v].x(), controls[u][v].y(), c);
-            vp[u][v] = QVector3D(sp[u][v].s12 / (1.0 - sp[u][v].s0), sp[u][v].s23 / (1.0 - sp[u][v].s0), sp[u][v].s31 / (1.0 - sp[u][v].s0));
-        }
-    }
+            vp[u][v] = evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * controls[u][v].second + controls[u][v].first];
 
     for (int u = 0; u < 3; ++u)
         for (int v = 0; v < 3; ++v)

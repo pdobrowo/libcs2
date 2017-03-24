@@ -76,7 +76,7 @@ private:
     void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
 
     void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius);
-    void simpleMeshGenPatch(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, int c, QVector2D controls[4][4]);
+    void simpleMeshGenPatch(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, int c, QPair<int, int> controls[4][4], int evalCacheSize, QVector3D *evalCache);
 
     virtual void closeEvent(QCloseEvent *event);
 

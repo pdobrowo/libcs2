@@ -9,7 +9,7 @@ varying vec3 vertex_normal;
 
 void main() {
     // Calculate the ambient term
-    vec4 ambient_color = gl_FrontMaterial.ambient * gl_LightSource[0].ambient + gl_LightModel.ambient * gl_FrontMaterial.ambient;;
+    vec4 ambient_color = gl_FrontMaterial.ambient * gl_LightSource[0].ambient + gl_LightModel.ambient * gl_FrontMaterial.ambient;
 
     // Calculate the diffuse term
     vec4 diffuse_color = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;

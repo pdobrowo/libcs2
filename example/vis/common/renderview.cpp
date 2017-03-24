@@ -219,35 +219,26 @@ void RenderView::initializeGL()
     // Somewhere in the initialization part of your program?
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
 
     // Create light components
-    GLfloat lightAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
-    GLfloat lightDiffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat lightSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat lightPositionA[] = { 5.0, 5.0, 5.0, 1.0 };
-    GLfloat lightPositionB[] = { -5.0, -5.0, -5.0, 1.0 };
+    const GLfloat lightAmbient[] = { 0.2, 0.2, 0.2, 1.0 };
+    const GLfloat lightDiffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    const GLfloat lightSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPositionA);
 
-    glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
-    glLightfv(GL_LIGHT1, GL_POSITION, lightPositionB);
-
-    //glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
     // Material
     GLfloat materialShininess[] = { 50 };
 
-    //GLfloat material_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+    GLfloat material_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
     GLfloat materialAmbient[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat materialSpecular[] = { 1.0, 1.0, 1.0, 1.0 };
 
-    //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, materialAmbient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, materialSpecular);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, materialShininess);
@@ -298,6 +289,9 @@ void RenderView::paintGL()
 
     // setup camera
     m_camera->applyTransformGL();
+
+    // setup lighting
+    drawLights();
 
     // draw axies
     if (!isViewModeOption(ViewMode::ModelOnly))
@@ -364,6 +358,15 @@ void RenderView::drawAxies()
 {
     glDisable(GL_LIGHTING);
     m_grid->render();
+}
+
+void RenderView::drawLights()
+{
+    GLfloat lightPositionA[] = {  20.0,  20.0,  20.0, 1.0 };
+    GLfloat lightPositionB[] = { -20.0, -20.0, -20.0, 1.0 };
+
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPositionA);
+    glLightfv(GL_LIGHT1, GL_POSITION, lightPositionB);
 }
 
 void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)

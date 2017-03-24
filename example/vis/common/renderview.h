@@ -132,6 +132,9 @@ private:
     // axies
     void drawAxies();
 
+    // lights
+    void drawLights();
+
     // gradient background
     void drawGradientBackground();
 
