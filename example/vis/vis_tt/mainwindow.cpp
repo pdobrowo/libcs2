@@ -338,10 +338,17 @@ void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct cs2_predgpar
         QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
         QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
         QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
-/*
-        addTriangle(triangles, Triangle(v00, v01, v11));
-        addTriangle(triangles, Triangle(v00, v11, v10));
-*/
+
+        QVector3D nu = QVector3D::crossProduct(v01 - v11, v00 - v11).normalized();
+        QVector3D nl = QVector3D::crossProduct(v00 - v11, v10 - v11).normalized();
+
+        addTriangle(triangles, Triangle(v00, v11, v01,
+                                        nu, nu, nu,
+                                        nu, nu, nu));
+
+        addTriangle(triangles, Triangle(v00, v10, v11,
+                                        nl, nl, nl,
+                                        nl, nl, nl));
     }
     else
     {
