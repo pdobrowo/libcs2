@@ -36,26 +36,33 @@
  * @ fixed memleaks, reformatted
  */
 Shader::Shader(const char *vsFile, const char *fsFile)
+    : m_loaded(false),
+      m_program(0),
+      m_vertexShader(0),
+      m_fragmentShader(0)
 {
     init(vsFile, fsFile);
 }
 
 void Shader::init(const char *vsFile, const char *fsFile)
 {
+    char *vsSrc = readTextFile(vsFile);
+    char *fsSrc = readTextFile(fsFile);
+
+    if (!vsSrc)
+        fprintf(stderr, "error: vertex shader '%s' not found!\n", vsFile);
+
+    if (!fsSrc)
+        fprintf(stderr, "error: fragment shader '%s' not found!\n", fsFile);
+
+    if (!vsSrc || !fsSrc)
+        return;
+
+    const GLchar *vertexShaderLines = vsSrc;
+    const GLchar *fragmentProgramLines = fsSrc;
+
     m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
     m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-    char *vertexShaderSource = readTextFile(vsFile);
-    char *fragmentProgramSource = readTextFile(fsFile);
-
-    if (vertexShaderSource == 0 || fragmentProgramSource == 0)
-    {
-        fprintf(stderr, "Vertex shader or fragment shader not found!\n");
-        return;
-    }
-
-    const GLchar *vertexShaderLines = vertexShaderSource;
-    const GLchar *fragmentProgramLines = fragmentProgramSource;
 
     glShaderSource(m_vertexShader, 1, &vertexShaderLines, 0);
     glShaderSource(m_fragmentShader, 1, &fragmentProgramLines, 0);
@@ -71,12 +78,17 @@ void Shader::init(const char *vsFile, const char *fsFile)
     glLinkProgram(m_program);
     checkProgramLinkError(m_program);
 
-    free(vertexShaderSource);
-    free(fragmentProgramSource);
+    free(vsSrc);
+    free(fsSrc);
+
+    m_loaded = true;
 }
 
 Shader::~Shader()
 {
+    if (!m_loaded)
+        return;
+
     glDetachShader(m_program, m_fragmentShader);
     glDetachShader(m_program, m_vertexShader);
 
@@ -92,11 +104,17 @@ GLuint Shader::id() const
 
 void Shader::bind() const
 {
+    if (!m_loaded)
+        return;
+
     glUseProgram(m_program);
 }
 
 void Shader::unbind() const
 {
+    if (!m_loaded)
+        return;
+
     glUseProgram(0);
 }
 

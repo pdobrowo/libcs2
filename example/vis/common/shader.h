@@ -51,6 +51,7 @@ public:
     GLuint id() const;
 
 private:
+    bool m_loaded;
     GLuint m_program;
     GLuint m_vertexShader;
     GLuint m_fragmentShader;
