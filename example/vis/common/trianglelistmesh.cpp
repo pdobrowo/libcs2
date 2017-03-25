@@ -39,8 +39,6 @@ void TriangleListMesh::renderOutlines()
 {
     glColor3ub(255, 255, 255);
 
-    GLint polygonMode;
-    glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glPolygonOffset(-1, 1);
@@ -61,7 +59,7 @@ void TriangleListMesh::renderOutlines()
 
     glDisable(GL_POLYGON_OFFSET_LINE);
 
-    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void TriangleListMesh::renderNormals()
