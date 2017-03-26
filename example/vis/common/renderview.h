@@ -149,9 +149,6 @@ private:
     // view modes
     ViewMode::Options m_viewModeOptions;
 
-    // shaders
-    boost::scoped_ptr<Shader> m_perPixelLightingShader;
-
     void ctor();
 
 protected:

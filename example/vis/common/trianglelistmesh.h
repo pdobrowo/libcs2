@@ -69,6 +69,13 @@ public:
         return m_sharedNormal[i];
     }
 
+    Triangle flipped() const
+    {
+        return Triangle(m_vertex[2], m_vertex[1], m_vertex[0],
+                        -m_normal[2], -m_normal[1], -m_normal[0],
+                        -m_sharedNormal[2], -m_sharedNormal[1], -m_sharedNormal[0]);
+    }
+
 private:
     QVector3D m_vertex[3], m_normal[3], m_sharedNormal[3];
 };

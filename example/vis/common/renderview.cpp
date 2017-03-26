@@ -181,9 +181,6 @@ void RenderView::initializeGL()
     // init extensions
     glewInit();
 
-    // init perpixel shader
-    m_perPixelLightingShader.reset(new Shader("perpixel.vert", "perpixel.frag"));
-
     // Set perspective
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -208,13 +205,15 @@ void RenderView::initializeGL()
     // Smooth shading
     glShadeModel(GL_SMOOTH);
 
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+
     // Clear mode
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClearDepth(1.0f);
 
     // Depth buffer
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LESS);
 
     // Somewhere in the initialization part of your program?
     glEnable(GL_LIGHTING);
@@ -228,8 +227,6 @@ void RenderView::initializeGL()
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
-
-    glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
     // Material
     GLfloat materialShininess[] = { 50 };
@@ -287,11 +284,11 @@ void RenderView::paintGL()
     if (!isViewModeOption(ViewMode::ModelOnly))
         drawGradientBackground();
 
-    // setup camera
-    m_camera->applyTransformGL();
-
     // setup lighting
     drawLights();
+
+    // setup camera
+    m_camera->applyTransformGL();
 
     // draw axies
     if (!isViewModeOption(ViewMode::ModelOnly))
@@ -362,11 +359,8 @@ void RenderView::drawAxies()
 
 void RenderView::drawLights()
 {
-    GLfloat lightPositionA[] = {  20.0,  20.0,  20.0, 1.0 };
-    GLfloat lightPositionB[] = { -20.0, -20.0, -20.0, 1.0 };
-
+    GLfloat lightPositionA[] = { 2.0, 2.0, 2.0, 1.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPositionA);
-    glLightfv(GL_LIGHT1, GL_POSITION, lightPositionB);
 }
 
 void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)
@@ -382,29 +376,16 @@ void RenderView::renderMeshes()
 {
     // draw bodies
     if (isViewModeOption(ViewMode::Wireframe))
-    {
-        // wireframe rendering
         glDisable(GL_LIGHTING);
-    }
     else
-    {
-        // normal rendering
         glEnable(GL_LIGHTING);
-        m_perPixelLightingShader->bind();
-    }
 
     // draw triangle lists
     for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
         it->second->render(isViewModeOption(ViewMode::Wireframe));
 
-    if (isViewModeOption(ViewMode::Wireframe))
-    {
-        glEnable(GL_LIGHTING);
-        m_perPixelLightingShader->bind();
-    }
-
-    m_perPixelLightingShader->unbind();
-    glDisable(GL_LIGHTING);
+    if (!isViewModeOption(ViewMode::Wireframe))
+        glDisable(GL_LIGHTING);
 
     // draw outlines
     if (isViewModeOption(ViewMode::Outlines))

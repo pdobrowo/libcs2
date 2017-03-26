@@ -58,12 +58,13 @@ double projectedDistance(const struct cs2_spin3f_s *a, const struct cs2_spin3f_s
 
     return cs2_vec3f_len(&pc);
 }
-int clamp(int x, int upper)
+
+int clampZeroUpper(int x, int upper)
 {
-    if (x < 0)
+    while (x < 0)
         x += upper;
 
-    if (x > upper)
+    while (x > upper)
         x -= upper;
 
     return x;
@@ -339,16 +340,19 @@ void MainWindow::autoMeshInternal(TriangleListPtr triangles, struct cs2_predgpar
         QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
         QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
 
-        QVector3D nu = QVector3D::crossProduct(v01 - v11, v00 - v11).normalized();
-        QVector3D nl = QVector3D::crossProduct(v00 - v11, v10 - v11).normalized();
+        QVector3D nu = QVector3D::crossProduct(v00 - v11, v01 - v11).normalized();
+        QVector3D nl = QVector3D::crossProduct(v10 - v11, v00 - v11).normalized();
 
-        addTriangle(triangles, Triangle(v00, v11, v01,
-                                        nu, nu, nu,
-                                        nu, nu, nu));
+        Triangle tu(v00, v01, v11,
+                    nu, nu, nu,
+                    nu, nu, nu);
 
-        addTriangle(triangles, Triangle(v00, v10, v11,
-                                        nl, nl, nl,
-                                        nl, nl, nl));
+        Triangle tl(v00, v11, v10,
+                    nl, nl, nl,
+                    nl, nl, nl);
+
+        addTriangle(triangles, tu);
+        addTriangle(triangles, tl);
     }
     else
     {
@@ -384,7 +388,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
             for (double pv = 0.0; pv < 1.0 - radius; pv += radius, ++v)
             {
                 cs2_predgparam3f_eval(&spin, param, pu, pv, c);
-                evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * v + u] =
+                evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * u + v] =
                     QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
             }
         }
@@ -394,7 +398,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
         for (double pu = 0.0; pu < 1.0 - radius; pu += radius, ++u)
         {
             cs2_predgparam3f_eval(&spin, param, pu, 1.0 - radius, c);
-            evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * (evalCacheSize - 1) + u] =
+            evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * u + (evalCacheSize - 1)] =
                 QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
         }
 
@@ -403,7 +407,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
         for (double pv = 0.0; pv < 1.0 - radius; pv += radius, ++v)
         {
             cs2_predgparam3f_eval(&spin, param, 1.0 - radius, pv, c);
-            evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * v + evalCacheSize - 1] =
+            evalCache[evalCacheSize * evalCacheSize * c + evalCacheSize * (evalCacheSize - 1) + v] =
                 QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
         }
 
@@ -419,7 +423,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
         {
             for (int u = 0; u < 4; ++u)
                 for (int v = 0; v < 4; ++v)
-                    controls[u][v] = QPair<int, int>(clamp(pu + u - 1, evalCacheSize - 1), clamp(pv + v - 1, evalCacheSize - 1));
+                    controls[u][v] = QPair<int, int>(clampZeroUpper(pu + u - 1, evalCacheSize - 1), clampZeroUpper(pv + v - 1, evalCacheSize - 1));
 
             for (int c = 0; c < numOfComponents; ++c)
                 simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
@@ -430,7 +434,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
     {
         for (int u = 0; u < 4; ++u)
             for (int v = 0; v < 4; ++v)
-                controls[u][v] = QPair<int, int>(clamp(pu + u - 1, evalCacheSize - 1), clamp(evalCacheSize + v - 2, evalCacheSize - 1));
+                controls[u][v] = QPair<int, int>(clampZeroUpper(pu + u - 1, evalCacheSize - 1), clampZeroUpper(evalCacheSize + v - 2, evalCacheSize - 1));
 
         for (int c = 0; c < numOfComponents; ++c)
             simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
@@ -440,7 +444,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
     {
         for (int u = 0; u < 4; ++u)
             for (int v = 0; v < 4; ++v)
-                controls[u][v] = QPair<int, int>(clamp(evalCacheSize + u - 2, evalCacheSize - 1), clamp(pv + v - 1, evalCacheSize - 1));
+                controls[u][v] = QPair<int, int>(clampZeroUpper(evalCacheSize + u - 2, evalCacheSize - 1), clampZeroUpper(pv + v - 1, evalCacheSize - 1));
 
         for (int c = 0; c < numOfComponents; ++c)
             simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
@@ -448,7 +452,7 @@ void MainWindow::simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s
 
     for (int u = 0; u < 4; ++u)
         for (int v = 0; v < 4; ++v)
-            controls[u][v] = QPair<int, int>(clamp(evalCacheSize + u - 2, evalCacheSize - 1), clamp(evalCacheSize + v - 2, evalCacheSize - 1));
+            controls[u][v] = QPair<int, int>(clampZeroUpper(evalCacheSize + u - 2, evalCacheSize - 1), clampZeroUpper(evalCacheSize + v - 2, evalCacheSize - 1));
 
     for (int c = 0; c < numOfComponents; ++c)
         simpleMeshGenPatch(triangles, c, controls, evalCacheSize, evalCache.get());
@@ -460,6 +464,11 @@ void MainWindow::simpleMeshGenPatch(TriangleListPtr triangles, int c, QPair<int,
     // |\ |
     // | \|
     // ----
+    //
+    // [UV]
+    //
+    // U V -
+    // |
     //
     // 00 u 01 u 02 u 03
     //   l    l    l
@@ -478,24 +487,27 @@ void MainWindow::simpleMeshGenPatch(TriangleListPtr triangles, int c, QPair<int,
 
     for (int u = 0; u < 3; ++u)
         for (int v = 0; v < 3; ++v)
-            vn[u][v][0] = QVector3D::crossProduct(vp[u + 1][v] - vp[u + 1][v + 1], vp[u][v] - vp[u + 1][v + 1]).normalized();
+            vn[u][v][0] = QVector3D::crossProduct(vp[u][v] - vp[u + 1][v + 1], vp[u][v + 1] - vp[u + 1][v + 1]).normalized();
 
     for (int u = 0; u < 3; ++u)
         for (int v = 0; v < 3; ++v)
-            vn[u][v][1] = QVector3D::crossProduct(vp[u][v] - vp[u + 1][v + 1], vp[u][v + 1] - vp[u + 1][v + 1]).normalized();
+            vn[u][v][1] = QVector3D::crossProduct(vp[u + 1][v] - vp[u + 1][v + 1], vp[u][v] - vp[u + 1][v + 1]).normalized();
 
     vs[0][0] = (vn[1][1][0] + vn[1][1][1] + vn[0][1][1] + vn[1][0][0] + vn[0][0][0] + vn[0][0][1]).normalized();
     vs[0][1] = (vn[1][2][0] + vn[1][2][1] + vn[0][2][1] + vn[1][1][0] + vn[0][1][0] + vn[0][1][1]).normalized();
     vs[1][0] = (vn[2][1][0] + vn[2][1][1] + vn[1][1][1] + vn[2][0][0] + vn[1][0][0] + vn[1][0][1]).normalized();
     vs[1][1] = (vn[2][2][0] + vn[2][2][1] + vn[1][2][1] + vn[2][1][0] + vn[1][1][0] + vn[1][1][1]).normalized();
 
-    addTriangle(triangles, Triangle(vp[1][1], vp[2][2], vp[1][2],
-                                    vn[1][1][0], vn[1][1][0], vn[1][1][0],
-                                    vs[0][0], vs[1][1], vs[0][1]));
+    Triangle tu(vp[1][1], vp[1][2], vp[2][2],
+                vn[1][1][0], vn[1][1][0], vn[1][1][0],
+                vs[0][0], vs[0][1], vs[1][1]);
 
-    addTriangle(triangles, Triangle(vp[1][1], vp[2][1], vp[2][2],
-                                    vn[1][1][1], vn[1][1][1], vn[1][1][1],
-                                    vs[0][0], vs[1][0], vs[1][1]));
+    Triangle tl(vp[1][1], vp[2][2], vp[2][1],
+                vn[1][1][1], vn[1][1][1], vn[1][1][1],
+                vs[0][0], vs[1][1], vs[1][0]);
+
+    addTriangle(triangles, tu);
+    addTriangle(triangles, tl);
 }
 
 void MainWindow::addTriangle(TriangleListPtr triangles, const Triangle &triangle)
