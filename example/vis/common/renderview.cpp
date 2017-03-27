@@ -246,17 +246,6 @@ void RenderView::initializeGL()
     // Nice perspective
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-    // Multisampling
-    if (0)
-    {
-        glEnable(GL_MULTISAMPLE);
-        GLint bufs;
-        GLint samples;
-        glGetIntegerv(GL_SAMPLE_BUFFERS, &bufs);
-        glGetIntegerv(GL_SAMPLES, &samples);
-        qDebug("Multisampling: %i buffers and %i samples", bufs, samples);
-    }
-
     // prerender meshes
     m_grid.reset(new GridMesh(this));
     m_grid->setTextColor(m_textColor);

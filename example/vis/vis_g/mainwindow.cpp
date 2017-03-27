@@ -46,6 +46,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // setup
+    if (true)
+    {
+        QGLFormat fmt;
+        fmt.setSamples(4);
+        fmt.setSampleBuffers(true);
+        QGLFormat::setDefaultFormat(fmt);
+    }
+
     m_rv = new RenderView();
 
     m_rv->setCaption("cspace");
