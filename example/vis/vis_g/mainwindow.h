@@ -25,10 +25,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "cs2/predg3f.h"
 #include "cs2/spin3f.h"
 #include "cs2/vec3f.h"
-#include "trianglelistmesh.h"
+#include "meshing.h"
 #include <QCloseEvent>
 #include <QMainWindow>
 #include <QSlider>
@@ -71,12 +70,6 @@ private:
     bool saveNewFile();
 
     void updateWindowTitle();
-
-    void autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions);
-    void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
-
-    void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius);
-    void simpleMeshGenPatch(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, int c, QPair<int, int> controls[4][4], int evalCacheSize, QVector3D *evalCache);
 
     virtual void closeEvent(QCloseEvent *event);
 

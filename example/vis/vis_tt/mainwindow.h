@@ -30,7 +30,7 @@
 #include "cs2/predtt3f.h"
 #include "cs2/spin3f.h"
 #include "cs2/vec3f.h"
-#include "trianglelistmesh.h"
+#include "meshing.h"
 #include <QCloseEvent>
 #include <QMainWindow>
 #include <QSlider>
@@ -75,15 +75,7 @@ private:
 
     void updateWindowTitle();
 
-    void autoMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions);
-    void autoMeshInternal(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision);
-
-    void simpleMesh(TriangleListPtr triangles, struct cs2_predgparam3f_s *param, double radius);
-    void simpleMeshGenPatch(TriangleListPtr triangles, int c, QPair<int, int> controls[4][4], int evalCacheSize, QVector3D *evalCache);
-
-    void addTriangle(TriangleListPtr triangles, const Triangle &triangle);
-
-    TriangleListPtr backface(const TriangleListPtr triangles) const;
+    void filterTriangles(TriangleListPtr triangles);
 
     virtual void closeEvent(QCloseEvent *event);
 
@@ -125,6 +117,8 @@ private slots:
     void on_actionModelOnlyView_triggered();
     void on_actionOutlines_triggered();
     void on_actionNormals_triggered();
+
+    void on_doubleSpinBoxCutoffDistance_valueChanged(double arg1);
 
 private:
     Ui::MainWindow *ui;

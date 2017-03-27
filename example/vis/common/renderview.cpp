@@ -181,6 +181,9 @@ void RenderView::initializeGL()
     // init extensions
     glewInit();
 
+    // init perpixel shader
+    m_shaderLighting.reset(new Shader("perpixel.vert", "perpixel.frag"));
+
     // Set perspective
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -215,8 +218,8 @@ void RenderView::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    // Somewhere in the initialization part of your program?
-    glEnable(GL_LIGHTING);
+    // Lighting
+    glDisable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
     // Create light components
@@ -353,7 +356,6 @@ void RenderView::mouseDoubleClickEvent(QMouseEvent *event)
 
 void RenderView::drawAxies()
 {
-    glDisable(GL_LIGHTING);
     m_grid->render();
 }
 
@@ -374,18 +376,23 @@ void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)
 
 void RenderView::renderMeshes()
 {
-    // draw bodies
-    if (isViewModeOption(ViewMode::Wireframe))
-        glDisable(GL_LIGHTING);
-    else
+    bool hasLighting = !isViewModeOption(ViewMode::Wireframe);
+
+    if (hasLighting)
+    {
         glEnable(GL_LIGHTING);
+        m_shaderLighting->bind();
+    }
 
     // draw triangle lists
     for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
         it->second->render(isViewModeOption(ViewMode::Wireframe));
 
-    if (!isViewModeOption(ViewMode::Wireframe))
+    if (hasLighting)
+    {
         glDisable(GL_LIGHTING);
+        m_shaderLighting->unbind();
+    }
 
     // draw outlines
     if (isViewModeOption(ViewMode::Outlines))
@@ -567,9 +574,11 @@ void TriangleListData::render(bool wireframe)
         return;
 
     // setup material
-    //glColor3ub(m_color.red(), m_color.green(), m_color.blue());
-    GLfloat material_diffuse[] = { static_cast<GLfloat>(m_color.redF()), static_cast<GLfloat>(m_color.greenF()), static_cast<GLfloat>(m_color.blueF()), 1.0 };
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_diffuse);
+    GLfloat diffuse[] = { static_cast<GLfloat>(m_color.redF()), static_cast<GLfloat>(m_color.greenF()), static_cast<GLfloat>(m_color.blueF()), 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+
+    if (wireframe)
+        glColor4fv(diffuse);
 
     if (wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

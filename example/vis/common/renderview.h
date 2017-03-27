@@ -97,11 +97,11 @@ class ViewMode
 public:
     enum Option
     {
-        Wireframe       = 1, // 000001
-        Culling         = 2, // 000010
-        ModelOnly    = 4, // 000100
-        Outlines        = 8, // 001000
-        Normals         = 16, // 010000
+        Wireframe       = 1,
+        Culling         = 2,
+        ModelOnly       = 4,
+        Outlines        = 8,
+        Normals         = 16
     };
     Q_DECLARE_FLAGS(Options, Option)
 };
@@ -148,6 +148,9 @@ private:
 
     // view modes
     ViewMode::Options m_viewModeOptions;
+
+    // shaders
+    boost::scoped_ptr<Shader> m_shaderLighting;
 
     void ctor();
 
