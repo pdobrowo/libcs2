@@ -32,6 +32,17 @@
 #define PI (3.1415926535897932385)
 #define EPS (10e-8)
 
+/* some platforms do not define an optimized sincos routine (eg. freebsd) */
+#ifndef sincos
+
+static void sincos(double x, double *s, double *c)
+{
+    *s = sin(x);
+    *c = cos(x);
+}
+
+#endif /* sincos */
+
 static int almost_zero(double x)
 {
     return fabs(x) < EPS;
