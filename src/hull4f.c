@@ -31,7 +31,7 @@
 #include <cs2/assert.h>
 #include <stdio.h>
 
-static int hull4f_sep(const struct cs2_hull4f_s *h, const struct cs2_plane4f_s *p)
+static int _cs2_hull4f_sep(const struct cs2_hull4f_s *h, const struct cs2_plane4f_s *p)
 {
     size_t vi;
 
@@ -139,13 +139,13 @@ int cs2_hull4f_inter(const struct cs2_hull4f_s *p, const struct cs2_hull4f_s *q)
 
     for (hi = 0; hi < p->nhr; ++hi)
     {
-        if (hull4f_sep(q, &p->hr[hi]))
+        if (_cs2_hull4f_sep(q, &p->hr[hi]))
             return 0;
     }
 
     for (hi = 0; hi < q->nhr; ++hi)
     {
-        if (hull4f_sep(p, &q->hr[hi]))
+        if (_cs2_hull4f_sep(p, &q->hr[hi]))
             return 0;
     }
 

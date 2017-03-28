@@ -25,7 +25,7 @@
 #include "cs2/predg3x.h"
 #include <cs2/assert.h>
 
-static void calc_r(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v)
+static void _cs2_calc_r(struct cs2_vec3x_s *r, const struct cs2_vec3x_s *v)
 {
     if (mpz_sgn(v->x))
     {
@@ -159,7 +159,7 @@ void cs2_predg3x_clear(struct cs2_predg3x_s *g)
 
 void cs2_predg3x_from_predh3x(struct cs2_predg3x_s *g, const struct cs2_predh3x_s *h)
 {
-    calc_r(&g->l, &h->p.n);
+    _cs2_calc_r(&g->l, &h->p.n);
     cs2_vec3x_cross(&g->k, &h->p.n, &g->l);
     cs2_vec3x_cross(&g->l, &h->p.n, &g->k);
     cs2_vec3x_copy(&g->a, &h->b);
