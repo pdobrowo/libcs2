@@ -70,6 +70,7 @@ set(cs2_HEADERS
     inc/cs2/bezierqq4f.h
     inc/cs2/beziertreeqq4f.h
     inc/cs2/hull4f.h
+    inc/cs2/mathf.h
 
     # exact integer arithmetic
     inc/cs2/vec3x.h
@@ -114,6 +115,7 @@ set(cs2_SOURCES
     src/bezierqq4f.c
     src/beziertreeqq4f.c
     src/hull4f.c
+    src/mathf.c
 
     # exact integer arithmetic
     src/vec3x.c

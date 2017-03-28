@@ -25,7 +25,7 @@
 #include "cs2/bezierqq4f.h"
 #include "cs2/hull4f.h"
 
-static void bezierqq4f_calc_hull(struct cs2_bezierqq4f_s *b)
+static void _cs2_bezierqq4f_calc_hull(struct cs2_bezierqq4f_s *b)
 {
     struct cs2_vec4f_s pts[9];
 
@@ -84,7 +84,7 @@ void cs2_bezierqq4f_from_qq(struct cs2_bezierqq4f_s *b, const struct cs2_bezierq
     #undef BEZIERQQ44F_MID_CASE_IMPL
 
     /* hull */
-    bezierqq4f_calc_hull(b);
+    _cs2_bezierqq4f_calc_hull(b);
 }
 
 void cs2_bezierqq4f_eval(struct cs2_vec4f_s *r, const struct cs2_bezierqq4f_s *b, double u, double v)

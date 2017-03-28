@@ -22,37 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/timer.h"
-#include <time.h>
+#ifndef CS2_MATHF_H
+#define CS2_MATHF_H
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#include "defs.h"
 
-uint64_t cs2_timer_sec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec;
-}
+CS2_API_BEGIN
 
-uint64_t cs2_timer_msec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-}
+#define CS2_PI (3.1415926535897932385)
 
-uint64_t cs2_timer_usec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000 + (uint64_t)ts.tv_nsec / 1000;
-}
+CS2_API void cs2_sincosf(double x, double *s, double *c);
 
-uint64_t cs2_timer_nsec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000000 + (uint64_t)ts.tv_nsec;
-}
+CS2_API_END
 
-#endif /* defined(__linux__) || defined(__FreeBSD__) */
+#endif /* CS2_MATHF_H */

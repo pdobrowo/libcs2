@@ -22,37 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/timer.h"
-#include <time.h>
+#include "cs2/mathf.h"
+#include <math.h>
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#if defined(__linux__)
 
-uint64_t cs2_timer_sec(void)
+void cs2_sincosf(double x, double *s, double *c)
 {
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec;
+    sincos(x, s, c);
 }
 
-uint64_t cs2_timer_msec(void)
+#endif /* defined(__linux__) */
+
+#if defined(__FreeBSD__)
+
+void cs2_sincosf(double x, double *s, double *c)
 {
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+    *s = sin(x);
+    *c = cos(x);
 }
 
-uint64_t cs2_timer_usec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000 + (uint64_t)ts.tv_nsec / 1000;
-}
-
-uint64_t cs2_timer_nsec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000000 + (uint64_t)ts.tv_nsec;
-}
-
-#endif /* defined(__linux__) || defined(__FreeBSD__) */
+#endif /* defined(__FreeBSD__) */

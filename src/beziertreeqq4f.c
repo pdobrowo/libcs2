@@ -27,7 +27,7 @@
 #include <stddef.h>
 #include <cs2/assert.h>
 
-static void beziertreenodeqq4f_eval(struct cs2_beziertreenodeqq4f_s *n)
+static void _cs2_beziertreenodeqq4f_eval(struct cs2_beziertreenodeqq4f_s *n)
 {
     struct cs2_bezierqq4f_coeff_s c;
 
@@ -66,7 +66,7 @@ void cs2_beziertreenodeqq4f_init(struct cs2_beziertreenodeqq4f_s *n, double u0, 
 
     if (!is_virt)
     {
-        beziertreenodeqq4f_eval(n);
+        _cs2_beziertreenodeqq4f_eval(n);
 
         n->vol = n->b.h.vol;
         n->area = n->b.h.area;
