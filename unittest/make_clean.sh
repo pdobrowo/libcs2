@@ -1,3 +1,9 @@
 #!/bin/sh
-cmake . && make clean
+
+GENERATOR=""
+if [[ "$OSTYPE" == "msys" ]]; then
+    GENERATOR=(-G "MSYS Makefiles")
+fi
+
+cmake . "${GENERATOR[@]}" && make clean
 
