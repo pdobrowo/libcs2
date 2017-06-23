@@ -24,7 +24,6 @@ include_directories(${QHULL_BASE_DIR}/include)
 add_definitions(
     -Wall
     -Wextra
-    -pedantic
     -Wno-long-long
 )
 

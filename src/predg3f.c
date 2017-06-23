@@ -30,7 +30,7 @@
 #include <math.h>
 #include <cs2/assert.h>
 
-#define EPS (10e-8)
+#define EPS (10e-2)
 
 static int _cs2_almost_zero(double x)
 {
@@ -47,12 +47,31 @@ static int _cs2_almost_equal(double x, double y)
     return _cs2_almost_zero(x - y);
 }
 
-static double _cs2_pclamp(double x)
+/* clamp small perturbations near zero to a non-negative value */
+static double _cs2_clamp_0(double x)
 {
     if (x < 0.0)
     {
-        CS2_ASSERT(x >= -EPS); /* guard nonsense */
+        CS2_ASSERT_MSG(x >= -EPS, "x=%.12f", x); /* guard nonsense */
         x = 0.0;
+    }
+
+    return x;
+}
+
+/* clamp small perturbations near -1 and 1 to a bounded value */
+static double _cs2_clamp_11(double x)
+{
+    if (x < -1.0)
+    {
+        CS2_ASSERT_MSG(x >= -1.0 - EPS, "x=%.12f", x); /* guard nonsense */
+        x = -1.0;
+    }
+
+    if (x > 1.0)
+    {
+        CS2_ASSERT_MSG(x <= 1.0 + EPS, "x=%.12f", x); /* guard nonsense */
+        x = 1.0;
     }
 
     return x;
@@ -87,36 +106,154 @@ static void _cs2_calc_ellipsoidal_w(struct cs2_vec4f_s *w, const struct cs2_vec3
     cs2_vec3f_cl(&uhvh, &uh, &vh);
     cs2_vec3f_cl(&phuhqhvh, &phxuh, &qhxvh);
     cs2_pin3f_mad4(&wp, &CS2_PIN3F_ONE, 1.0, &phuhqhvh, a * b, &phqh, -a, &uhvh, -b);
-    cs2_pin3f_mul(&ws, &wp, 0.5 / sqrt(_cs2_pclamp(wp.p0)));
+    cs2_pin3f_mul(&ws, &wp, 0.5 / sqrt(_cs2_clamp_0(wp.p0)));
     cs2_vec4f_from_pin3f(w, &ws);
 }
 
 static void _cs2_calc_toroidal_w(struct cs2_vec4f_s *w1, struct cs2_vec4f_s *w2, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, double a)
 {
     /*
-     * x = (p2^2 [q]^2 - q2^2 [p]^2) u
-     * y = (p2^2 [q]^2 - q2^2 [p]^2) v
-     * z = (q2 q3 [p]^2 - p2 p3 [q]^2 - l (p2 q3 - p3 q2)) u + (q1 q2 [p]^2 - p1 p2 [q]^2 + l (p1 q2 - p2 q1)) v
-     * w = (- q1 q2 [p]^2 - p1 p2 [q]^2 + l (p1 q2 + p2 q1)) u + (q2 q3 [p]^2 + p2 p3 [q]^2 - l (p2 q3 + p3 q2)) v
+     * z1 = [   p2 p1 - q2 q1 - a (p2 q1 - p1 q2)
+     *          0
+     *        - p3 p1 + q3 q1 + a (p3 q1 - p1 q3)
+     *        - p1 p1 - q1 q1 + a (p1 q1 + p1 q1)
+     *      ] u
+     *      +
+     *      [   0
+     *          p2 p1 - q2 q1 - a (p2 q1 - p1 q2)
+     *        - p1 p1 + q1 q1 + a (p1 q1 - p1 q1)
+     *          p3 p1 + q3 q1 - a (p3 q1 + p1 q3)
+     *      ] v
      *
-     * l = a [p] [q]
-     * 0 = b [u] [v]
+     * z2 = [   p2 p2 - q2 q2 - a (p2 q2 - p2 q2)
+     *          0
+     *        - p3 p2 + q3 q2 + a (p3 q2 - p2 q3)
+     *        - p1 p2 - q1 q2 + a (p1 q2 + p2 q1)
+     *      ] u
+     *      +
+     *      [   0
+     *          p2 p2 - q2 q2 - a (p2 q2 - p2 q2)
+     *        - p1 p2 + q1 q2 + a (p1 q2 - p2 q1)
+     *          p3 p2 + q3 q2 - a (p3 q2 + p2 q3)
+     *      ] v
      *
-     * w(u, v) = [x, y, z, e]^T
+     * z3 = [   p2 p3 - q2 q3 - a (p2 q3 - p3 q2)
+     *          0
+     *        - p3 p3 + q3 q3 + a (p3 q3 - p3 q3)
+     *        - p1 p3 - q1 q3 + a (p1 q3 + p3 q1)
+     *      ] u
+     *      +
+     *      [   0
+     *          p2 p3 - q2 q3 - a (p2 q3 - p3 q2)
+     *        - p1 p3 + q1 q3 + a (p1 q3 - p3 q1)
+     *          p3 p3 + q3 q3 - a (p3 q3 + p3 q3)
+     *      ] v
+     *
+     * assumtions:
+     * [p]^2 != 0, [q]^2 !=0
+     *
+     * let:
+     * poq = [p] / [q]
+     * qop = [q] / [p]
+     *
+     * then:
+     * [p] [q] z1 = [   qop p2 p1 - poq q2 q1 - a (p2 q1 - p1 q2)
+     *                  0
+     *                - qop p3 p1 + poq q3 q1 + a (p3 q1 - p1 q3)
+     *                - qop p1 p1 - poq q1 q1 + a (p1 q1 + p1 q1)
+     *              ] u
+     *              +
+     *              [   0
+     *                  qop p2 p1 - poq q2 q1 - a (p2 q1 - p1 q2)
+     *                - qop p1 p1 + poq q1 q1 + a (p1 q1 - p1 q1)
+     *                  qop p3 p1 + poq q3 q1 - a (p3 q1 + p1 q3)
+     *              ] v
+     *
+     * [p] [q] z2 = [   qop p2 p2 - poq q2 q2 - a (p2 q2 - p2 q2)
+     *                  0
+     *                - qop p3 p2 + poq q3 q2 + a (p3 q2 - p2 q3)
+     *                - qop p1 p2 - poq q1 q2 + a (p1 q2 + p2 q1)
+     *              ] u
+     *              +
+     *              [   0
+     *                  qop p2 p2 - poq q2 q2 - a (p2 q2 - p2 q2)
+     *                - qop p1 p2 + poq q1 q2 + a (p1 q2 - p2 q1)
+     *                  qop p3 p2 + poq q3 q2 - a (p3 q2 + p2 q3)
+     *              ] v
+     *
+     * [p] [q] z3 = [   qop p2 p3 - poq q2 q3 - a (p2 q3 - p3 q2)
+     *                  0
+     *                - qop p3 p3 + poq q3 q3 + a (p3 q3 - p3 q3)
+     *                - qop p1 p3 - poq q1 q3 + a (p1 q3 + p3 q1)
+     *              ] u
+     *              +
+     *              [   0
+     *                  qop p2 p3 - poq q2 q3 - a (p2 q3 - p3 q2)
+     *                - qop p1 p3 + poq q1 q3 + a (p1 q3 - p3 q1)
+     *                  qop p3 p3 + poq q3 q3 - a (p3 q3 + p3 q3)
+     *              ] v
      */
-    double pp = cs2_vec3f_sqlen(p);
-    double qq = cs2_vec3f_sqlen(q);
-    double l = a * sqrt(pp * qq);
+    double lp = cs2_vec3f_len(p);
+    double lq = cs2_vec3f_len(q);
+    double poq, qop;
+    struct cs2_vec4f_s z1u, z1v, z2u, z2v, z3u, z3v;
+    double mlz1, mlz2, mlz3;
 
-    w1->x = p->y * p->y * qq - q->y * q->y * pp;
-    w1->y = 0;
-    w1->z = q->y * q->z * pp - p->y * p->z * qq - l * (p->y * q->z - p->z * q->y);
-    w1->w = - q->x * q->y * pp - p->x * p->y * qq + l * (p->x * q->y + p->y * q->x);
+    CS2_ASSERT(!_cs2_almost_zero(lp) && !_cs2_almost_zero(lq));
 
-    w2->x = 0;
-    w2->y = p->y * p->y * qq - q->y * q->y * pp;
-    w2->z = q->x * q->y * pp - p->x * p->y * qq + l * (p->x * q->y - p->y * q->x);
-    w2->w = q->y * q->z * pp + p->y * p->z * qq - l * (p->y * q->z + p->z * q->y);
+    poq = lp / lq;
+    qop = lq / lp;
+
+    z1u.x = qop * p->y * p->x - poq * q->y * q->x - a * (p->y * q->x - p->x * q->y);
+    z1u.y = 0;
+    z1u.z = - qop * p->z * p->x + poq * q->z * q->x + a * (p->z * q->x - p->x * q->z);
+    z1u.w = - qop * p->x * p->x - poq * q->x * q->x + a * (p->x * q->x + p->x * q->x);
+
+    z1v.x = 0;
+    z1v.y = qop * p->y * p->x - poq * q->y * q->x - a * (p->y * q->x - p->x * q->y);
+    z1v.z = - qop * p->x * p->x + poq * q->x * q->x + a * (p->x * q->x - p->x * q->x);
+    z1v.w = qop * p->z * p->x + poq * q->z * q->x - a * (p->z * q->x + p->x * q->z);
+
+    z2u.x = qop * p->y * p->y - poq * q->y * q->y - a * (p->y * q->y - p->y * q->y);
+    z2u.y = 0;
+    z2u.z = - qop * p->z * p->y + poq * q->z * q->y + a * (p->z * q->y - p->y * q->z);
+    z2u.w = - qop * p->x * p->y - poq * q->x * q->y + a * (p->x * q->y + p->y * q->x);
+
+    z2v.x = 0;
+    z2v.y = qop * p->y * p->y - poq * q->y * q->y - a * (p->y * q->y - p->y * q->y);
+    z2v.z = - qop * p->x * p->y + poq * q->x * q->y + a * (p->x * q->y - p->y * q->x);
+    z2v.w = qop * p->z * p->y + poq * q->z * q->y - a * (p->z * q->y + p->y * q->z);
+
+    z3u.x = qop * p->y * p->z - poq * q->y * q->z - a * (p->y * q->z - p->z * q->y);
+    z3u.y = 0;
+    z3u.z = - qop * p->z * p->z + poq * q->z * q->z + a * (p->z * q->z - p->z * q->z);
+    z3u.w = - qop * p->x * p->z - poq * q->x * q->z + a * (p->x * q->z + p->z * q->x);
+
+    z3v.x = 0;
+    z3v.y = qop * p->y * p->z - poq * q->y * q->z - a * (p->y * q->z - p->z * q->y);
+    z3v.z = - qop * p->x * p->z + poq * q->x * q->z + a * (p->x * q->z - p->z * q->x);
+    z3v.w = qop * p->z * p->z + poq * q->z * q->z - a * (p->z * q->z + p->z * q->z);
+
+    /* select best */
+    mlz1 = CS2_MIN(cs2_vec4f_len(&z1u), cs2_vec4f_len(&z1v));
+    mlz2 = CS2_MIN(cs2_vec4f_len(&z2u), cs2_vec4f_len(&z2v));
+    mlz3 = CS2_MIN(cs2_vec4f_len(&z3u), cs2_vec4f_len(&z3v));
+
+    if (mlz1 > mlz2 && mlz1 > mlz3)
+    {
+        cs2_vec4f_copy(w1, &z1u);
+        cs2_vec4f_copy(w2, &z1v);
+    }
+    else if (mlz2 > mlz1 && mlz2 > mlz3)
+    {
+        cs2_vec4f_copy(w1, &z2u);
+        cs2_vec4f_copy(w2, &z2v);
+    }
+    else
+    {
+        cs2_vec4f_copy(w1, &z3u);
+        cs2_vec4f_copy(w2, &z3v);
+    }
 
     /* normalize */
     cs2_vec4f_mul(w1, w1, 1.0 / cs2_vec4f_len(w1));
@@ -281,24 +418,27 @@ static enum cs2_predgparamtype3f_e _cs2_toroidal_param_type(double a, double b, 
     return cs2_predgparamtype3f_an_empty_set;
 }
 
-static void _cs2_debug_verify_polar_decomposition(struct cs2_mat44f_s *m, const struct cs2_predg3f_s *g)
+static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const struct cs2_predg3f_s *g)
 {
     struct cs2_spinquad3f_s sp;
     int i;
+    double x, y, z, w, l;
+    double ex, ey, ez, ew;
+    double dot, err;
 
     cs2_spinquad3f_from_predg3f(&sp, g);
 
     for (i = 0; i < 4; ++i)
     {
-        double x = sp.a11 * m->m[0][i] + sp.a12 * m->m[1][i] + sp.a13 * m->m[2][i] + sp.a14 * m->m[3][i];
-        double y = sp.a12 * m->m[0][i] + sp.a22 * m->m[1][i] + sp.a23 * m->m[2][i] + sp.a24 * m->m[3][i];
-        double z = sp.a13 * m->m[0][i] + sp.a23 * m->m[1][i] + sp.a33 * m->m[2][i] + sp.a34 * m->m[3][i];
-        double w = sp.a14 * m->m[0][i] + sp.a24 * m->m[1][i] + sp.a34 * m->m[2][i] + sp.a44 * m->m[3][i];
-        double l = sqrt(x * x + y * y + z * z + w * w);
-        double ex = m->m[0][i];
-        double ey = m->m[1][i];
-        double ez = m->m[2][i];
-        double ew = m->m[3][i];
+        x = sp.a11 * m->m[0][i] + sp.a12 * m->m[1][i] + sp.a13 * m->m[2][i] + sp.a14 * m->m[3][i];
+        y = sp.a12 * m->m[0][i] + sp.a22 * m->m[1][i] + sp.a23 * m->m[2][i] + sp.a24 * m->m[3][i];
+        z = sp.a13 * m->m[0][i] + sp.a23 * m->m[1][i] + sp.a33 * m->m[2][i] + sp.a34 * m->m[3][i];
+        w = sp.a14 * m->m[0][i] + sp.a24 * m->m[1][i] + sp.a34 * m->m[2][i] + sp.a44 * m->m[3][i];
+        l = sqrt(x * x + y * y + z * z + w * w);
+        ex = m->m[0][i];
+        ey = m->m[1][i];
+        ez = m->m[2][i];
+        ew = m->m[3][i];
 
         /* normalize */
         x /= l;
@@ -306,8 +446,14 @@ static void _cs2_debug_verify_polar_decomposition(struct cs2_mat44f_s *m, const 
         z /= l;
         w /= l;
 
-        CS2_ASSERT((fabs(x - ex) + fabs(y - ey) + fabs(z - ez) + fabs(w - ew) < EPS) ||
-                   (fabs(x + ex) + fabs(y + ey) + fabs(z + ez) + fabs(w + ew) < EPS) );
+        /* both vectors should be very close in terms of an angle */
+        dot = x * ex + y * ey + z * ez + w * ew;
+        err = fabs(1.0 - fabs(_cs2_clamp_11(dot)));
+
+        CS2_ASSERT_MSG(err < EPS,
+                       "failed to obtain required eigen decomposition accuracy: "
+                       "target=%.12f, actual=%.12f, dot=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T, ev=[%.12f, %.12f, %.12f, %.12f]^T",
+                       EPS, err, dot, x, y, z, w, ex, ey, ez, ew);
     }
 }
 
@@ -390,7 +536,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, do
     *t12 = sqrt(r / (pp->a + pp->b)) * sb * ca;
     *t23 = sqrt(r / pp->a) * sb * sa;
     *t31 = sqrt(r / pp->b) * cb;
-    *t0 = sgn * sqrt(_cs2_pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+    *t0 = sgn * sqrt(_cs2_clamp_0(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
 static void _cs2_predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -473,13 +619,13 @@ static void _cs2_predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *
 
     x = sqrt((pp->b - pp->a + pp->c) / (2.0 * pp->b)) * ca;
     z = sqrt((pp->b - pp->a + pp->c) / (2.0 * (pp->b - pp->a))) * sa;
-    y = h * sqrt(_cs2_pclamp(1.0 - x * x - z * z));
-    d = sqrt(_cs2_pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+    y = h * sqrt(_cs2_clamp_0(1.0 - x * x - z * z));
+    d = sqrt(_cs2_clamp_0((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
 
     *t12 = x * d;
     *t23 = y * d;
     *t31 = z * d;
-    *t0 = sgn * sqrt(_cs2_pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+    *t0 = sgn * sqrt(_cs2_clamp_0(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
 static void _cs2_predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -508,13 +654,13 @@ static void _cs2_predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *
 
     x = sqrt((pp->a - pp->b + pp->c) / (2.0 * pp->a)) * ca;
     y = sqrt((pp->a - pp->b + pp->c) / (2.0 * (pp->a - pp->b))) * sa;
-    z = h * sqrt(_cs2_pclamp(1.0 - x * x - y * y));
-    d = sqrt(_cs2_pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+    z = h * sqrt(_cs2_clamp_0(1.0 - x * x - y * y));
+    d = sqrt(_cs2_clamp_0((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
 
     *t12 = x * d;
     *t23 = y * d;
     *t31 = z * d;
-    *t0 = sgn * sqrt(_cs2_pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+    *t0 = sgn * sqrt(_cs2_clamp_0(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
 static void _cs2_predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -592,18 +738,18 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, doubl
 
     y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
     z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
-    x = side * sqrt(_cs2_pclamp(1.0 - y * y - z * z));
+    x = side * sqrt(_cs2_clamp_0(1.0 - y * y - z * z));
 
     x = x * (1 - v) + side * v;
     y = y * (1 - v);
     z = z * (1 - v);
 
-    d = sqrt(_cs2_pclamp((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
+    d = sqrt(_cs2_clamp_0((pp->a + pp->b + pp->c) / (2.0 * ((pp->a + pp->b) * x * x + pp->a * y * y + pp->b * z * z))));
 
     *t12 = x * d;
     *t23 = y * d;
     *t31 = z * d;
-    *t0 = sgn * sqrt(_cs2_pclamp(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
+    *t0 = sgn * sqrt(_cs2_clamp_0(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
 static void _cs2_predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -982,6 +1128,6 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
         m->m[3][3] = w4.w;
 
         /* debug */
-        _cs2_debug_verify_polar_decomposition(m, g);
+        _cs2_debug_verify_eigen_decomposition(m, g);
     }
 }

@@ -28,7 +28,6 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../../bin)
 add_definitions(
     -Wall
     -Wextra
-    -pedantic
     -Wno-long-long
     -Wno-variadic-macros
 )

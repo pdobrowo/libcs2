@@ -24,7 +24,6 @@ include_directories(${CMOCKA_BASE_DIR}/include)
 add_definitions(
     -Wall
     -Wextra
-    -pedantic
     -Wno-long-long
     -Wno-variadic-macros
 )
@@ -64,6 +63,7 @@ set(unittest_HEADERS
 # src
 set(unittest_SOURCES
     ${unittest_HEADERS}
+
     # runner
     src/main.c
     src/unittest.c
@@ -74,6 +74,7 @@ set(unittest_SOURCES
     src/hull4f.c
     src/vec3f.c
     src/vec3x.c
+    src/predg3f.c
 )
 
 add_executable(unittest ${unittest_SOURCES})

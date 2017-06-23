@@ -25,6 +25,7 @@
 #include "cs2/assert.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 void cs2_assert(int value, const char *cond, const char *file, int line)
 {
@@ -37,20 +38,38 @@ void cs2_assert(int value, const char *cond, const char *file, int line)
     abort();
 }
 
-void cs2_assert_msg(int value, const char *cond, const char *msg, const char *file, int line)
+void cs2_assert_msg(int value, const char *cond, const char *file, int line, const char *msg, ...)
 {
+    va_list args;
+
     if (value)
         return;
 
-    printf("libcs2: assertion '%s' failed at %s:%d with message '%s'\n", cond, file, line, msg);
+    printf("libcs2: assertion '%s' failed at %s:%d with message '", cond, file, line);
+
+    va_start(args, msg);
+    vprintf(msg, args);
+    va_end(args);
+
+    printf("'\n");
+
     fflush(stdout);
 
     abort();
 }
 
-void cs2_assert_panic(const char *msg, const char *file, int line)
+void cs2_assert_panic(const char *file, int line, const char *msg, ...)
 {
-    printf("libcs2: panic at %s:%d with message '%s'\n", file, line, msg);
+    va_list args;
+
+    printf("libcs2: panic at %s:%d with message '", file, line);
+
+    va_start(args, msg);
+    vprintf(msg, args);
+    va_end(args);
+
+    printf("'\n");
+
     fflush(stdout);
 
     abort();

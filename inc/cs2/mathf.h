@@ -31,6 +31,16 @@ CS2_API_BEGIN
 
 #define CS2_PI (3.1415926535897932385)
 
+#define CS2_MIN(a, b) \
+    ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+       _a < _b ? _a : _b; })
+
+#define CS2_MAX(a, b) \
+    ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+       _a < _b ? _b : _a; })
+
 CS2_API void cs2_sincosf(double x, double *s, double *c);
 
 CS2_API_END
