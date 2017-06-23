@@ -22,31 +22,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_RAND_H
-#define CS2_RAND_H
+#include "cs2/predg3f.h"
+#include "cs2/rand.h"
+#include "unittest/unittest.h"
+#include <math.h>
 
-#include "defs.h"
-#include "vec3f.h"
-#include <stdint.h>
-
-CS2_API_BEGIN
-
-struct cs2_rand_s
+static void rand_predg3f(struct cs2_rand_s *r, struct cs2_predg3f_s *g)
 {
-    uint64_t state[2];
-};
+    const double MIN = -10;
+    const double MAX = 10;
 
-CS2_API void cs2_rand_seed(struct cs2_rand_s *r);
+    cs2_rand_vec3f_u1f(r, &g->a, MIN, MAX);
+    cs2_rand_vec3f_u1f(r, &g->b, MIN, MAX);
+    cs2_rand_vec3f_u1f(r, &g->k, MIN, MAX);
+    cs2_rand_vec3f_u1f(r, &g->l, MIN, MAX);
+    g->c = cs2_rand_u1f(r, MIN, MAX);
+}
 
-CS2_API double cs2_rand_1f(struct cs2_rand_s *r); /* uniform rand [0; 1] */
-CS2_API double cs2_rand_u1f(struct cs2_rand_s *r, double min, double max); /* uniform rand [min; max] */
+TEST_SUITE(predg3f)
 
-CS2_API int cs2_rand_1i(struct cs2_rand_s *r); /* uniform rand {0, 1} */
-CS2_API int cs2_rand_u1i(struct cs2_rand_s *r, int min, int max); /* uniform rand {min, ..., max} */
+TEST_CASE(predg3f, random_param)
+{
+    struct cs2_predgparam3f_s pp;
+    struct cs2_predg3f_s g;
+    struct cs2_rand_s r;
 
-CS2_API void cs2_rand_vec3f_1f(struct cs2_rand_s *r, struct cs2_vec3f_s *v); /* uniform rand vec3f [0; 1] */
-CS2_API void cs2_rand_vec3f_u1f(struct cs2_rand_s *r, struct cs2_vec3f_s *v, double min, double max); /* uniform rand vec3f [min; max] */
+    const int ITER = 1000000;
+    int i;
 
-CS2_API_END
+    cs2_rand_seed(&r);
 
-#endif /* CS2_RAND_H */
+    for (i = 0; i < ITER; ++i)
+    {
+        rand_predg3f(&r, &g);
+        cs2_predg3f_param(&pp, &g);
+    }
+}

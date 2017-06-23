@@ -51,3 +51,23 @@ double cs2_rand_u1f(struct cs2_rand_s *r, double min, double max)
 {
     return min + cs2_rand_1f(r) * (max - min);
 }
+
+int cs2_rand_1i(struct cs2_rand_s *r)
+{
+    return _cs2_xorshift128plus(r) & 1;
+}
+
+int cs2_rand_u1i(struct cs2_rand_s *r, int min, int max)
+{
+    return min + (double)_cs2_xorshift128plus(r) * (max - min) / UINT64_MAX; // fixme: overflow possble
+}
+
+void cs2_rand_vec3f_1f(struct cs2_rand_s *r, struct cs2_vec3f_s *v)
+{
+    cs2_vec3f_set(v, cs2_rand_1f(r), cs2_rand_1f(r), cs2_rand_1f(r));
+}
+
+void cs2_rand_vec3f_u1f(struct cs2_rand_s *r, struct cs2_vec3f_s *v, double min, double max)
+{
+    cs2_vec3f_set(v, cs2_rand_u1f(r, min, max), cs2_rand_u1f(r, min, max), cs2_rand_u1f(r, min, max));
+}
