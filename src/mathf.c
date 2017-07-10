@@ -34,7 +34,7 @@ void cs2_sincosf(double x, double *s, double *c)
 
 #endif /* defined(__linux__) */
 
-#if defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 
 void cs2_sincosf(double x, double *s, double *c)
 {
@@ -42,4 +42,4 @@ void cs2_sincosf(double x, double *s, double *c)
     *c = cos(x);
 }
 
-#endif /* defined(__FreeBSD__) || defined(__OpenBSD__) */
+#endif /* defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) */

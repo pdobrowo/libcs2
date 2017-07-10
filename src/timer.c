@@ -25,7 +25,7 @@
 #include "cs2/timer.h"
 #include <time.h>
 
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 
 uint64_t cs2_timer_sec(void)
 {
@@ -55,4 +55,4 @@ uint64_t cs2_timer_nsec(void)
     return (uint64_t)ts.tv_sec * 1000000000 + (uint64_t)ts.tv_nsec;
 }
 
-#endif /* defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) */
+#endif /* defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) */
