@@ -74,3 +74,18 @@ void cs2_assert_panic(const char *file, int line, const char *msg, ...)
 
     abort();
 }
+
+void cs2_warn_msg(const char *file, int line, const char *msg, ...)
+{
+    va_list args;
+
+    printf("libcs2: warning at %s:%d with message '", file, line);
+
+    va_start(args, msg);
+    vprintf(msg, args);
+    va_end(args);
+
+    printf("'\n");
+
+    fflush(stdout);
+}

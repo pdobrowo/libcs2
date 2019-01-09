@@ -33,9 +33,13 @@ CS2_API void cs2_assert(int value, const char *cond, const char *file, int line)
 CS2_API void cs2_assert_msg(int value, const char *cond, const char *file, int line, const char *msg, ...);
 CS2_API void cs2_assert_panic(const char *file, int line, const char *msg, ...);
 
+CS2_API void cs2_warn_msg(const char *file, int line, const char *msg, ...);
+
 #define CS2_ASSERT(Cond) do cs2_assert(Cond, #Cond, __FILE__, __LINE__); while (0)
 #define CS2_ASSERT_MSG(Cond, Msg, ...) do cs2_assert_msg(Cond, #Cond, __FILE__, __LINE__, Msg, ## __VA_ARGS__); while (0)
 #define CS2_ASSERT_PANIC(Msg, ...) do cs2_assert_panic(__FILE__, __LINE__, Msg, ## __VA_ARGS__); while (0)
+
+#define CS2_WARN_MSG(Msg, ...) do cs2_warn_msg(__FILE__, __LINE__, Msg, ## __VA_ARGS__); while (0)
 
 CS2_API_END
 

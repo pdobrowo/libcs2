@@ -475,6 +475,9 @@ static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const 
     double ex, ey, ez, ew;
     double dot, err;
 
+    const double EPS_LEN = 10e-8;
+    const double EPS_DOT = 10e-6;
+
     cs2_spinquad3f_from_predg3f(&sp, g);
 
     for (i = 0; i < 4; ++i)
@@ -484,11 +487,17 @@ static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const 
         ez = m->m[2][i];
         ew = m->m[3][i];
 
-        x = sp.a11 * ex + sp.a12 * ey + sp.a13 * ez + sp.a14 * ez;
-        y = sp.a12 * ex + sp.a22 * ey + sp.a23 * ez + sp.a24 * ez;
-        z = sp.a13 * ex + sp.a23 * ey + sp.a33 * ez + sp.a34 * ez;
-        w = sp.a14 * ex + sp.a24 * ey + sp.a34 * ez + sp.a44 * ez;
+        x = sp.a11 * ex + sp.a12 * ey + sp.a13 * ez + sp.a14 * ew;
+        y = sp.a12 * ex + sp.a22 * ey + sp.a23 * ez + sp.a24 * ew;
+        z = sp.a13 * ex + sp.a23 * ey + sp.a33 * ez + sp.a34 * ew;
+        w = sp.a14 * ex + sp.a24 * ey + sp.a34 * ez + sp.a44 * ew;
         l = sqrt(x * x + y * y + z * z + w * w);
+
+        if (l < EPS_LEN)
+        {
+            CS2_WARN_MSG("eigenvector too small: len=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T", l, x, y, z, w);
+            continue;
+        }
 
         /* normalize */
         x /= l;
@@ -500,7 +509,7 @@ static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const 
         dot = x * ex + y * ey + z * ez + w * ew;
         err = fabs(1.0 - fabs(_cs2_clamp_11(dot)));
 
-        CS2_ASSERT_MSG(err < EPS,
+        CS2_ASSERT_MSG(err < EPS_DOT,
                        "failed to obtain required eigen decomposition accuracy: "
                        "target=%.12f, actual=%.12f, dot=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T, ev=[%.12f, %.12f, %.12f, %.12f]^T",
                        EPS, err, dot, x, y, z, w, ex, ey, ez, ew);
