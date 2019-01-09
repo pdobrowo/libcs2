@@ -190,7 +190,7 @@ const char *cs2_predgtype3x_str(enum cs2_predgtype3x_e t)
 {
     switch (t)
     {
-    case cs2_predgtype3x_inproper: return "inproper";
+    case cs2_predgtype3x_improper: return "improper";
     case cs2_predgtype3x_ellipsoidal: return "ellipsoidal";
     case cs2_predgtype3x_toroidal: return "toroidal";
     default: return 0;
@@ -214,7 +214,7 @@ enum cs2_predgtype3x_e cs2_predg3x_type(const struct cs2_predg3x_s *g)
     else if (pq || uv)
         t = cs2_predgtype3x_toroidal;
     else
-        t = cs2_predgtype3x_inproper;
+        t = cs2_predgtype3x_improper;
     cs2_vec3x_clear(&p);
     cs2_vec3x_clear(&q);
     cs2_vec3x_clear(&u);

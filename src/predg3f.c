@@ -27,8 +27,8 @@
 #include "cs2/pin3f.h"
 #include "cs2/spinquad3f.h"
 #include "cs2/mathf.h"
+#include "cs2/assert.h"
 #include <math.h>
-#include <cs2/assert.h>
 
 #define EPS (10e-2)
 
@@ -260,7 +260,7 @@ static void _cs2_calc_toroidal_w(struct cs2_vec4f_s *w1, struct cs2_vec4f_s *w2,
     cs2_vec4f_mul(w2, w2, 1.0 / cs2_vec4f_len(w2));
 }
 
-static enum cs2_predgparamtype3f_e _cs2_inproper_param_type(void)
+static enum cs2_predgparamtype3f_e _cs2_improper_param_type(void)
 {
     return cs2_predgparamtype3f_an_empty_set;
 }
@@ -834,7 +834,7 @@ const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t)
 {
     switch (t)
     {
-    case cs2_predgtype3f_inproper: return "inproper";
+    case cs2_predgtype3f_improper: return "improper";
     case cs2_predgtype3f_ellipsoidal: return "ellipsoidal";
     case cs2_predgtype3f_toroidal: return "toroidal";
     default: return 0;
@@ -859,7 +859,7 @@ enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g)
     else if (!za || !zb)
         return cs2_predgtype3f_toroidal;
     else
-        return cs2_predgtype3f_inproper;
+        return cs2_predgtype3f_improper;
 }
 
 const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt)
@@ -968,7 +968,7 @@ void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s
     else if (!za || !zb)
         pp->t = _cs2_toroidal_param_type(pp->a, pp->b, pp->c);
     else
-        pp->t = _cs2_inproper_param_type();
+        pp->t = _cs2_improper_param_type();
 }
 
 void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -1071,7 +1071,7 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
         /* eigenvectors */
         switch (cs2_predg3f_type(g))
         {
-            case cs2_predgtype3f_inproper:
+            case cs2_predgtype3f_improper:
                 cs2_vec4f_set(&w1, 1.0, 0.0, 0.0, 0.0);
                 cs2_vec4f_set(&w2, 0.0, 1.0, 0.0, 0.0);
                 cs2_vec4f_set(&w3, 0.0, 0.0, 1.0, 0.0);

@@ -56,7 +56,7 @@ CS2_API void cs2_predg3f_pquv(struct cs2_vec3f_s *p, struct cs2_vec3f_s *q, stru
 /* type */
 enum cs2_predgtype3f_e
 {
-    cs2_predgtype3f_inproper,
+    cs2_predgtype3f_improper,
     cs2_predgtype3f_ellipsoidal,
     cs2_predgtype3f_toroidal
 };

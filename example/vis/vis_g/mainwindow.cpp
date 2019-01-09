@@ -126,7 +126,7 @@ void MainWindow::updatePredicateInformation()
     // information -> type
     enum cs2_predgtype3f_e type = cs2_predg3f_type(&pred);
 
-    ui->labelproperval->setText(type == cs2_predgtype3f_inproper ? "no" : "yes");
+    ui->labelproperval->setText(type == cs2_predgtype3f_improper ? "no" : "yes");
     ui->labeltypeval->setText(cs2_predgtype3f_str(type));
 
     // information -> parametrization variables
