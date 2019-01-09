@@ -28,8 +28,6 @@
 #include <string>
 #include <stdlib.h>
 #include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glext.h>
 #include <boost/noncopyable.hpp>
 
 /**

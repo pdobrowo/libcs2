@@ -27,6 +27,174 @@
 #include "unittest/unittest.h"
 #include <math.h>
 
+/**
+ * P = K x L
+ * Q = A - B
+ * U = K - L
+ * V = A x B
+ * a = ||P|| ||Q||
+ * b = ||U|| ||V||
+ * c = c
+ *
+ * Integer example:
+ * K = [-3, 10, 4]
+ * L = [-1, -6, -4]
+ * A = [6, 2, -5]
+ * B = [10, -2, -3]
+ *
+ * P = [-16, -16, 28]
+ * Q = [-4, 4, -2]
+ * U = [-2, 16, 8]
+ * V = [-16, -32, -32]
+ *
+ * ||P|| = 36
+ * ||Q|| = 6
+ * ||U|| = 18
+ * ||V|| = 48
+ *
+ * a = 216
+ * b = 864
+ */
+
+/* common */
+static const struct cs2_predg3f_s test_predg3f_an_empty_set = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+/* ellipsoidal */
+static const struct cs2_predg3f_s test_predg3f_a_pair_of_points = {
+    { -3.0, 10.0, 4.0 },
+    { -1.0, -6.0, -4.0 },
+    { 6.0, 2.0, -5.0 },
+    { 10.0, -2.0, -3.0 },
+    -1080.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_pair_of_separate_ellipsoids = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_pair_of_y_touching_ellipsoids = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_pair_of_yz_crossed_ellipsoids = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_pair_of_z_touching_ellipsoids = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_y_barrel = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_z_barrel = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_notched_y_barrel = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_notched_z_barrel = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_pair_of_separate_yz_caps = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+/* toroidal */
+static const struct cs2_predg3f_s test_predg3f_a_xy_zw_torus = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_xy_circle = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_zw_circle = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_xz_yw_torus = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_xz_circle = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
+static const struct cs2_predg3f_s test_predg3f_a_yw_circle = {
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    { 0.0, 0.0, 0.0 },
+    0.0
+};
+
 static void rand_predg3f(struct cs2_rand_s *r, struct cs2_predg3f_s *g)
 {
     const double MIN = -10;
@@ -41,13 +209,13 @@ static void rand_predg3f(struct cs2_rand_s *r, struct cs2_predg3f_s *g)
 
 TEST_SUITE(predg3f)
 
-TEST_CASE(predg3f, random_param)
+TEST_CASE(predg3f, param_random)
 {
     struct cs2_predgparam3f_s pp;
     struct cs2_predg3f_s g;
     struct cs2_rand_s r;
 
-    const int ITER = 1000000;
+    const int ITER = 100000;
     int i;
 
     cs2_rand_seed(&r);
@@ -59,7 +227,7 @@ TEST_CASE(predg3f, random_param)
     }
 }
 
-TEST_CASE(predg3f, bug_too_low_epsilon_for_ellipsoidal_param_check)
+TEST_CASE(predg3f, param_bug_too_low_epsilon_for_ellipsoidal_param_check)
 {
     struct cs2_predgparam3f_s pp;
     struct cs2_predg3f_s g =
@@ -88,4 +256,89 @@ TEST_CASE(predg3f, bug_too_low_epsilon_for_ellipsoidal_param_check)
     };
 
     cs2_predg3f_param(&pp, &g);
+}
+
+TEST_CASE(predg3f, param_an_empty_set)
+{
+    struct cs2_predgparam3f_s pp;
+    cs2_predg3f_param(&pp, &test_predg3f_an_empty_set);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_an_empty_set);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "an empty set");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == -1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_components(pp.t) == 0);
+}
+
+TEST_CASE(predg3f, param_a_pair_of_points)
+{
+    struct cs2_predgparam3f_s pp;
+    struct cs2_spin3f_s sp;
+    cs2_predg3f_param(&pp, &test_predg3f_a_pair_of_points);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_pair_of_points);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a pair of points");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 0);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_components(pp.t) == 2);
+    cs2_predgparam3f_eval(&sp, &pp, 0.0, 0.0, 0);
+    cs2_predgparam3f_eval(&sp, &pp, 0.0, 0.0, 1);
+}
+
+TEST_CASE(predg3f, param_a_pair_of_separate_ellipsoids)
+{
+}
+
+TEST_CASE(predg3f, param_a_pair_of_y_touching_ellipsoids)
+{
+}
+
+TEST_CASE(predg3f, param_a_pair_of_yz_crossed_ellipsoids)
+{
+}
+
+TEST_CASE(predg3f, param_a_pair_of_z_touching_ellipsoids)
+{
+}
+
+TEST_CASE(predg3f, param_a_y_barrel)
+{
+}
+
+TEST_CASE(predg3f, param_a_z_barrel)
+{
+}
+
+TEST_CASE(predg3f, param_a_notched_y_barrel)
+{
+}
+
+TEST_CASE(predg3f, param_a_notched_z_barrel)
+{
+}
+
+TEST_CASE(predg3f, param_a_pair_of_separate_yz_caps)
+{
+}
+
+TEST_CASE(predg3f, param_a_xy_zw_torus)
+{
+}
+
+TEST_CASE(predg3f, param_a_xy_circle)
+{
+}
+
+TEST_CASE(predg3f, param_a_zw_circle)
+{
+}
+
+TEST_CASE(predg3f, param_a_xz_yw_torus)
+{
+}
+
+TEST_CASE(predg3f, param_a_xz_circle)
+{
+}
+
+TEST_CASE(predg3f, param_a_yw_circle)
+{
 }

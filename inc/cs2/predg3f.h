@@ -58,14 +58,21 @@ enum cs2_predgtype3f_e
 {
     cs2_predgtype3f_improper,
     cs2_predgtype3f_ellipsoidal,
-    cs2_predgtype3f_toroidal
+    cs2_predgtype3f_toroidal,
+
+    cs2_predgtype3f_COUNT
 };
 
 CS2_API const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t);
 
 CS2_API enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g);
 
-/* parametrization */
+/**
+ * parametrization (17 cases):
+ * - empty set (1 case)
+ * - ellipsoidal (10 cases)
+ * - toroidal (6 cases)
+ */
 enum cs2_predgparamtype3f_e
 {
     /* common */
@@ -84,7 +91,14 @@ enum cs2_predgparamtype3f_e
     cs2_predgparamtype3f_a_pair_of_separate_yz_caps,
 
     /* toroidal */
-    cs2_predgparamtype3f_a_torus
+    cs2_predgparamtype3f_a_xy_zw_torus,
+    cs2_predgparamtype3f_a_xy_circle,
+    cs2_predgparamtype3f_a_zw_circle,
+    cs2_predgparamtype3f_a_xz_yw_torus,
+    cs2_predgparamtype3f_a_xz_circle,
+    cs2_predgparamtype3f_a_yw_circle,
+
+    cs2_predgparamtype3f_COUNT
 };
 
 CS2_API const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt);

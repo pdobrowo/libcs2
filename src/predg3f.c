@@ -30,7 +30,7 @@
 #include "cs2/assert.h"
 #include <math.h>
 
-#define EPS (10e-2)
+#define EPS (10e-8)
 
 static int _cs2_almost_zero(double x)
 {
@@ -284,7 +284,7 @@ static enum cs2_predgparamtype3f_e _cs2_ellipsoidal_param_type(double a, double 
      *  | 1/1/1    | c ∈ (a + b, +∞)     | c ∈ (t, +∞)  | c ∈ (a + b, +∞)     |
      *  -----------------------------------------------------------------------
      *
-     *  (1) an empty case
+     *  (1) an empty set
      *  (2) a pair of points
      *  (3) a pair of separate ellipsoids
      *  (4) a pair of y-touching ellipsoids
@@ -398,24 +398,73 @@ static enum cs2_predgparamtype3f_e _cs2_ellipsoidal_param_type(double a, double 
 
 static enum cs2_predgparamtype3f_e _cs2_toroidal_param_type(double a, double b, double c)
 {
-    if (_cs2_almost_zero(a) && !_cs2_almost_zero(b))
-    {
-        if (c >= -b && c <= b)
-            return cs2_predgparamtype3f_a_torus;
-        else
-            return cs2_predgparamtype3f_an_empty_set;
-    }
+    /*
+     * toroidal parametrization type
+     *
+     *  ----------------------------------------
+     *  | type   | a != 0       | b != 0       |
+     *  ----------------------------------------
+     *  | 1/1    | c ∈ (−∞, −a) | c ∈ (−∞, −b) |
+     *  | 4/7    | c = −a       | c = −b       |
+     *  | 2/5    | c ∈ (−a, a)  | c ∈ (−b, b)  |
+     *  | 3/6    | c = a        | c = b        |
+     *  | 1/1    | c ∈ (a, ∞)   | c ∈ (b, ∞)   |
+     *  ----------------------------------------
+     *
+     *  (1) an empty set
+     *  (2) a xy/zw-torus
+     *  (3) a xy-circle
+     *  (4) a zw-circle
+     *  (5) a xz/yw-torus
+     *  (6) a xz-circle
+     *  (7) a yw-circle
+     *
+     *  a general rule: always approximate towards the exact cases
+     */
 
-    if (!_cs2_almost_zero(a) && _cs2_almost_zero(b))
+    /* a = 0 */
+    if (_cs2_almost_zero(a))
     {
-        if (c >= -a && c <= a)
-            return cs2_predgparamtype3f_a_torus;
-        else
+        if (_cs2_almost_equal(c, -b))
+            return cs2_predgparamtype3f_a_yw_circle;
+
+        if (_cs2_almost_equal(c, b))
+            return cs2_predgparamtype3f_a_xz_circle;
+
+        if (c > -b && c < b)
+            return cs2_predgparamtype3f_a_xz_yw_torus;
+
+        if (c < -b)
             return cs2_predgparamtype3f_an_empty_set;
+
+        if (c > b)
+            return cs2_predgparamtype3f_an_empty_set;
+
+        /* fall through */
+    }
+    /* b = 0 */
+    else if (_cs2_almost_zero(b))
+    {
+        if (_cs2_almost_equal(c, -a))
+            return cs2_predgparamtype3f_a_zw_circle;
+
+        if (_cs2_almost_equal(c, a))
+            return cs2_predgparamtype3f_a_xy_circle;
+
+        if (c > -a && c < a)
+            return cs2_predgparamtype3f_a_xy_zw_torus;
+
+        if (c < -a)
+            return cs2_predgparamtype3f_an_empty_set;
+
+        if (c > a)
+            return cs2_predgparamtype3f_an_empty_set;
+
+        /* fall through */
     }
 
     CS2_ASSERT_PANIC("unknown param type");
-    return cs2_predgparamtype3f_an_empty_set;
+    return cs2_predgparamtype3f_COUNT;
 }
 
 static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const struct cs2_predg3f_s *g)
@@ -430,15 +479,16 @@ static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const 
 
     for (i = 0; i < 4; ++i)
     {
-        x = sp.a11 * m->m[0][i] + sp.a12 * m->m[1][i] + sp.a13 * m->m[2][i] + sp.a14 * m->m[3][i];
-        y = sp.a12 * m->m[0][i] + sp.a22 * m->m[1][i] + sp.a23 * m->m[2][i] + sp.a24 * m->m[3][i];
-        z = sp.a13 * m->m[0][i] + sp.a23 * m->m[1][i] + sp.a33 * m->m[2][i] + sp.a34 * m->m[3][i];
-        w = sp.a14 * m->m[0][i] + sp.a24 * m->m[1][i] + sp.a34 * m->m[2][i] + sp.a44 * m->m[3][i];
-        l = sqrt(x * x + y * y + z * z + w * w);
         ex = m->m[0][i];
         ey = m->m[1][i];
         ez = m->m[2][i];
         ew = m->m[3][i];
+
+        x = sp.a11 * ex + sp.a12 * ey + sp.a13 * ez + sp.a14 * ez;
+        y = sp.a12 * ex + sp.a22 * ey + sp.a23 * ez + sp.a24 * ez;
+        z = sp.a13 * ex + sp.a23 * ey + sp.a33 * ez + sp.a34 * ez;
+        w = sp.a14 * ex + sp.a24 * ey + sp.a34 * ez + sp.a44 * ez;
+        l = sqrt(x * x + y * y + z * z + w * w);
 
         /* normalize */
         x /= l;
@@ -752,34 +802,66 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, doubl
     *t0 = sgn * sqrt(_cs2_clamp_0(1.0 - *t12 * *t12 - *t23 * *t23 - *t31 * *t31));
 }
 
-static void _cs2_predgparam3f_eval_a_torus(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
+static void _cs2_predgparam3f_eval_a_xy_zw_torus(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
 {
     double alpha = u * 2 * CS2_PI;
     double beta = v * 2 * CS2_PI;
+    double rp, rm, sa, ca, sb, cb;
 
     CS2_ASSERT(component == 0);
 
-    if (_cs2_almost_zero(pp->b))
-    {
-        double rp = sqrt((pp->a + pp->c) / (2 * pp->a));
-        double rm = sqrt((pp->a - pp->c) / (2 * pp->a));
+    rp = sqrt((pp->a + pp->c) / (2 * pp->a));
+    rm = sqrt((pp->a - pp->c) / (2 * pp->a));
 
-        *t12 = rp * cos(alpha);
-        *t23 = rp * sin(alpha);
-        *t31 = rm * cos(beta);
-        *t0 = rm * sin(beta);
-    }
-    else
-    {
-        double rp = sqrt((pp->b + pp->c) / (2 * pp->b));
-        double rm = sqrt((pp->b - pp->c) / (2 * pp->b));
+    cs2_sincosf(alpha, &sa, &ca);
+    cs2_sincosf(beta, &sb, &cb);
 
-        *t12 = rp * cos(alpha);
-        *t23 = rm * sin(alpha);
-        *t31 = rp * cos(beta);
-        *t0 = rm * sin(beta);
-    }
+    *t12 = rp * ca;
+    *t23 = rp * sa;
+    *t31 = rm * cb;
+    *t0 = rm * sb;
 }
+
+static void _cs2_predgparam3f_eval_a_xy_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
+{
+
+}
+
+static void _cs2_predgparam3f_eval_a_zw_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
+{
+
+}
+
+static void _cs2_predgparam3f_eval_a_xz_yw_torus(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
+{
+    double alpha = u * 2 * CS2_PI;
+    double beta = v * 2 * CS2_PI;
+    double rp, rm, sa, ca, sb, cb;
+
+    CS2_ASSERT(component == 0);
+
+    rp = sqrt((pp->b + pp->c) / (2 * pp->b));
+    rm = sqrt((pp->b - pp->c) / (2 * pp->b));
+
+    cs2_sincosf(alpha, &sa, &ca);
+    cs2_sincosf(beta, &sb, &cb);
+
+    *t12 = rp * ca;
+    *t23 = rm * sa;
+    *t31 = rp * cb;
+    *t0 = rm * sb;
+}
+
+static void _cs2_predgparam3f_eval_a_xz_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
+{
+
+}
+
+static void _cs2_predgparam3f_eval_a_yw_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
+{
+
+}
+
 
 void cs2_predg3f_set(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b, double c)
 {
@@ -837,8 +919,12 @@ const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t)
     case cs2_predgtype3f_improper: return "improper";
     case cs2_predgtype3f_ellipsoidal: return "ellipsoidal";
     case cs2_predgtype3f_toroidal: return "toroidal";
-    default: return 0;
+
+    /* COUNT */
+    case cs2_predgtype3f_COUNT: return 0;
     }
+
+    return 0;
 }
 
 enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g)
@@ -867,7 +953,7 @@ const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt)
     switch (pt)
     {
     /* common */
-    case cs2_predgparamtype3f_an_empty_set: return "an empty case";
+    case cs2_predgparamtype3f_an_empty_set: return "an empty set";
 
     /* ellipsoidal */
     case cs2_predgparamtype3f_a_pair_of_points: return "a pair of points";
@@ -882,10 +968,18 @@ const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt)
     case cs2_predgparamtype3f_a_pair_of_separate_yz_caps: return "a pair of separate yz-caps";
 
     /* toroidal */
-    case cs2_predgparamtype3f_a_torus: return "a torus";
+    case cs2_predgparamtype3f_a_xy_zw_torus: return "a xy/zw-torus";
+    case cs2_predgparamtype3f_a_xy_circle: return "a xy-circle";
+    case cs2_predgparamtype3f_a_zw_circle: return "a zw-circle";
+    case cs2_predgparamtype3f_a_xz_yw_torus: return "a xz/yw-torus";
+    case cs2_predgparamtype3f_a_xz_circle: return "a xz-circle";
+    case cs2_predgparamtype3f_a_yw_circle: return "a yw-circle";
 
-    default: return 0;
+    /* COUNT */
+    case cs2_predgparamtype3f_COUNT: return 0;
     }
+
+    return 0;
 }
 
 int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt)
@@ -908,12 +1002,19 @@ int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt)
     case cs2_predgparamtype3f_a_pair_of_separate_yz_caps: return 2;
 
     /* toroidal */
-    case cs2_predgparamtype3f_a_torus: return 2;
+    case cs2_predgparamtype3f_a_xy_zw_torus: return 2;
+    case cs2_predgparamtype3f_a_xy_circle: return 1;
+    case cs2_predgparamtype3f_a_zw_circle: return 1;
+    case cs2_predgparamtype3f_a_xz_yw_torus: return 2;
+    case cs2_predgparamtype3f_a_xz_circle: return 1;
+    case cs2_predgparamtype3f_a_yw_circle: return 1;
 
-    default:
-        CS2_ASSERT_PANIC("invalid param type");
-        return -2;
+    /* COUNT */
+    case cs2_predgparamtype3f_COUNT: return -1;
     }
+
+    CS2_ASSERT_PANIC("invalid param type");
+    return -1;
 }
 
 int cs2_predgparamtype3f_components(enum cs2_predgparamtype3f_e pt)
@@ -936,12 +1037,19 @@ int cs2_predgparamtype3f_components(enum cs2_predgparamtype3f_e pt)
     case cs2_predgparamtype3f_a_pair_of_separate_yz_caps: return 2;
 
     /* toroidal */
-    case cs2_predgparamtype3f_a_torus: return 1;
+    case cs2_predgparamtype3f_a_xy_zw_torus: return 1;
+    case cs2_predgparamtype3f_a_xy_circle: return 1;
+    case cs2_predgparamtype3f_a_zw_circle: return 1;
+    case cs2_predgparamtype3f_a_xz_yw_torus: return 1;
+    case cs2_predgparamtype3f_a_xz_circle: return 1;
+    case cs2_predgparamtype3f_a_yw_circle: return 1;
 
-    default:
-        CS2_ASSERT_PANIC("invalid param type");
-        return -1;
+    /* COUNT */
+    case cs2_predgparamtype3f_COUNT: return -1;
     }
+
+    CS2_ASSERT_PANIC("invalid param type");
+    return -1;
 }
 
 void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g)
@@ -976,64 +1084,34 @@ void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f
     double t12 = 0.0, t23 = 0.0, t31 = 0.0, t0 = 0.0;
 
     CS2_ASSERT(u >= 0.0 && u <= 1.0 && v >= 0.0 && v <= 1.0);
+    CS2_ASSERT(pp->t >= 0 && pp->t < cs2_predgparamtype3f_COUNT);
 
-    switch (pp->t)
-    {
-    /* common */
-    case cs2_predgparamtype3f_an_empty_set:
-        _cs2_predgparam3f_eval_an_empty_set(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
+    static void (* const eval_tab[cs2_predgparamtype3f_COUNT])(double *, double *, double *, double *, const struct cs2_predgparam3f_s *, double, double, int) = {
+        /* common */
+        _cs2_predgparam3f_eval_an_empty_set,
 
-    /* ellipsoidal */
-    case cs2_predgparamtype3f_a_pair_of_points:
-        _cs2_predgparam3f_eval_a_pair_of_points(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
+        /* ellipsoidal */
+        _cs2_predgparam3f_eval_a_pair_of_points,
+        _cs2_predgparam3f_eval_a_pair_of_separate_ellipsoids,
+        _cs2_predgparam3f_eval_a_pair_of_y_touching_ellipsoids,
+        _cs2_predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids,
+        _cs2_predgparam3f_eval_a_pair_of_z_touching_ellipsoids,
+        _cs2_predgparam3f_eval_a_y_barrel,
+        _cs2_predgparam3f_eval_a_z_barrel,
+        _cs2_predgparam3f_eval_a_notched_y_barrel,
+        _cs2_predgparam3f_eval_a_notched_z_barrel,
+        _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps,
 
-    case cs2_predgparamtype3f_a_pair_of_separate_ellipsoids:
-        _cs2_predgparam3f_eval_a_pair_of_separate_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
+        /* toroidal */
+        _cs2_predgparam3f_eval_a_xy_zw_torus,
+        _cs2_predgparam3f_eval_a_xy_circle,
+        _cs2_predgparam3f_eval_a_zw_circle,
+        _cs2_predgparam3f_eval_a_xz_yw_torus,
+        _cs2_predgparam3f_eval_a_xz_circle,
+        _cs2_predgparam3f_eval_a_yw_circle
+    };
 
-    case cs2_predgparamtype3f_a_pair_of_y_touching_ellipsoids:
-        _cs2_predgparam3f_eval_a_pair_of_y_touching_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_pair_of_yz_crossed_ellipsoids:
-        _cs2_predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_pair_of_z_touching_ellipsoids:
-        _cs2_predgparam3f_eval_a_pair_of_z_touching_ellipsoids(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_y_barrel:
-        _cs2_predgparam3f_eval_a_y_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_z_barrel:
-        _cs2_predgparam3f_eval_a_z_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_notched_y_barrel:
-        _cs2_predgparam3f_eval_a_notched_y_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_notched_z_barrel:
-        _cs2_predgparam3f_eval_a_notched_z_barrel(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    case cs2_predgparamtype3f_a_pair_of_separate_yz_caps:
-        _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    /* toroidal */
-    case cs2_predgparamtype3f_a_torus:
-        _cs2_predgparam3f_eval_a_torus(&t12, &t23, &t31, &t0, pp, u, v, component);
-        break;
-
-    default:
-        CS2_ASSERT_PANIC("invalid param type");
-        break;
-    }
+    eval_tab[pp->t](&t12, &t23, &t31, &t0, pp, u, v, component);
 
     /* eigenmatrix rotation */
     s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
@@ -1102,6 +1180,12 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
                 {
                     CS2_ASSERT_PANIC("invalid type");
                 }
+
+                break;
+
+            /* COUNT */
+            case cs2_predgtype3f_COUNT:
+                CS2_ASSERT_PANIC("invalid type");
 
                 break;
         }

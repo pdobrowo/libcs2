@@ -27,7 +27,7 @@
 #include <math.h>
 
 #define EPS (10e-8)
-#define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
+#define test_almost_equal(x, y) TEST_ASSERT_TRUE(fabs((x) - (y)) < EPS)
 
 struct ctx
 {

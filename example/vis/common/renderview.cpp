@@ -23,8 +23,6 @@
  * SOFTWARE.
  */
 #include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glext.h>
 #include "renderview.h"
 #include "renderviewflycamera.h"
 #include "renderviewarcballcamera.h"

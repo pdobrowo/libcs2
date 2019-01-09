@@ -90,7 +90,8 @@ struct test_suite_s
     } \
     static void test_case_proc_##TestSuiteName##_##TestCaseName(void)
 
-#define TEST_ASSERT assert_true
+#define TEST_ASSERT_TRUE assert_true
+#define TEST_ASSERT_STRING_EQUAL assert_string_equal
 
 /* suites */
 struct test_suite_s *test_suites(void);

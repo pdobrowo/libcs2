@@ -28,7 +28,7 @@
 #include <math.h>
 
 #define EPS (10e-8)
-#define test_almost_equal(x, y) TEST_ASSERT(fabs((x) - (y)) < EPS)
+#define test_almost_equal(x, y) TEST_ASSERT_TRUE(fabs((x) - (y)) < EPS)
 
 struct predbb_func_s
 {
@@ -73,7 +73,7 @@ TEST_CASE(beziertreeqq4f, init_and_sub)
     cs2_beziertreeqq4f_from_func(&t, &predbb_func, &f);
 
     /* initial tree is virtual with zero volume and zero area */
-    TEST_ASSERT(cs2_beziertreenodeqq4f_is_virt(t.rn));
+    TEST_ASSERT_TRUE(cs2_beziertreenodeqq4f_is_virt(t.rn));
     test_almost_equal(cs2_beziertreeqq4f_vol(&t), 0.0);
     test_almost_equal(cs2_beziertreeqq4f_area(&t), 0.0);
 
@@ -81,13 +81,13 @@ TEST_CASE(beziertreeqq4f, init_and_sub)
     cs2_beziertreenodeqq4f_sub(t.rn);
 
     /* first level subdivision must not be virtual and volume must not be zero */
-    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[0][0]));
-    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[0][1]));
-    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[1][0]));
-    TEST_ASSERT(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[1][1]));
+    TEST_ASSERT_TRUE(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[0][0]));
+    TEST_ASSERT_TRUE(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[0][1]));
+    TEST_ASSERT_TRUE(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[1][0]));
+    TEST_ASSERT_TRUE(!cs2_beziertreenodeqq4f_is_virt(t.rn->c[1][1]));
 
-    TEST_ASSERT(cs2_beziertreeqq4f_vol(&t) > 0.0);
-    TEST_ASSERT(cs2_beziertreeqq4f_area(&t) > 0.0);
+    TEST_ASSERT_TRUE(cs2_beziertreeqq4f_vol(&t) > 0.0);
+    TEST_ASSERT_TRUE(cs2_beziertreeqq4f_area(&t) > 0.0);
 
     /* do second level subdivision */
     cs2_beziertreenodeqq4f_sub(t.rn->c[0][0]);
@@ -123,7 +123,7 @@ TEST_CASE(beziertreeqq4f, sub_vol)
 
     cs2_beziertreeleafsqq4f_sub_vol(&l, 0.0001);
 
-    TEST_ASSERT(pc == l.c);
+    TEST_ASSERT_TRUE(pc == l.c);
 
     /* count */
     tc = 0;
@@ -135,7 +135,7 @@ TEST_CASE(beziertreeqq4f, sub_vol)
         ll = ll->next;
     }
 
-    TEST_ASSERT(pc == tc);
+    TEST_ASSERT_TRUE(pc == tc);
 
     /* clear */
     cs2_beziertreeqq4f_clear(&t);

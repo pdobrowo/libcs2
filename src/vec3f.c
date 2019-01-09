@@ -24,6 +24,7 @@
  */
 #include "cs2/vec3f.h"
 #include "cs2/fmt.h"
+#include "cs2/assert.h"
 #include <math.h>
 
 void cs2_vec3f_set(struct cs2_vec3f_s *r, double x, double y, double z)
@@ -36,6 +37,17 @@ void cs2_vec3f_set(struct cs2_vec3f_s *r, double x, double y, double z)
 void cs2_vec3f_zero(struct cs2_vec3f_s *r)
 {
     cs2_vec3f_set(r, 0, 0, 0);
+}
+
+double cs2_vec3f_coord(const struct cs2_vec3f_s *r, int k)
+{
+    switch (k) {
+    case 0: return r->x;
+    case 1: return r->y;
+    case 2: return r->z;
+    }
+    CS2_ASSERT_PANIC("invalid coordinate");
+    return 0.0;
 }
 
 void cs2_vec3f_copy(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)

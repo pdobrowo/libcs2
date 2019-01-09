@@ -40,6 +40,8 @@ struct cs2_vec4f_s
 CS2_API void cs2_vec4f_set(struct cs2_vec4f_s *r, double x, double y, double z, double w);
 CS2_API void cs2_vec4f_zero(struct cs2_vec4f_s *r);
 
+CS2_API double cs2_vec4f_coord(const struct cs2_vec4f_s *r, int k);
+
 CS2_API void cs2_vec4f_copy(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *v);
 
 CS2_API void cs2_vec4f_add(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, const struct cs2_vec4f_s *b);

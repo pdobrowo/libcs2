@@ -70,9 +70,9 @@ TEST_CASE(vec3x, set)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_set(&c.v, c.si[3], c.si[5], c.si[7]);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 3) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 5) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 7) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 3) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 5) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 7) == 0);
     ctx_clear(&c);
 }
 
@@ -81,9 +81,9 @@ TEST_CASE(vec3x, set_si)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_set_si(&c.v, 3, 5, 7);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 3) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 5) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 7) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 3) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 5) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 7) == 0);
     ctx_clear(&c);
 }
 
@@ -92,9 +92,9 @@ TEST_CASE(vec3x, zero)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_zero(&c.v);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 0) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 0) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 0) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 0) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 0) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 0) == 0);
     ctx_clear(&c);
 }
 
@@ -103,7 +103,7 @@ TEST_CASE(vec3x, is_zero)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_zero(&c.v);
-    TEST_ASSERT(cs2_vec3x_is_zero(&c.v));
+    TEST_ASSERT_TRUE(cs2_vec3x_is_zero(&c.v));
     ctx_clear(&c);
 }
 
@@ -112,9 +112,9 @@ TEST_CASE(vec3x, copy)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_copy(&c.v, &c.v357);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 3) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 5) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 7) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 3) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 5) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 7) == 0);
     ctx_clear(&c);
 }
 
@@ -123,9 +123,9 @@ TEST_CASE(vec3x, add)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_add(&c.v, &c.v123, &c.v357);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 4) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 7) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 10) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 4) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 7) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 10) == 0);
     ctx_clear(&c);
 }
 
@@ -134,9 +134,9 @@ TEST_CASE(vec3x, sub)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_sub(&c.v, &c.v123, &c.v357);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, -2) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, -3) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, -4) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, -2) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, -3) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, -4) == 0);
     ctx_clear(&c);
 }
 
@@ -145,9 +145,9 @@ TEST_CASE(vec3x, neg)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_neg(&c.v, &c.v123);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, -1) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, -2) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, -3) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, -1) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, -2) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, -3) == 0);
     ctx_clear(&c);
 }
 
@@ -156,9 +156,9 @@ TEST_CASE(vec3x, mul)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_mul(&c.v, &c.v123, c.si[5]);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 5) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 10) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 15) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 5) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 10) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 15) == 0);
     ctx_clear(&c);
 }
 
@@ -169,10 +169,10 @@ TEST_CASE(vec3x, cl)
     ctx_init(&c);
     cs2_pin3x_init(&p);
     cs2_vec3x_cl(&p, &c.v123, &c.v357);
-    TEST_ASSERT(mpz_cmp_si(p.p0, 34) == 0);
-    TEST_ASSERT(mpz_cmp_si(p.p12, -1) == 0);
-    TEST_ASSERT(mpz_cmp_si(p.p23, -1) == 0);
-    TEST_ASSERT(mpz_cmp_si(p.p31, 2) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(p.p0, 34) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(p.p12, -1) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(p.p23, -1) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(p.p31, 2) == 0);
     cs2_pin3x_clear(&p);
     ctx_clear(&c);
 }
@@ -182,9 +182,9 @@ TEST_CASE(vec3x, mad2)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_mad2(&c.v, &c.v123, c.si[4], &c.v357, c.si[8]);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 28) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 48) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 68) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 28) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 48) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 68) == 0);
     ctx_clear(&c);
 }
 
@@ -193,9 +193,9 @@ TEST_CASE(vec3x, mad3)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_mad3(&c.v, &c.v123, c.si[4], &c.v357, c.si[8], &c.v248, c.si[9]);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 46) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 84) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 140) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 46) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 84) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 140) == 0);
     ctx_clear(&c);
 }
 
@@ -204,9 +204,9 @@ TEST_CASE(vec3x, mad4)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_mad4(&c.v, &c.v123, c.si[4], &c.v357, c.si[8], &c.v248, c.si[9], &c.v159, c.si[2]);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 48) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 94) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 158) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 48) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 94) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 158) == 0);
     ctx_clear(&c);
 }
 
@@ -215,9 +215,9 @@ TEST_CASE(vec3x, mad5)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_mad5(&c.v, &c.v123, c.si[4], &c.v357, c.si[8], &c.v248, c.si[9], &c.v159, c.si[2], &c.v789, c.si[5]);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, 83) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 134) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, 203) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, 83) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 134) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, 203) == 0);
     ctx_clear(&c);
 }
 
@@ -228,7 +228,7 @@ TEST_CASE(vec3x, dot)
     ctx_init(&c);
     mpz_init(d);
     cs2_vec3x_dot(d, &c.v123, &c.v357);
-    TEST_ASSERT(mpz_cmp_si(d, 34) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(d, 34) == 0);
     mpz_clear(d);
     ctx_clear(&c);
 }
@@ -238,9 +238,9 @@ TEST_CASE(vec3x, cross)
     struct ctx c;
     ctx_init(&c);
     cs2_vec3x_cross(&c.v, &c.v123, &c.v357);
-    TEST_ASSERT(mpz_cmp_si(c.v.x, -1) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.y, 2) == 0);
-    TEST_ASSERT(mpz_cmp_si(c.v.z, -1) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.x, -1) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.y, 2) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(c.v.z, -1) == 0);
     ctx_clear(&c);
 }
 
@@ -255,10 +255,10 @@ TEST_CASE(vec3x, cl_vs_cross_and_dot)
     cs2_vec3x_cl(&p, &c.v123, &c.v357);
     cs2_vec3x_cross(&c.v, &c.v123, &c.v357);
     cs2_vec3x_dot(d, &c.v123, &c.v357);
-    TEST_ASSERT(mpz_cmp(p.p0, d) == 0);
-    TEST_ASSERT(mpz_cmp(p.p12, c.v.z) == 0);
-    TEST_ASSERT(mpz_cmp(p.p23, c.v.x) == 0);
-    TEST_ASSERT(mpz_cmp(p.p31, c.v.y) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp(p.p0, d) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp(p.p12, c.v.z) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp(p.p23, c.v.x) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp(p.p31, c.v.y) == 0);
     mpz_clear(d);
     cs2_pin3x_clear(&p);
     ctx_clear(&c);
@@ -271,7 +271,7 @@ TEST_CASE(vec3x, sqlen)
     ctx_init(&c);
     mpz_init(d);
     cs2_vec3x_sqlen(d, &c.v123);
-    TEST_ASSERT(mpz_cmp_si(d, 14) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(d, 14) == 0);
     mpz_clear(d);
     ctx_clear(&c);
 }
@@ -283,7 +283,7 @@ TEST_CASE(vec3x, tr)
     ctx_init(&c);
     mpz_init(d);
     cs2_vec3x_tr(d, &c.v123);
-    TEST_ASSERT(mpz_cmp_si(d, 6) == 0);
+    TEST_ASSERT_TRUE(mpz_cmp_si(d, 6) == 0);
     mpz_clear(d);
     ctx_clear(&c);
 }
