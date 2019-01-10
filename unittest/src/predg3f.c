@@ -24,6 +24,8 @@
  */
 #include "cs2/predg3f.h"
 #include "cs2/rand.h"
+#include "cs2/spin3f.h"
+#include "cs2/spinquad3f.h"
 #include "unittest/unittest.h"
 #include <math.h>
 
@@ -195,6 +197,13 @@ static const struct cs2_predg3f_s test_predg3f_a_yw_circle = {
     0.0
 };
 
+#define EPS (10e-8)
+
+static int _cs2_almost_zero(double x)
+{
+    return fabs(x) < EPS;
+}
+
 static void rand_predg3f(struct cs2_rand_s *r, struct cs2_predg3f_s *g)
 {
     const double MIN = -10;
@@ -272,15 +281,22 @@ TEST_CASE(predg3f, param_an_empty_set)
 TEST_CASE(predg3f, param_a_pair_of_points)
 {
     struct cs2_predgparam3f_s pp;
+    struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
-    cs2_predg3f_param(&pp, &test_predg3f_a_pair_of_points);
+    const struct cs2_predg3f_s *pg = &test_predg3f_a_pair_of_points;
+
+    cs2_spinquad3f_from_predg3f(&sq, pg);
+    cs2_predg3f_param(&pp, pg);
 
     TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_pair_of_points);
     TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a pair of points");
     TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 0);
     TEST_ASSERT_TRUE(cs2_predgparamtype3f_components(pp.t) == 2);
+
     cs2_predgparam3f_eval(&sp, &pp, 0.0, 0.0, 0);
+    TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     cs2_predgparam3f_eval(&sp, &pp, 0.0, 0.0, 1);
+    TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
 }
 
 TEST_CASE(predg3f, param_a_pair_of_separate_ellipsoids)
