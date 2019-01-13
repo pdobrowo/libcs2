@@ -123,7 +123,7 @@ void cs2_hull4f_from_arr(struct cs2_hull4f_s *h, const struct cs2_vec4f_s *v, si
     }
     else
     {
-        CS2_ASSERT_PANIC("qhull error - see stderr for details");
+        CS2_PANIC_MSG("qhull error - see stderr for details");
     }
 
     qh.NOerrexit = True;

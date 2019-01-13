@@ -46,7 +46,7 @@ double cs2_vec3f_coord(const struct cs2_vec3f_s *r, int k)
     case 1: return r->y;
     case 2: return r->z;
     }
-    CS2_ASSERT_PANIC("invalid coordinate");
+    CS2_PANIC_MSG("invalid coordinate");
     return 0.0;
 }
 

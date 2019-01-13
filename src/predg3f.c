@@ -392,7 +392,7 @@ static enum cs2_predgparamtype3f_e _cs2_ellipsoidal_param_type(double a, double 
         /* fall through */
     }
 
-    CS2_ASSERT_PANIC("unknown param type");
+    CS2_PANIC_MSG("unknown param type");
     return cs2_predgparamtype3f_an_empty_set;
 }
 
@@ -463,7 +463,7 @@ static enum cs2_predgparamtype3f_e _cs2_toroidal_param_type(double a, double b, 
         /* fall through */
     }
 
-    CS2_ASSERT_PANIC("unknown param type");
+    CS2_PANIC_MSG("unknown param type");
     return cs2_predgparamtype3f_COUNT;
 }
 
@@ -531,7 +531,7 @@ static void _cs2_predgparam3f_eval_an_empty_set(double *t12, double *t23, double
     (void)component;
 
     /* no parametrization */
-    CS2_ASSERT_PANIC("no parametrization");
+    CS2_PANIC_MSG("no parametrization");
 }
 
 static void _cs2_predgparam3f_eval_a_pair_of_points(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -558,7 +558,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_points(double *t12, double *t23, do
             break;
 
         default:
-            CS2_ASSERT_PANIC("invalid component");
+            CS2_PANIC_MSG("invalid component");
             break;
     }
 }
@@ -582,7 +582,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, do
             break;
 
         default:
-            CS2_ASSERT_PANIC("invalid component");
+            CS2_PANIC_MSG("invalid component");
             break;
     }
 
@@ -613,7 +613,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_y_touching_ellipsoids(double *t12, 
     (void)component;
 
     /* no parametrization */
-    CS2_ASSERT_PANIC("not implemented");
+    CS2_PANIC_MSG("not implemented");
 }
 
 static void _cs2_predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -631,7 +631,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_yz_crossed_ellipsoids(double *t12, 
     (void)component;
 
     /* no parametrization */
-    CS2_ASSERT_PANIC("not implemented");
+    CS2_PANIC_MSG("not implemented");
 }
 
 static void _cs2_predgparam3f_eval_a_pair_of_z_touching_ellipsoids(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -649,7 +649,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_z_touching_ellipsoids(double *t12, 
     (void)component;
 
     /* no parametrization */
-    CS2_ASSERT_PANIC("not implemented");
+    CS2_PANIC_MSG("not implemented");
 }
 
 static void _cs2_predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -737,7 +737,7 @@ static void _cs2_predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, 
     (void)component;
 
     /* no parametrization */
-    CS2_ASSERT_PANIC("not implemented");
+    CS2_PANIC_MSG("not implemented");
 }
 
 static void _cs2_predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -755,7 +755,7 @@ static void _cs2_predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, 
     (void)component;
 
     /* no parametrization */
-    CS2_ASSERT_PANIC("not implemented");
+    CS2_PANIC_MSG("not implemented");
 }
 
 static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int component)
@@ -777,7 +777,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, doubl
             break;
 
         default:
-            CS2_ASSERT_PANIC("invalid component");
+            CS2_PANIC_MSG("invalid component");
             break;
     }
 
@@ -1022,7 +1022,7 @@ int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt)
     case cs2_predgparamtype3f_COUNT: return -1;
     }
 
-    CS2_ASSERT_PANIC("invalid param type");
+    CS2_PANIC_MSG("invalid param type");
     return -1;
 }
 
@@ -1057,7 +1057,7 @@ int cs2_predgparamtype3f_components(enum cs2_predgparamtype3f_e pt)
     case cs2_predgparamtype3f_COUNT: return -1;
     }
 
-    CS2_ASSERT_PANIC("invalid param type");
+    CS2_PANIC_MSG("invalid param type");
     return -1;
 }
 
@@ -1187,14 +1187,14 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
                 }
                 else
                 {
-                    CS2_ASSERT_PANIC("invalid type");
+                    CS2_PANIC_MSG("invalid type");
                 }
 
                 break;
 
             /* COUNT */
             case cs2_predgtype3f_COUNT:
-                CS2_ASSERT_PANIC("invalid type");
+                CS2_PANIC_MSG("invalid type");
 
                 break;
         }

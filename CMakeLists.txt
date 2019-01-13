@@ -103,6 +103,7 @@ set(cs2_HEADERS
     inc/cs2/mem.h
     inc/cs2/fmt.h
     inc/cs2/assert.h
+    inc/cs2/color.h
 )
 
 # src
