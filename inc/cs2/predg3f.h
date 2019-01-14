@@ -104,7 +104,10 @@ enum cs2_predgparamtype3f_e
 CS2_API const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt);
 
 CS2_API int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt);
-CS2_API int cs2_predgparamtype3f_components(enum cs2_predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_domain_components(enum cs2_predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_is_manifold(enum cs2_predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pt);
 
 struct cs2_predgparam3f_s
 {
@@ -114,7 +117,7 @@ struct cs2_predgparam3f_s
 };
 
 CS2_API void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g);
-CS2_API void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int component);
+CS2_API void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component);
 
 /* special */
 CS2_API void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const struct cs2_predg3f_s *g);
