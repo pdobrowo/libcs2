@@ -6,25 +6,25 @@ jobs:
     steps:
     - checkout
     - run:
-      name: Install build dependencies
-      command: apt-get update && apt-get install -y g++ cmake git libgmp-dev libcgal-dev
+        name: Install build dependencies
+        command: apt-get update && apt-get install -y g++ cmake git libgmp-dev libcgal-dev
     - run:
-      name: Build and install dependencies
-      command: ./init.sh
+        name: Build and install dependencies
+        command: ./init.sh
     - run:
-      name: Make
-      command: ./make_release.sh
+        name: Make
+        command: ./make_release.sh
     - run:
-      name: Make unit tests
-      command: ( cd unittest && ./make_release.sh )
+        name: Make unit tests
+        command: ( cd unittest && ./make_release.sh )
     - run:
-      name: Create test-results directory
-      command: mkdir -u bin/test-results/unittest
+        name: Create test-results directory
+        command: mkdir -u bin/test-results/unittest
     - run:
-      name: Run unit tests
-      command: ./bin/unittest --xml | tee bin/test-results/unittest/results.xml
+        name: Run unit tests
+        command: ./bin/unittest --xml | tee bin/test-results/unittest/results.xml
     - store_test_results:
-      path: bin/test-results
+        path: bin/test-results
 workflows:
   version: 2
   workflow:
