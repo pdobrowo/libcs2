@@ -22,7 +22,7 @@ jobs:
         command: mkdir -p bin/test-results/unittest
     - run:
         name: Run unit tests
-        command: ./bin/unittest --xml | tee bin/test-results/unittest/results.xml
+        command: ./bin/unittest --xml 2>/dev/null 2>/dev/null | tee bin/test-results/unittest/results.xml
     - store_test_results:
         path: bin/test-results
 workflows:

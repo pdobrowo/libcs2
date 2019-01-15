@@ -40,9 +40,10 @@ void cs2_assert(int value, const char *cond, const char *file, int line)
     if (value)
         return;
 
-    printf("%slibcs2:%s %sassertion '%s' failed at %s:%d%s\n",
+    fprintf(stderr, "%slibcs2:%s %sassertion '%s' failed at %s:%d%s\n",
            _cs2_color_lib, _cs2_color_default, _cs2_color_assert, cond, file, line, _cs2_color_default);
-    fflush(stdout);
+
+    fflush(stderr);
 
     abort();
 }
@@ -54,16 +55,16 @@ void cs2_assert_msg(int value, const char *cond, const char *file, int line, con
     if (value)
         return;
 
-    printf("%slibcs2:%s %sassertion '%s' failed at %s:%d with message '",
+    fprintf(stderr, "%slibcs2:%s %sassertion '%s' failed at %s:%d with message '",
            _cs2_color_lib, _cs2_color_default, _cs2_color_assert, cond, file, line);
 
     va_start(args, msg);
-    vprintf(msg, args);
+    vfprintf(stderr, msg, args);
     va_end(args);
 
-    printf("%s'\n", _cs2_color_default);
+    fprintf(stderr, "%s'\n", _cs2_color_default);
 
-    fflush(stdout);
+    fflush(stderr);
 
     abort();
 }
@@ -72,16 +73,16 @@ void cs2_panic_msg(const char *file, int line, const char *msg, ...)
 {
     va_list args;
 
-    printf("%slibcs2:%s %spanic at %s:%d with message '",
+    fprintf(stderr, "%slibcs2:%s %spanic at %s:%d with message '",
            _cs2_color_lib, _cs2_color_default, _cs2_color_panic, file, line);
 
     va_start(args, msg);
-    vprintf(msg, args);
+    vfprintf(stderr, msg, args);
     va_end(args);
 
-    printf("%s'\n", _cs2_color_default);
+    fprintf(stderr, "%s'\n", _cs2_color_default);
 
-    fflush(stdout);
+    fflush(stderr);
 
     abort();
 }
@@ -90,14 +91,14 @@ void cs2_warn_msg(const char *file, int line, const char *msg, ...)
 {
     va_list args;
 
-    printf("%slibcs2:%s %swarning at %s:%d with message '",
+    fprintf(stderr, "%slibcs2:%s %swarning at %s:%d with message '",
            _cs2_color_lib, _cs2_color_default, _cs2_color_warn, file, line);
 
     va_start(args, msg);
-    vprintf(msg, args);
+    vfprintf(stderr, msg, args);
     va_end(args);
 
-    printf("%s'\n", _cs2_color_default);
+    fprintf(stderr, "%s'\n", _cs2_color_default);
 
-    fflush(stdout);
+    fflush(stderr);
 }
