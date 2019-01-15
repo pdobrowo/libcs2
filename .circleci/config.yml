@@ -19,7 +19,7 @@ jobs:
         command: ( cd unittest && ./make_release.sh )
     - run:
         name: Create test-results directory
-        command: mkdir -u bin/test-results/unittest
+        command: mkdir -p bin/test-results/unittest
     - run:
         name: Run unit tests
         command: ./bin/unittest --xml | tee bin/test-results/unittest/results.xml
