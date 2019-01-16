@@ -93,19 +93,19 @@ static const struct cs2_predg3f_s test_predg3f_a_pair_of_y_touching_ellipsoids =
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_pair_of_yz_crossed_ellipsoids = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
+    { -3.0, 10.0, 4.0 },
+    { -1.0, -6.0, -4.0 },
+    { -3.0, 10.0, 4.0 },
+    { -1.0, -6.0, -4.0 },
     0.0
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_pair_of_z_touching_ellipsoids = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    0.0
+    { 10.0, -2.0, -3.0 },
+    { 6.0, 2.0, -5.0 },
+    { -1.0, -6.0, -4.0 },
+    { -3.0, 10.0, 4.0 },
+    -648.0
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_y_barrel = {
@@ -367,7 +367,6 @@ TEST_CASE(predg3f, param_a_pair_of_y_touching_ellipsoids)
 
 TEST_CASE(predg3f, param_a_pair_of_yz_crossed_ellipsoids)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -391,14 +390,12 @@ TEST_CASE(predg3f, param_a_pair_of_yz_crossed_ellipsoids)
         cs2_predgparam3f_eval(&sp, &pp, u, v, c);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 
     /* TODO: test if values in domain holes match */
 }
 
 TEST_CASE(predg3f, param_a_pair_of_z_touching_ellipsoids)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -422,7 +419,6 @@ TEST_CASE(predg3f, param_a_pair_of_z_touching_ellipsoids)
         cs2_predgparam3f_eval(&sp, &pp, u, v, c);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 
     /* TODO: test if values in domain holes match */
 }
