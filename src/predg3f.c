@@ -694,38 +694,18 @@ static void _cs2_predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *
 
 static void _cs2_predgparam3f_eval_a_notched_y_barrel(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
-    (void)t12;
-    (void)t23;
-    (void)t31;
-    (void)t0;
-
-    (void)pp;
-
-    (void)u;
-    (void)v;
-
-    (void)domain_component;
-
-    /* no parametrization */
-    CS2_PANIC_MSG("not implemented");
+    /* same as 'a y-barrel'
+     * includes a domain hole
+     */
+    _cs2_predgparam3f_eval_a_y_barrel(t12, t23, t31, t0, pp, u, v, domain_component);
 }
 
 static void _cs2_predgparam3f_eval_a_notched_z_barrel(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
-    (void)t12;
-    (void)t23;
-    (void)t31;
-    (void)t0;
-
-    (void)pp;
-
-    (void)u;
-    (void)v;
-
-    (void)domain_component;
-
-    /* no parametrization */
-    CS2_PANIC_MSG("not implemented");
+    /* same as 'a z-barrel'
+     * includes a domain hole
+     */
+    _cs2_predgparam3f_eval_a_z_barrel(t12, t23, t31, t0, pp, u, v, domain_component);
 }
 
 static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
@@ -1079,8 +1059,8 @@ int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pt)
     case cs2_predgparamtype3f_a_pair_of_y_touching_ellipsoids: return 1;
     case cs2_predgparamtype3f_a_pair_of_yz_crossed_ellipsoids: return 1;
     case cs2_predgparamtype3f_a_pair_of_z_touching_ellipsoids: return 1;
-    case cs2_predgparamtype3f_a_y_barrel: return 0;
-    case cs2_predgparamtype3f_a_z_barrel: return 0;
+    case cs2_predgparamtype3f_a_y_barrel: return 1;
+    case cs2_predgparamtype3f_a_z_barrel: return 1;
     case cs2_predgparamtype3f_a_notched_y_barrel: return 1;
     case cs2_predgparamtype3f_a_notched_z_barrel: return 1;
     case cs2_predgparamtype3f_a_pair_of_separate_yz_caps: return 0;
