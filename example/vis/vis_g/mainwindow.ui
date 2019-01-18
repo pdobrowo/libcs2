@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>732</height>
+    <height>853</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>19</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCamera">
@@ -91,22 +91,45 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menu_Test">
+    <property name="title">
+     <string>&amp;Test</string>
+    </property>
+    <addaction name="actionA_pair_of_points"/>
+    <addaction name="actionA_pair_of_separate_ellipsoids"/>
+    <addaction name="actionA_pair_of_y_touching_ellipsoids"/>
+    <addaction name="actionA_pair_of_yz_crossed_ellipsoids"/>
+    <addaction name="actionA_pair_of_z_touching_ellipsoids"/>
+    <addaction name="actionA_y_barrel"/>
+    <addaction name="actionA_z_barrel"/>
+    <addaction name="actionA_notched_y_barrel"/>
+    <addaction name="actionA_notched_z_barrel"/>
+    <addaction name="actionA_pair_of_separate_yz_caps"/>
+    <addaction name="separator"/>
+    <addaction name="actionA_xy_zw_torus"/>
+    <addaction name="actionA_xy_circle"/>
+    <addaction name="actionA_zw_circle"/>
+    <addaction name="actionA_xz_yw_torus"/>
+    <addaction name="actionA_xz_circle"/>
+    <addaction name="actionA_yw_circle"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menuCamera"/>
    <addaction name="menuView"/>
+   <addaction name="menu_Test"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
     <size>
      <width>300</width>
-     <height>656</height>
+     <height>793</height>
     </size>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
-    <string>Information</string>
+    <string>&amp;Information</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -115,6 +138,11 @@
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QGroupBox" name="groupBoxParameters">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Parameters</string>
        </property>
@@ -203,6 +231,11 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxBaseParameters">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Base variables</string>
        </property>
@@ -291,6 +324,11 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxParametrizationvariable">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Parametrization variables</string>
        </property>
@@ -304,13 +342,6 @@
         <property name="verticalSpacing">
          <number>2</number>
         </property>
-        <item row="4" column="1">
-         <widget class="QLabel" name="labelmaxval">
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
         <item row="6" column="1">
          <widget class="QLabel" name="labeldimval">
           <property name="text">
@@ -318,8 +349,29 @@
           </property>
          </widget>
         </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="labelismani">
+          <property name="text">
+           <string>is manifold</string>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="labelcval">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelbval">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QLabel" name="labelcompval">
           <property name="text">
            <string>-</string>
           </property>
@@ -332,52 +384,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelbval">
-          <property name="text">
-           <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelb">
-          <property name="text">
-           <string>b</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QLabel" name="labelaval">
           <property name="text">
            <string>-</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="labelmax">
-          <property name="text">
-           <string>max(a-b,b-a)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="labela">
-          <property name="text">
-           <string>a</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="labelmin">
-          <property name="text">
-           <string>min(a-b,b-a)</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="labelcase">
-          <property name="text">
-           <string>case</string>
           </property>
          </widget>
         </item>
@@ -393,10 +403,45 @@
           </property>
          </widget>
         </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="labelcomphashole">
+          <property name="text">
+           <string>has domain hole</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="labelcase">
+          <property name="text">
+           <string>case</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelmax">
+          <property name="text">
+           <string>max(a-b,b-a)</string>
+          </property>
+         </widget>
+        </item>
         <item row="3" column="1">
          <widget class="QLabel" name="labelminval">
           <property name="text">
            <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="labelmaxval">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelmin">
+          <property name="text">
+           <string>min(a-b,b-a)</string>
           </property>
          </widget>
         </item>
@@ -414,8 +459,43 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="1">
-         <widget class="QLabel" name="labelcompval">
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelb">
+          <property name="text">
+           <string>b</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="labela">
+          <property name="text">
+           <string>a</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
+         <widget class="QLabel" name="labelcompconn">
+          <property name="text">
+           <string>is connected</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QLabel" name="labelismanival">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1">
+         <widget class="QLabel" name="labelhasholeval">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QLabel" name="labelisconnval">
           <property name="text">
            <string>-</string>
           </property>
@@ -426,6 +506,11 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxType">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Type</string>
        </property>
@@ -472,6 +557,11 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBoxEigendecomposition">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
        <property name="title">
         <string>Eigen decomposition</string>
        </property>
@@ -634,11 +724,11 @@
    <property name="minimumSize">
     <size>
      <width>250</width>
-     <height>563</height>
+     <height>734</height>
     </size>
    </property>
    <property name="windowTitle">
-    <string>Parameters</string>
+    <string>&amp;Parameters</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -650,98 +740,50 @@
        <property name="title">
         <string>K</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="verticalSpacing">
-         <number>2</number>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <item row="2" column="0">
-         <widget class="QSlider" name="verticalSliderKZ">
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxKX">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
+          </property>
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>450</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="labelSliderKZ">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxKY">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderKX">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>150</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderKY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxKZ">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderKX">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderKY">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>300</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item>
          <widget class="QLabel" name="labelZeroK">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -756,98 +798,50 @@
        <property name="title">
         <string>L</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <property name="verticalSpacing">
-         <number>2</number>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <item row="2" column="1">
-         <widget class="QLabel" name="labelSliderLZ">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxLX">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QSlider" name="verticalSliderLZ">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>350</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderLX">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxLY">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderLX">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>400</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderLY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxLZ">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderLY">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>200</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item>
          <widget class="QLabel" name="labelZeroL">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -862,98 +856,50 @@
        <property name="title">
         <string>A</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <property name="verticalSpacing">
-         <number>2</number>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <item row="2" column="1">
-         <widget class="QLabel" name="labelSliderAZ">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxAX">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderAY">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>250</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderAX">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxAY">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QSlider" name="verticalSliderAZ">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>300</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderAY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxAZ">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderAX">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>380</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item>
          <widget class="QLabel" name="labelZeroA">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -968,98 +914,50 @@
        <property name="title">
         <string>B</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <property name="verticalSpacing">
-         <number>2</number>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <item row="2" column="0">
-         <widget class="QSlider" name="verticalSliderBZ">
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxBX">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
+          </property>
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>200</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderBX">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxBY">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
           </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="labelSliderBZ">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="labelSliderBY">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderBX">
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>420</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QSlider" name="verticalSliderBY">
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxBZ">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
+          </property>
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>280</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item>
          <widget class="QLabel" name="labelZeroB">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1074,40 +972,24 @@
        <property name="title">
         <string>c</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <property name="verticalSpacing">
-         <number>2</number>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <property name="spacing">
+         <number>0</number>
         </property>
-        <item row="0" column="0">
-         <widget class="QSlider" name="verticalSliderC">
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBoxC">
+          <property name="minimum">
+           <double>-2000.000000000000000</double>
+          </property>
           <property name="maximum">
-           <number>600</number>
+           <double>2000.000000000000000</double>
           </property>
-          <property name="value">
-           <number>330</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labelSliderC">
-          <property name="minimumSize">
-           <size>
-            <width>40</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>0.00</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
+        <item>
          <widget class="QLabel" name="labelZeroC">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot; &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;zero&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1255,7 +1137,7 @@
      <normaloff>:/res/automesh.png</normaloff>:/res/automesh.png</iconset>
    </property>
    <property name="text">
-    <string>Auto mesh</string>
+    <string>&amp;Auto mesh</string>
    </property>
   </action>
   <action name="actionTakeScreenshot">
@@ -1264,7 +1146,7 @@
      <normaloff>:/res/screenshot.png</normaloff>:/res/screenshot.png</iconset>
    </property>
    <property name="text">
-    <string>Take screenshot...</string>
+    <string>&amp;Take screenshot...</string>
    </property>
    <property name="toolTip">
     <string>Take screenshot</string>
@@ -1279,7 +1161,7 @@
      <normaloff>:/res/modelonly.png</normaloff>:/res/modelonly.png</iconset>
    </property>
    <property name="text">
-    <string>Model-only view</string>
+    <string>&amp;Model-only view</string>
    </property>
   </action>
   <action name="actionOutlines">
@@ -1291,7 +1173,7 @@
      <normaloff>:/res/outline.png</normaloff>:/res/outline.png</iconset>
    </property>
    <property name="text">
-    <string>Outlines</string>
+    <string>&amp;Outlines</string>
    </property>
   </action>
   <action name="actionNormals">
@@ -1303,26 +1185,91 @@
      <normaloff>:/res/normals.png</normaloff>:/res/normals.png</iconset>
    </property>
    <property name="text">
-    <string>Normals</string>
+    <string>&amp;Normals</string>
+   </property>
+  </action>
+  <action name="actionA_pair_of_points">
+   <property name="text">
+    <string>A pair of points</string>
+   </property>
+  </action>
+  <action name="actionA_pair_of_separate_ellipsoids">
+   <property name="text">
+    <string>A pair of separate ellipsoids</string>
+   </property>
+  </action>
+  <action name="actionA_pair_of_y_touching_ellipsoids">
+   <property name="text">
+    <string>A pair of y-touching ellipsoids</string>
+   </property>
+  </action>
+  <action name="actionA_pair_of_yz_crossed_ellipsoids">
+   <property name="text">
+    <string>A pair of yz-crossed ellipsoids</string>
+   </property>
+  </action>
+  <action name="actionA_pair_of_z_touching_ellipsoids">
+   <property name="text">
+    <string>A pair of z-touching ellipsoids</string>
+   </property>
+  </action>
+  <action name="actionA_y_barrel">
+   <property name="text">
+    <string>A y-barrel</string>
+   </property>
+  </action>
+  <action name="actionA_z_barrel">
+   <property name="text">
+    <string>A z-barrel</string>
+   </property>
+  </action>
+  <action name="actionA_notched_y_barrel">
+   <property name="text">
+    <string>A notched y-barrel</string>
+   </property>
+  </action>
+  <action name="actionA_notched_z_barrel">
+   <property name="text">
+    <string>A notched z-barrel</string>
+   </property>
+  </action>
+  <action name="actionA_pair_of_separate_yz_caps">
+   <property name="text">
+    <string>A pair of separate yz-caps</string>
+   </property>
+  </action>
+  <action name="actionA_xy_zw_torus">
+   <property name="text">
+    <string>A xy/zw-torus</string>
+   </property>
+  </action>
+  <action name="actionA_xy_circle">
+   <property name="text">
+    <string>A xy-circle</string>
+   </property>
+  </action>
+  <action name="actionA_zw_circle">
+   <property name="text">
+    <string>A zw-circle</string>
+   </property>
+  </action>
+  <action name="actionA_xz_yw_torus">
+   <property name="text">
+    <string>A xz/yw-torus</string>
+   </property>
+  </action>
+  <action name="actionA_xz_circle">
+   <property name="text">
+    <string>A xz-circle</string>
+   </property>
+  </action>
+  <action name="actionA_yw_circle">
+   <property name="text">
+    <string>A yw-circle</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <tabstops>
-  <tabstop>verticalSliderKX</tabstop>
-  <tabstop>verticalSliderKY</tabstop>
-  <tabstop>verticalSliderKZ</tabstop>
-  <tabstop>verticalSliderLY</tabstop>
-  <tabstop>verticalSliderLX</tabstop>
-  <tabstop>verticalSliderLZ</tabstop>
-  <tabstop>verticalSliderAX</tabstop>
-  <tabstop>verticalSliderAY</tabstop>
-  <tabstop>verticalSliderAZ</tabstop>
-  <tabstop>verticalSliderBX</tabstop>
-  <tabstop>verticalSliderBY</tabstop>
-  <tabstop>verticalSliderBZ</tabstop>
-  <tabstop>verticalSliderC</tabstop>
- </tabstops>
  <resources>
   <include location="../res.qrc"/>
  </resources>

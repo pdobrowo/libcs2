@@ -40,6 +40,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    m_blockPredicateUpdate(false),
     m_currentChanged(false),
     ui(new Ui::MainWindow)
 {
@@ -61,9 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->widgetView->layout()->addWidget(m_rv);
 
-    // update slider information
-    updateSliderInformation();
-
     // update predicate predicate
     updatePredicateInformation();
 
@@ -81,6 +79,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::updatePredicateInformation()
 {
+    if (m_blockPredicateUpdate)
+        return;
+
     // changed
     m_currentChanged = true;
     updateWindowTitle();
@@ -88,11 +89,11 @@ void MainWindow::updatePredicateInformation()
     // predicate g
     struct cs2_predg3f_s pred =
         {
-            { sliderToParamValue(ui->verticalSliderKX), sliderToParamValue(ui->verticalSliderKY), sliderToParamValue(ui->verticalSliderKZ) },
-            { sliderToParamValue(ui->verticalSliderLX), sliderToParamValue(ui->verticalSliderLY), sliderToParamValue(ui->verticalSliderLZ) },
-            { sliderToParamValue(ui->verticalSliderAX), sliderToParamValue(ui->verticalSliderAY), sliderToParamValue(ui->verticalSliderAZ) },
-            { sliderToParamValue(ui->verticalSliderBX), sliderToParamValue(ui->verticalSliderBY), sliderToParamValue(ui->verticalSliderBZ) },
-            sliderToParamValue(ui->verticalSliderC)
+            { ui->doubleSpinBoxKX->value(), ui->doubleSpinBoxKY->value(), ui->doubleSpinBoxKZ->value() },
+            { ui->doubleSpinBoxLX->value(), ui->doubleSpinBoxLY->value(), ui->doubleSpinBoxLZ->value() },
+            { ui->doubleSpinBoxAX->value(), ui->doubleSpinBoxAY->value(), ui->doubleSpinBoxAZ->value() },
+            { ui->doubleSpinBoxBX->value(), ui->doubleSpinBoxBY->value(), ui->doubleSpinBoxBZ->value() },
+            ui->doubleSpinBoxC->value()
         };
 
     // param g
@@ -138,7 +139,10 @@ void MainWindow::updatePredicateInformation()
 
     ui->labelcaseval->setText(cs2_predgparamtype3f_str(param.t));
     ui->labeldimval->setText(QString::number(cs2_predgparamtype3f_dim(param.t)));
-    ui->labelcompval->setText(QString::number(cs2_predgparamtype3f_components(param.t)));
+    ui->labelcompval->setText(QString::number(cs2_predgparamtype3f_domain_components(param.t)));
+    ui->labelismanival->setText(cs2_predgparamtype3f_is_manifold(param.t) ? "yes" : "no");
+    ui->labelhasholeval->setText(cs2_predgparamtype3f_has_domain_hole(param.t) ? "yes" : "no");
+    ui->labelisconnval->setText(cs2_predgparamtype3f_is_connected(param.t) ? "yes" : "no");
 
     // information -> eigen decomposition
     struct cs2_mat44f_s eigenvec;
@@ -191,40 +195,31 @@ void MainWindow::updatePredicateInformation()
     }
 }
 
-double MainWindow::sliderToParamValue(QSlider *slider)
+void MainWindow::setPredicate(double kx, double ky, double kz, double lx, double ly, double lz, double ax, double ay, double az, double bx, double by, double bz, double c)
 {
-    return sliderValueToParamValue(slider->value());
-}
+    m_blockPredicateUpdate = true;
 
-double MainWindow::sliderValueToParamValue(double value)
-{
-    return 0.01 * (value - 300) / 3.0;
-}
+    ui->doubleSpinBoxKX->setValue(kx);
+    ui->doubleSpinBoxKY->setValue(ky);
+    ui->doubleSpinBoxKZ->setValue(kz);
 
-void MainWindow::formatSliderValue(QLabel *label, double value)
-{
-    label->setText(QString::number(sliderValueToParamValue(value), 'f', 2));
-}
+    ui->doubleSpinBoxLX->setValue(lx);
+    ui->doubleSpinBoxLY->setValue(ly);
+    ui->doubleSpinBoxLZ->setValue(lz);
 
-void MainWindow::updateSliderInformation()
-{
-    formatSliderValue(ui->labelSliderKX, ui->verticalSliderKX->value());
-    formatSliderValue(ui->labelSliderKY, ui->verticalSliderKY->value());
-    formatSliderValue(ui->labelSliderKZ, ui->verticalSliderKZ->value());
+    ui->doubleSpinBoxAX->setValue(ax);
+    ui->doubleSpinBoxAY->setValue(ay);
+    ui->doubleSpinBoxAZ->setValue(az);
 
-    formatSliderValue(ui->labelSliderLX, ui->verticalSliderLX->value());
-    formatSliderValue(ui->labelSliderLY, ui->verticalSliderLY->value());
-    formatSliderValue(ui->labelSliderLZ, ui->verticalSliderLZ->value());
+    ui->doubleSpinBoxBX->setValue(bx);
+    ui->doubleSpinBoxBY->setValue(by);
+    ui->doubleSpinBoxBZ->setValue(bz);
 
-    formatSliderValue(ui->labelSliderAX, ui->verticalSliderAX->value());
-    formatSliderValue(ui->labelSliderAY, ui->verticalSliderAY->value());
-    formatSliderValue(ui->labelSliderAZ, ui->verticalSliderAZ->value());
+    ui->doubleSpinBoxC->setValue(c);
 
-    formatSliderValue(ui->labelSliderBX, ui->verticalSliderBX->value());
-    formatSliderValue(ui->labelSliderBY, ui->verticalSliderBY->value());
-    formatSliderValue(ui->labelSliderBZ, ui->verticalSliderBZ->value());
+    m_blockPredicateUpdate = false;
 
-    formatSliderValue(ui->labelSliderC, ui->verticalSliderC->value());
+    updatePredicateInformation();
 }
 
 QString MainWindow::formatVector(const struct cs2_vec3f_s *v)
@@ -273,23 +268,23 @@ bool MainWindow::saveCurrentFile()
         {
             QTextStream stream(&out);
 
-            stream << ui->verticalSliderKX->value() << " ";
-            stream << ui->verticalSliderKY->value() << " ";
-            stream << ui->verticalSliderKZ->value();
+            stream << ui->doubleSpinBoxKX->value() << " ";
+            stream << ui->doubleSpinBoxKY->value() << " ";
+            stream << ui->doubleSpinBoxKZ->value();
             stream << "\r\n";
-            stream << ui->verticalSliderLX->value() << " ";
-            stream << ui->verticalSliderLY->value() << " ";
-            stream << ui->verticalSliderLZ->value();
+            stream << ui->doubleSpinBoxLX->value() << " ";
+            stream << ui->doubleSpinBoxLY->value() << " ";
+            stream << ui->doubleSpinBoxLZ->value();
             stream << "\r\n";
-            stream << ui->verticalSliderAX->value() << " ";
-            stream << ui->verticalSliderAY->value() << " ";
-            stream << ui->verticalSliderAZ->value();
+            stream << ui->doubleSpinBoxAX->value() << " ";
+            stream << ui->doubleSpinBoxAY->value() << " ";
+            stream << ui->doubleSpinBoxAZ->value();
             stream << "\r\n";
-            stream << ui->verticalSliderBX->value() << " ";
-            stream << ui->verticalSliderBY->value() << " ";
-            stream << ui->verticalSliderBZ->value();
+            stream << ui->doubleSpinBoxBX->value() << " ";
+            stream << ui->doubleSpinBoxBY->value() << " ";
+            stream << ui->doubleSpinBoxBZ->value();
             stream << "\r\n";
-            stream << ui->verticalSliderC->value();
+            stream << ui->doubleSpinBoxC->value();
             stream << "\r\n";
         }
 
@@ -372,81 +367,68 @@ void MainWindow::on_actionAutoCamera_triggered()
     ui->actionAutoCamera->setChecked(true);
 }
 
-void MainWindow::on_verticalSliderKX_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxKX_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderKX, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderKY_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxKY_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderKY, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderKZ_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxKZ_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderKZ, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderLX_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxLX_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderLX, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderLY_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxLY_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderLY, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderLZ_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxLZ_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderLZ, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderAX_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxAX_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderAX, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderAY_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxAY_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderAY, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderAZ_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxAZ_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderAZ, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderBX_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxBX_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderBX, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderBY_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxBY_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderBY, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderBZ_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxBZ_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderBZ, value);
     updatePredicateInformation();
 }
 
-void MainWindow::on_verticalSliderC_valueChanged(int value)
+void MainWindow::on_doubleSpinBoxC_valueChanged(double)
 {
-    formatSliderValue(ui->labelSliderC, value);
     updatePredicateInformation();
 }
 
@@ -454,43 +436,43 @@ void MainWindow::on_labelZeroK_linkActivated(const QString &link)
 {
     Q_UNUSED(link);
 
-    ui->verticalSliderKX->setValue(300);
-    ui->verticalSliderKY->setValue(300);
-    ui->verticalSliderKZ->setValue(300);
+    ui->doubleSpinBoxKX->setValue(0);
+    ui->doubleSpinBoxKY->setValue(0);
+    ui->doubleSpinBoxKZ->setValue(0);
 }
 
 void MainWindow::on_labelZeroL_linkActivated(const QString &link)
 {
     Q_UNUSED(link);
 
-    ui->verticalSliderLX->setValue(300);
-    ui->verticalSliderLY->setValue(300);
-    ui->verticalSliderLZ->setValue(300);
+    ui->doubleSpinBoxLX->setValue(0);
+    ui->doubleSpinBoxLY->setValue(0);
+    ui->doubleSpinBoxLZ->setValue(0);
 }
 
 void MainWindow::on_labelZeroA_linkActivated(const QString &link)
 {
     Q_UNUSED(link);
 
-    ui->verticalSliderAX->setValue(300);
-    ui->verticalSliderAY->setValue(300);
-    ui->verticalSliderAZ->setValue(300);
+    ui->doubleSpinBoxAX->setValue(0);
+    ui->doubleSpinBoxAY->setValue(0);
+    ui->doubleSpinBoxAZ->setValue(0);
 }
 
 void MainWindow::on_labelZeroB_linkActivated(const QString &link)
 {
     Q_UNUSED(link);
 
-    ui->verticalSliderBX->setValue(300);
-    ui->verticalSliderBY->setValue(300);
-    ui->verticalSliderBZ->setValue(300);
+    ui->doubleSpinBoxBX->setValue(0);
+    ui->doubleSpinBoxBY->setValue(0);
+    ui->doubleSpinBoxBZ->setValue(0);
 }
 
 void MainWindow::on_labelZeroC_linkActivated(const QString &link)
 {
     Q_UNUSED(link);
 
-    ui->verticalSliderC->setValue(300);
+    ui->doubleSpinBoxC->setValue(0);
 }
 
 void MainWindow::on_actionWireframe_triggered()
@@ -551,23 +533,23 @@ void MainWindow::on_actionOpen_triggered()
                 return;
             }
 
-            ui->verticalSliderKX->setValue(kx);
-            ui->verticalSliderKY->setValue(ky);
-            ui->verticalSliderKZ->setValue(kz);
+            ui->doubleSpinBoxKX->setValue(kx);
+            ui->doubleSpinBoxKY->setValue(ky);
+            ui->doubleSpinBoxKZ->setValue(kz);
 
-            ui->verticalSliderLX->setValue(lx);
-            ui->verticalSliderLY->setValue(ly);
-            ui->verticalSliderLZ->setValue(lz);
+            ui->doubleSpinBoxLX->setValue(lx);
+            ui->doubleSpinBoxLY->setValue(ly);
+            ui->doubleSpinBoxLZ->setValue(lz);
 
-            ui->verticalSliderAX->setValue(ax);
-            ui->verticalSliderAY->setValue(ay);
-            ui->verticalSliderAZ->setValue(az);
+            ui->doubleSpinBoxAX->setValue(ax);
+            ui->doubleSpinBoxAY->setValue(ay);
+            ui->doubleSpinBoxAZ->setValue(az);
 
-            ui->verticalSliderBX->setValue(bx);
-            ui->verticalSliderBY->setValue(by);
-            ui->verticalSliderBZ->setValue(bz);
+            ui->doubleSpinBoxBX->setValue(bx);
+            ui->doubleSpinBoxBY->setValue(by);
+            ui->doubleSpinBoxBZ->setValue(bz);
 
-            ui->verticalSliderC->setValue(c);
+            ui->doubleSpinBoxC->setValue(c);
         }
 
         file.close();
@@ -616,7 +598,7 @@ void MainWindow::on_actionTakeScreenshot_triggered()
 
     QImage img = m_rv->grabFrameBuffer();
 
-    if (!img.save(fileName, 0, 100))
+    if (!img.save(fileName, nullptr, 100))
     {
         (void)QMessageBox::warning(this, tr("Save current frame buffer file"), tr("Failed to save frame buffer"), QMessageBox::Ok);
         return;
@@ -636,4 +618,132 @@ void MainWindow::on_actionOutlines_triggered()
 void MainWindow::on_actionNormals_triggered()
 {
     m_rv->setViewModeOption(ViewMode::Normals, ui->actionNormals->isChecked());
+}
+
+void MainWindow::on_actionA_pair_of_points_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 6.0, 2.0, -5.0,
+                 10.0, -2.0, -3.0,
+                 -1080.0);
+}
+
+void MainWindow::on_actionA_pair_of_separate_ellipsoids_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 6.0, 2.0, -5.0,
+                 10.0, -2.0, -3.0,
+                 -1000.0);
+}
+
+void MainWindow::on_actionA_pair_of_y_touching_ellipsoids_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 6.0, 2.0, -5.0,
+                 10.0, -2.0, -3.0,
+                 -648.0);
+
+}
+
+void MainWindow::on_actionA_pair_of_yz_crossed_ellipsoids_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 0.0);
+
+}
+
+void MainWindow::on_actionA_pair_of_z_touching_ellipsoids_triggered()
+{
+    setPredicate(10.0, -2.0, -3.0,
+                 6.0, 2.0, -5.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 -648.0);
+
+}
+
+void MainWindow::on_actionA_y_barrel_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 6.0, 2.0, -5.0,
+                 10.0, -2.0, -3.0,
+                 17.0);
+
+}
+
+void MainWindow::on_actionA_z_barrel_triggered()
+{
+    setPredicate(10.0, -2.0, -3.0,
+                 6.0, 2.0, -5.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 17.0);
+
+}
+
+void MainWindow::on_actionA_notched_y_barrel_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 6.0, 2.0, -5.0,
+                 10.0, -2.0, -3.0,
+                 648.0);
+
+}
+
+void MainWindow::on_actionA_notched_z_barrel_triggered()
+{
+    setPredicate(10.0, -2.0, -3.0,
+                 6.0, 2.0, -5.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 648.0);
+
+}
+
+void MainWindow::on_actionA_pair_of_separate_yz_caps_triggered()
+{
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 6.0, 2.0, -5.0,
+                 10.0, -2.0, -3.0,
+                 1080.0);
+
+}
+
+void MainWindow::on_actionA_xy_zw_torus_triggered()
+{
+
+}
+
+void MainWindow::on_actionA_xy_circle_triggered()
+{
+
+}
+
+void MainWindow::on_actionA_zw_circle_triggered()
+{
+
+}
+
+void MainWindow::on_actionA_xz_yw_torus_triggered()
+{
+
+}
+
+void MainWindow::on_actionA_xz_circle_triggered()
+{
+
+}
+
+void MainWindow::on_actionA_yw_circle_triggered()
+{
+
 }

@@ -44,19 +44,21 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
     RenderView *m_rv;
 
+    bool m_blockPredicateUpdate;
+
     void updatePredicateInformation();
 
-    double sliderToParamValue(QSlider *slider);
-    double sliderValueToParamValue(double value);
-
-    void formatSliderValue(QLabel *label, double value);
-    void updateSliderInformation();
+    void setPredicate(double kx, double ky, double kz,
+                      double lx, double ly, double lz,
+                      double ax, double ay, double az,
+                      double bx, double by, double bz,
+                      double c);
 
     QString formatVector(const struct cs2_vec3f_s *v);
     QString formatVector(const struct cs2_vec4f_s *v);
@@ -77,19 +79,19 @@ private slots:
     void on_actionArcballCamera_triggered();
     void on_actionFreeCamera_triggered();
     void on_actionAutoCamera_triggered();
-    void on_verticalSliderKX_valueChanged(int value);
-    void on_verticalSliderKY_valueChanged(int value);
-    void on_verticalSliderKZ_valueChanged(int value);
-    void on_verticalSliderLX_valueChanged(int value);
-    void on_verticalSliderLY_valueChanged(int value);
-    void on_verticalSliderLZ_valueChanged(int value);
-    void on_verticalSliderAX_valueChanged(int value);
-    void on_verticalSliderAY_valueChanged(int value);
-    void on_verticalSliderAZ_valueChanged(int value);
-    void on_verticalSliderBX_valueChanged(int value);
-    void on_verticalSliderBY_valueChanged(int value);
-    void on_verticalSliderBZ_valueChanged(int value);
-    void on_verticalSliderC_valueChanged(int value);
+    void on_doubleSpinBoxKX_valueChanged(double);
+    void on_doubleSpinBoxKY_valueChanged(double);
+    void on_doubleSpinBoxKZ_valueChanged(double);
+    void on_doubleSpinBoxLX_valueChanged(double);
+    void on_doubleSpinBoxLY_valueChanged(double);
+    void on_doubleSpinBoxLZ_valueChanged(double);
+    void on_doubleSpinBoxAX_valueChanged(double);
+    void on_doubleSpinBoxAY_valueChanged(double);
+    void on_doubleSpinBoxAZ_valueChanged(double);
+    void on_doubleSpinBoxBX_valueChanged(double);
+    void on_doubleSpinBoxBY_valueChanged(double);
+    void on_doubleSpinBoxBZ_valueChanged(double);
+    void on_doubleSpinBoxC_valueChanged(double);
     void on_labelZeroK_linkActivated(const QString &link);
     void on_labelZeroL_linkActivated(const QString &link);
     void on_labelZeroA_linkActivated(const QString &link);
@@ -105,6 +107,23 @@ private slots:
     void on_actionModelOnlyView_triggered();
     void on_actionOutlines_triggered();
     void on_actionNormals_triggered();
+
+    void on_actionA_pair_of_points_triggered();
+    void on_actionA_pair_of_separate_ellipsoids_triggered();
+    void on_actionA_pair_of_y_touching_ellipsoids_triggered();
+    void on_actionA_pair_of_yz_crossed_ellipsoids_triggered();
+    void on_actionA_pair_of_z_touching_ellipsoids_triggered();
+    void on_actionA_y_barrel_triggered();
+    void on_actionA_z_barrel_triggered();
+    void on_actionA_notched_y_barrel_triggered();
+    void on_actionA_notched_z_barrel_triggered();
+    void on_actionA_pair_of_separate_yz_caps_triggered();
+    void on_actionA_xy_zw_torus_triggered();
+    void on_actionA_xy_circle_triggered();
+    void on_actionA_zw_circle_triggered();
+    void on_actionA_xz_yw_torus_triggered();
+    void on_actionA_xz_circle_triggered();
+    void on_actionA_yw_circle_triggered();
 
 private:
     Ui::MainWindow *ui;

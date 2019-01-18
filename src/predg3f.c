@@ -516,6 +516,21 @@ static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const 
     }
 }
 
+static void _cs2_debug_verify_spinor(struct cs2_spin3f_s *s)
+{
+    double len, err;
+
+    const double EPS_LEN = 10e-8;
+
+    len = sqrt(s->s12 * s->s12 + s->s23 * s->s23 + s->s31 * s->s31 + s->s0 * s->s0);
+    err = fabs(1.0 - len);
+
+    CS2_ASSERT_MSG(err < EPS_LEN,
+                   "failed to obtain a valid spinor: "
+                   "len=%.12f, s=%.12f e12 + %.12f e23 + %.12f e31 + %.12f]",
+                   len, s->s12, s->s23, s->s31, s->s0);
+}
+
 static void _cs2_predgparam3f_eval_an_empty_set(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
     (void)t12;
@@ -642,7 +657,7 @@ static void _cs2_predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *
         v = (0.5 - v) * 2.0;
     }
 
-    a = u * 2 * CS2_PI;
+    a = u * 2.0 * CS2_PI;
     h = 2.0 * v - 1.0;
     cs2_sincosf(a, &sa, &ca);
 
@@ -677,7 +692,7 @@ static void _cs2_predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *
         v = (0.5 - v) * 2.0;
     }
 
-    a = u * 2 * CS2_PI;
+    a = u * 2.0 * CS2_PI;
     h = 2.0 * v - 1.0;
     cs2_sincosf(a, &sa, &ca);
 
@@ -742,7 +757,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, doubl
         v = (0.5 - v) * 2.0;
     }
 
-    a = u * 2 * CS2_PI;
+    a = u * 2.0 * CS2_PI;
     cs2_sincosf(a, &sa, &ca);
 
     y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
@@ -769,8 +784,8 @@ static void _cs2_predgparam3f_eval_a_xy_zw_torus(double *t12, double *t23, doubl
 
     CS2_ASSERT(domain_component == 0);
 
-    rp = sqrt((pp->a + pp->c) / (2 * pp->a));
-    rm = sqrt((pp->a - pp->c) / (2 * pp->a));
+    rp = sqrt((pp->a + pp->c) / (2.0 * pp->a));
+    rm = sqrt((pp->a - pp->c) / (2.0 * pp->a));
 
     cs2_sincosf(alpha, &sa, &ca);
     cs2_sincosf(beta, &sb, &cb);
@@ -799,8 +814,8 @@ static void _cs2_predgparam3f_eval_a_xz_yw_torus(double *t12, double *t23, doubl
 
     CS2_ASSERT(domain_component == 0);
 
-    rp = sqrt((pp->b + pp->c) / (2 * pp->b));
-    rm = sqrt((pp->b - pp->c) / (2 * pp->b));
+    rp = sqrt((pp->b + pp->c) / (2.0 * pp->b));
+    rm = sqrt((pp->b - pp->c) / (2.0 * pp->b));
 
     cs2_sincosf(alpha, &sa, &ca);
     cs2_sincosf(beta, &sb, &cb);
@@ -1182,6 +1197,9 @@ void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f
     s->s23 = pp->q.m[1][0] * t12 + pp->q.m[1][1] * t23 + pp->q.m[1][2] * t31 + pp->q.m[1][3] * t0;
     s->s31 = pp->q.m[2][0] * t12 + pp->q.m[2][1] * t23 + pp->q.m[2][2] * t31 + pp->q.m[2][3] * t0;
     s->s0 = pp->q.m[3][0] * t12 + pp->q.m[3][1] * t23 + pp->q.m[3][2] * t31 + pp->q.m[3][3] * t0;
+
+    /* debug */
+    _cs2_debug_verify_spinor(s);
 }
 
 void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const struct cs2_predg3f_s *g)

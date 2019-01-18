@@ -172,7 +172,7 @@ void simpleMeshGenPatch(TriangleListPtr trianglesFront, TriangleListPtr triangle
 
 void autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions)
 {
-    int number_of_components = cs2_predgparamtype3f_components(param->t);
+    int number_of_components = cs2_predgparamtype3f_domain_components(param->t);
 
     for (int component = 0; component < number_of_components; ++component)
         for (double u = 0; u <= 1 - initialRadius; u += initialRadius)
@@ -182,7 +182,7 @@ void autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, str
 
 void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius)
 {
-    int numOfComponents = cs2_predgparamtype3f_components(param->t);
+    int numOfComponents = cs2_predgparamtype3f_domain_components(param->t);
     Coord2i controls[4][4]; /* [u][v] */
 
     // calculate eval cache size
