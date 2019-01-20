@@ -87,7 +87,7 @@ static void _cs2_calc_r(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
         cs2_vec3f_set(r, v->z, v->y, -v->x); /* take z-x plane */
 }
 
-static void _cs2_calc_ellipsoidal_w(struct cs2_vec4f_s *w, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double a, double b)
+static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double a, double b)
 {
     /*
      * w = 1 - a b p^ u^ q^ v^ - a p^ q^ - b u^ v^
@@ -110,7 +110,7 @@ static void _cs2_calc_ellipsoidal_w(struct cs2_vec4f_s *w, const struct cs2_vec3
     cs2_vec4f_from_pin3f(w, &ws);
 }
 
-static void _cs2_calc_toroidal_w(struct cs2_vec4f_s *w1, struct cs2_vec4f_s *w2, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, double a)
+static void _cs2_calc_toroidal_eigenvector(struct cs2_vec4f_s *w1, struct cs2_vec4f_s *w2, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, double a)
 {
     /*
      * z1 = [   p2 p1 - q2 q1 - a (p2 q1 - p1 q2)
@@ -467,7 +467,7 @@ static enum cs2_predgparamtype3f_e _cs2_toroidal_param_type(double a, double b, 
     return cs2_predgparamtype3f_COUNT;
 }
 
-static void _cs2_debug_verify_eigen_decomposition(const struct cs2_mat44f_s *m, const struct cs2_vec4f_s *l, const struct cs2_predg3f_s *g)
+static void _cs2_debug_verify_eigen_decomposition(const struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g)
 {
     struct cs2_spinquad3f_s sq;
     struct cs2_vec4f_s ev, tv;
@@ -483,10 +483,10 @@ static void _cs2_debug_verify_eigen_decomposition(const struct cs2_mat44f_s *m, 
     for (i = 0; i < 4; ++i)
     {
         /* eigenvector */
-        cs2_vec4f_set(&ev, m->m[0][i], m->m[1][i], m->m[2][i], m->m[3][i]);
+        cs2_vec4f_copy(&ev, &pp->ev[i]);
 
         /* eigenvalue */
-        e = cs2_vec4f_coord(l, i);
+        e = cs2_vec4f_coord(&pp->e, i);
 
         /* transform eigenvector */
         cs2_vec4f_set(&tv,
@@ -816,12 +816,38 @@ static void _cs2_predgparam3f_eval_a_xy_zw_torus(double *t12, double *t23, doubl
 
 static void _cs2_predgparam3f_eval_a_xy_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
+    (void)pp;
+    (void)v;
 
+    double alpha = u * 2 * CS2_PI;
+    double sa, ca;
+
+    CS2_ASSERT(domain_component == 0);
+
+    cs2_sincosf(alpha, &sa, &ca);
+
+    *t12 = ca;
+    *t23 = sa;
+    *t31 = 0.0;
+    *t0 = 0.0;
 }
 
 static void _cs2_predgparam3f_eval_a_zw_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
+    (void)pp;
+    (void)v;
 
+    double alpha = u * 2 * CS2_PI;
+    double sa, ca;
+
+    CS2_ASSERT(domain_component == 0);
+
+    cs2_sincosf(alpha, &sa, &ca);
+
+    *t12 = 0.0;
+    *t23 = 0.0;
+    *t31 = ca;
+    *t0 = sa;
 }
 
 static void _cs2_predgparam3f_eval_a_xz_yw_torus(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
@@ -846,14 +872,39 @@ static void _cs2_predgparam3f_eval_a_xz_yw_torus(double *t12, double *t23, doubl
 
 static void _cs2_predgparam3f_eval_a_xz_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
+    (void)pp;
+    (void)v;
 
+    double alpha = u * 2 * CS2_PI;
+    double sa, ca;
+
+    CS2_ASSERT(domain_component == 0);
+
+    cs2_sincosf(alpha, &sa, &ca);
+
+    *t12 = ca;
+    *t23 = 0.0;
+    *t31 = sa;
+    *t0 = 0.0;
 }
 
 static void _cs2_predgparam3f_eval_a_yw_circle(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
+    (void)pp;
+    (void)v;
 
+    double alpha = u * 2 * CS2_PI;
+    double sa, ca;
+
+    CS2_ASSERT(domain_component == 0);
+
+    cs2_sincosf(alpha, &sa, &ca);
+
+    *t12 = 0.0;
+    *t23 = ca;
+    *t31 = 0.0;
+    *t0 = sa;
 }
-
 
 void cs2_predg3f_set(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b, double c)
 {
@@ -1153,6 +1204,7 @@ void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s
 {
     struct cs2_vec3f_s p, q, u, v;
     int za, zb;
+    int i;
 
     cs2_predg3f_pquv(&p, &q, &u, &v, g);
 
@@ -1164,9 +1216,13 @@ void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s
     zb = _cs2_almost_zero(pp->b);
 
     if (!za || !zb)
-        cs2_predg3f_eigen(&pp->q, &pp->l, g);
+        cs2_predg3f_eigen(pp, g);
     else
-        cs2_mat44f_zero(&pp->q);
+    {
+        for (i = 0; i < 4; ++i)
+            cs2_vec4f_zero(&pp->ev[i]);
+        cs2_vec4f_set(&pp->e, g->c, g->c, g->c, g->c);
+    }
 
     if (!za && !zb)
         pp->t = _cs2_ellipsoidal_param_type(pp->a, pp->b, pp->c);
@@ -1178,7 +1234,7 @@ void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s
 
 void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
 {
-    double t12 = 0.0, t23 = 0.0, t31 = 0.0, t0 = 0.0;
+    double t12, t23, t31, t0;
 
     CS2_ASSERT(u >= 0.0 && u <= 1.0 && v >= 0.0 && v <= 1.0);
     CS2_ASSERT(pp->t >= 0 && pp->t < cs2_predgparamtype3f_COUNT);
@@ -1211,21 +1267,20 @@ void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f
     eval_tab[pp->t](&t12, &t23, &t31, &t0, pp, u, v, domain_component);
 
     /* eigenmatrix rotation */
-    s->s12 = pp->q.m[0][0] * t12 + pp->q.m[0][1] * t23 + pp->q.m[0][2] * t31 + pp->q.m[0][3] * t0;
-    s->s23 = pp->q.m[1][0] * t12 + pp->q.m[1][1] * t23 + pp->q.m[1][2] * t31 + pp->q.m[1][3] * t0;
-    s->s31 = pp->q.m[2][0] * t12 + pp->q.m[2][1] * t23 + pp->q.m[2][2] * t31 + pp->q.m[2][3] * t0;
-    s->s0 = pp->q.m[3][0] * t12 + pp->q.m[3][1] * t23 + pp->q.m[3][2] * t31 + pp->q.m[3][3] * t0;
+    s->s12 = pp->ev[0].x * t12 + pp->ev[1].x * t23 + pp->ev[2].x * t31 + pp->ev[3].x * t0;
+    s->s23 = pp->ev[0].y * t12 + pp->ev[1].y * t23 + pp->ev[2].y * t31 + pp->ev[3].y * t0;
+    s->s31 = pp->ev[0].z * t12 + pp->ev[1].z * t23 + pp->ev[2].z * t31 + pp->ev[3].z * t0;
+    s->s0 = pp->ev[0].w * t12 + pp->ev[1].w * t23 + pp->ev[2].w * t31 + pp->ev[3].w * t0;
 
     /* debug */
     _cs2_debug_verify_spinor(s);
 }
 
-void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const struct cs2_predg3f_s *g)
+void cs2_predg3f_eigen(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g)
 {
     struct cs2_vec3f_s p, q, u, v;
-    struct cs2_vec4f_s w1, w2, w3, w4;
-    struct cs2_vec4f_s l;
     double pl, ql, ul, vl, a, b;
+    int i;
 
     /* base */
     cs2_predg3f_pquv(&p, &q, &u, &v, g);
@@ -1239,88 +1294,60 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
     a = pl * ql;
     b = ul * vl;
 
-    cs2_vec4f_set(&l, g->c - (a + b),
-                      g->c - (a - b),
-                      g->c - (-a + b),
-                      g->c - (-a - b));
-
-    if (e)
-        cs2_vec4f_copy(e, &l);
+    cs2_vec4f_set(&pp->e,
+                  g->c - (a + b),
+                  g->c - (a - b),
+                  g->c - (-a + b),
+                  g->c - (-a - b));
 
     /* eigenvectors */
-    if (m)
+    switch (cs2_predg3f_type(g))
     {
-        switch (cs2_predg3f_type(g))
-        {
-            case cs2_predgtype3f_improper:
-                cs2_vec4f_set(&w1, 1.0, 0.0, 0.0, 0.0);
-                cs2_vec4f_set(&w2, 0.0, 1.0, 0.0, 0.0);
-                cs2_vec4f_set(&w3, 0.0, 0.0, 1.0, 0.0);
-                cs2_vec4f_set(&w4, 0.0, 0.0, 0.0, 1.0);
+        case cs2_predgtype3f_improper:
+            cs2_vec4f_set(&pp->ev[0], 1.0, 0.0, 0.0, 0.0);
+            cs2_vec4f_set(&pp->ev[1], 0.0, 1.0, 0.0, 0.0);
+            cs2_vec4f_set(&pp->ev[2], 0.0, 0.0, 1.0, 0.0);
+            cs2_vec4f_set(&pp->ev[3], 0.0, 0.0, 0.0, 1.0);
 
-                break;
+            break;
 
-            case cs2_predgtype3f_ellipsoidal:
-                _cs2_calc_ellipsoidal_w(&w1, &p, &q, &u, &v, 1.0, 1.0);
-                _cs2_calc_ellipsoidal_w(&w2, &p, &q, &u, &v, 1.0, -1.0);
-                _cs2_calc_ellipsoidal_w(&w3, &p, &q, &u, &v, -1.0, 1.0);
-                _cs2_calc_ellipsoidal_w(&w4, &p, &q, &u, &v, -1.0, -1.0);
+        case cs2_predgtype3f_ellipsoidal:
+            _cs2_calc_ellipsoidal_eigenvector(&pp->ev[0], &p, &q, &u, &v, 1.0, 1.0);
+            _cs2_calc_ellipsoidal_eigenvector(&pp->ev[1], &p, &q, &u, &v, 1.0, -1.0);
+            _cs2_calc_ellipsoidal_eigenvector(&pp->ev[2], &p, &q, &u, &v, -1.0, 1.0);
+            _cs2_calc_ellipsoidal_eigenvector(&pp->ev[3], &p, &q, &u, &v, -1.0, -1.0);
 
-                break;
+            break;
 
-            case cs2_predgtype3f_toroidal:
-                if (_cs2_almost_zero_vector(&p) || _cs2_almost_zero_vector(&q))
-                {
-                    _cs2_calc_toroidal_w(&w1, &w3, &u, &v, 1.0);
-                    _cs2_calc_toroidal_w(&w2, &w4, &u, &v, -1.0);
-                }
-                else if (_cs2_almost_zero_vector(&u) || _cs2_almost_zero_vector(&v))
-                {
-                    _cs2_calc_toroidal_w(&w1, &w2, &p, &q, 1.0);
-                    _cs2_calc_toroidal_w(&w3, &w4, &p, &q, -1.0);
-                }
-                else
-                {
-                    CS2_PANIC_MSG("invalid type");
-                }
-
-                break;
-
-            /* COUNT */
-            case cs2_predgtype3f_COUNT:
+        case cs2_predgtype3f_toroidal:
+            if (_cs2_almost_zero_vector(&p) || _cs2_almost_zero_vector(&q))
+            {
+                _cs2_calc_toroidal_eigenvector(&pp->ev[0], &pp->ev[2], &u, &v, 1.0);
+                _cs2_calc_toroidal_eigenvector(&pp->ev[1], &pp->ev[3], &u, &v, -1.0);
+            }
+            else if (_cs2_almost_zero_vector(&u) || _cs2_almost_zero_vector(&v))
+            {
+                _cs2_calc_toroidal_eigenvector(&pp->ev[0], &pp->ev[1], &p, &q, 1.0);
+                _cs2_calc_toroidal_eigenvector(&pp->ev[2], &pp->ev[3], &p, &q, -1.0);
+            }
+            else
+            {
                 CS2_PANIC_MSG("invalid type");
+            }
 
-                break;
-        }
+            break;
 
-        /* debug */
-        _cs2_debug_verify_eigenvector(&w1);
-        _cs2_debug_verify_eigenvector(&w2);
-        _cs2_debug_verify_eigenvector(&w3);
-        _cs2_debug_verify_eigenvector(&w4);
+        /* COUNT */
+        case cs2_predgtype3f_COUNT:
+            CS2_PANIC_MSG("invalid type");
 
-        /* copy */
-        m->m[0][0] = w1.x;
-        m->m[1][0] = w1.y;
-        m->m[2][0] = w1.z;
-        m->m[3][0] = w1.w;
-
-        m->m[0][1] = w2.x;
-        m->m[1][1] = w2.y;
-        m->m[2][1] = w2.z;
-        m->m[3][1] = w2.w;
-
-        m->m[0][2] = w3.x;
-        m->m[1][2] = w3.y;
-        m->m[2][2] = w3.z;
-        m->m[3][2] = w3.w;
-
-        m->m[0][3] = w4.x;
-        m->m[1][3] = w4.y;
-        m->m[2][3] = w4.z;
-        m->m[3][3] = w4.w;
-
-        /* debug */
-        _cs2_debug_verify_eigen_decomposition(m, e, g);
+            break;
     }
+
+    /* debug */
+    for (i = 0; i < 4; ++i)
+        _cs2_debug_verify_eigenvector(&pp->ev[i]);
+
+    /* debug */
+    _cs2_debug_verify_eigen_decomposition(pp, g);
 }

@@ -177,19 +177,19 @@ static const struct cs2_predg3f_s test_predg3f_a_xy_zw_torus = {
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_xy_circle = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    0.0
+    { -3.0, 10.0, 4.0 },
+    { -1.0, -6.0, -4.0 },
+    { 4.0, -2.0, -4.0 },
+    { -10.0, 5.0, 10.0 },
+    756.0
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_zw_circle = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    0.0
+    { -3.0, 10.0, 4.0 },
+    { -1.0, -6.0, -4.0 },
+    { 4.0, -2.0, -4.0 },
+    { -10.0, 5.0, 10.0 },
+    -756.0
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_xz_yw_torus = {
@@ -216,7 +216,7 @@ static const struct cs2_predg3f_s test_predg3f_a_yw_circle = {
     0.0
 };
 
-#define EPS (10e-8)
+static const double EPS = 10e-8;
 
 static int _cs2_almost_zero(double x)
 {
@@ -613,20 +613,140 @@ TEST_CASE(predg3f, param_a_xy_zw_torus)
 
 TEST_CASE(predg3f, param_a_xy_circle)
 {
+    /*
+    struct cs2_predgparam3f_s pp;
+    struct cs2_spinquad3f_s sq;
+    struct cs2_spin3f_s sp;
+    const struct cs2_predg3f_s *pg = &test_predg3f_a_xy_circle;
+    double u;
+
+    cs2_spinquad3f_from_predg3f(&sq, pg);
+    cs2_predg3f_param(&pp, pg);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_xy_circle);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a xy-circle");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_domain_components(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_manifold(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_has_domain_hole(pp.t) == 0);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_connected(pp.t) == 1);
+
+    for (u = 0.0; u <= 1.0; u += 0.01)
+    {
+        cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
+        TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
+    }
+    */
 }
 
 TEST_CASE(predg3f, param_a_zw_circle)
 {
+    /*
+    struct cs2_predgparam3f_s pp;
+    struct cs2_spinquad3f_s sq;
+    struct cs2_spin3f_s sp;
+    const struct cs2_predg3f_s *pg = &test_predg3f_a_zw_circle;
+    double u;
+
+    cs2_spinquad3f_from_predg3f(&sq, pg);
+    cs2_predg3f_param(&pp, pg);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_zw_circle);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a zw-circle");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_domain_components(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_manifold(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_has_domain_hole(pp.t) == 0);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_connected(pp.t) == 1);
+
+    for (u = 0.0; u <= 1.0; u += 0.01)
+    {
+        cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
+        TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
+    }
+    */
 }
 
 TEST_CASE(predg3f, param_a_xz_yw_torus)
 {
+    /*
+    struct cs2_predgparam3f_s pp;
+    struct cs2_spinquad3f_s sq;
+    struct cs2_spin3f_s sp;
+    const struct cs2_predg3f_s *pg = &test_predg3f_a_xz_yw_torus;
+    double u, v;
+
+    cs2_spinquad3f_from_predg3f(&sq, pg);
+    cs2_predg3f_param(&pp, pg);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_xz_yw_torus);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a xz/yw-torus");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 2);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_domain_components(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_manifold(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_has_domain_hole(pp.t) == 0);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_connected(pp.t) == 1);
+
+    for (u = 0.0; u <= 1.0; u += 0.01) for (v = 0.0; v <= 1.0; v += 0.01)
+    {
+        cs2_predgparam3f_eval(&sp, &pp, u, v, 0);
+        TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
+    }
+    */
 }
 
 TEST_CASE(predg3f, param_a_xz_circle)
 {
+    /*
+    struct cs2_predgparam3f_s pp;
+    struct cs2_spinquad3f_s sq;
+    struct cs2_spin3f_s sp;
+    const struct cs2_predg3f_s *pg = &test_predg3f_a_xz_circle;
+    double u;
+
+    cs2_spinquad3f_from_predg3f(&sq, pg);
+    cs2_predg3f_param(&pp, pg);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_xz_circle);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a xz-circle");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_domain_components(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_manifold(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_has_domain_hole(pp.t) == 0);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_connected(pp.t) == 1);
+
+    for (u = 0.0; u <= 1.0; u += 0.01)
+    {
+        cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
+        TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
+    }
+    */
 }
 
 TEST_CASE(predg3f, param_a_yw_circle)
 {
+    /*
+    struct cs2_predgparam3f_s pp;
+    struct cs2_spinquad3f_s sq;
+    struct cs2_spin3f_s sp;
+    const struct cs2_predg3f_s *pg = &test_predg3f_a_yw_circle;
+    double u;
+
+    cs2_spinquad3f_from_predg3f(&sq, pg);
+    cs2_predg3f_param(&pp, pg);
+
+    TEST_ASSERT_TRUE(pp.t == cs2_predgparamtype3f_a_yw_circle);
+    TEST_ASSERT_STRING_EQUAL(cs2_predgparamtype3f_str(pp.t), "a yw-circle");
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_dim(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_domain_components(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_manifold(pp.t) == 1);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_has_domain_hole(pp.t) == 0);
+    TEST_ASSERT_TRUE(cs2_predgparamtype3f_is_connected(pp.t) == 1);
+
+    for (u = 0.0; u <= 1.0; u += 0.01)
+    {
+        cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
+        TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
+    }
+    */
 }
