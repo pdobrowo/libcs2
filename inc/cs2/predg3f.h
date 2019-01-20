@@ -113,6 +113,7 @@ struct cs2_predgparam3f_s
 {
     enum cs2_predgparamtype3f_e t;
     struct cs2_mat44f_s q;
+    struct cs2_vec4f_s l;
     double a, b, c;
 };
 

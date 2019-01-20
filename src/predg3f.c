@@ -467,56 +467,59 @@ static enum cs2_predgparamtype3f_e _cs2_toroidal_param_type(double a, double b, 
     return cs2_predgparamtype3f_COUNT;
 }
 
-static void _cs2_debug_verify_eigen_decomposition(struct cs2_mat44f_s *m, const struct cs2_predg3f_s *g)
+static void _cs2_debug_verify_eigen_decomposition(const struct cs2_mat44f_s *m, const struct cs2_vec4f_s *l, const struct cs2_predg3f_s *g)
 {
-    struct cs2_spinquad3f_s sp;
+    struct cs2_spinquad3f_s sq;
+    struct cs2_vec4f_s ev, tv;
+    double e, len, dot, err;
     int i;
-    double x, y, z, w, l;
-    double ex, ey, ez, ew;
-    double dot, err;
 
     const double EPS_LEN = 10e-8;
-    const double EPS_DOT = 10e-6;
+    const double EPS_COORD = 10e-8;
+    const double EPS_DOT = 10e-7;
 
-    cs2_spinquad3f_from_predg3f(&sp, g);
+    cs2_spinquad3f_from_predg3f(&sq, g);
 
     for (i = 0; i < 4; ++i)
     {
-        ex = m->m[0][i];
-        ey = m->m[1][i];
-        ez = m->m[2][i];
-        ew = m->m[3][i];
+        /* eigenvector */
+        cs2_vec4f_set(&ev, m->m[0][i], m->m[1][i], m->m[2][i], m->m[3][i]);
 
-        x = sp.a11 * ex + sp.a12 * ey + sp.a13 * ez + sp.a14 * ew;
-        y = sp.a12 * ex + sp.a22 * ey + sp.a23 * ez + sp.a24 * ew;
-        z = sp.a13 * ex + sp.a23 * ey + sp.a33 * ez + sp.a34 * ew;
-        w = sp.a14 * ex + sp.a24 * ey + sp.a34 * ez + sp.a44 * ew;
-        l = sqrt(x * x + y * y + z * z + w * w);
+        /* eigenvalue */
+        e = cs2_vec4f_coord(l, i);
 
-        if (l < EPS_LEN)
+        /* transform eigenvector */
+        cs2_vec4f_set(&tv,
+                      sq.a11 * ev.x + sq.a12 * ev.y + sq.a13 * ev.z + sq.a14 * ev.w,
+                      sq.a12 * ev.x + sq.a22 * ev.y + sq.a23 * ev.z + sq.a24 * ev.w,
+                      sq.a13 * ev.x + sq.a23 * ev.y + sq.a33 * ev.z + sq.a34 * ev.w,
+                      sq.a14 * ev.x + sq.a24 * ev.y + sq.a34 * ev.z + sq.a44 * ev.w);
+
+        len = cs2_vec4f_len(&tv);
+
+        if (len < EPS_LEN)
         {
-            CS2_WARN_MSG("eigenvector too small: len=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T", l, x, y, z, w);
+            CS2_ASSERT_MSG(fabs(e) < EPS_COORD,
+                           "transformed eigenvector is zero and eigenvalue is non-zero: len=%.12f, e=%.12f, tv=[%.12f, %.12f, %.12f, %.12f]^T",
+                           len, e, tv.x, tv.y, tv.z, tv.w);
             continue;
         }
 
         /* normalize */
-        x /= l;
-        y /= l;
-        z /= l;
-        w /= l;
+        cs2_vec4f_mul(&tv, &tv, 1.0 / len);
 
         /* both vectors should be very close in terms of an angle */
-        dot = x * ex + y * ey + z * ez + w * ew;
+        dot = cs2_vec4f_dot(&ev, &tv);
         err = fabs(1.0 - fabs(_cs2_clamp_11(dot)));
 
         CS2_ASSERT_MSG(err < EPS_DOT,
                        "failed to obtain required eigen decomposition accuracy: "
-                       "target=%.12f, actual=%.12f, dot=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T, ev=[%.12f, %.12f, %.12f, %.12f]^T",
-                       EPS, err, dot, x, y, z, w, ex, ey, ez, ew);
+                       "eps=%.12f, err=%.12f, dot=%.12f, tv=[%.12f, %.12f, %.12f, %.12f]^T, ev=[%.12f, %.12f, %.12f, %.12f]^T",
+                       EPS, err, dot, tv.x, tv.y, tv.z, tv.w, ev.x, ev.y, ev.z, ev.w);
     }
 }
 
-static void _cs2_debug_verify_spinor(struct cs2_spin3f_s *s)
+static void _cs2_debug_verify_spinor(const struct cs2_spin3f_s *s)
 {
     double len, err;
 
@@ -527,8 +530,23 @@ static void _cs2_debug_verify_spinor(struct cs2_spin3f_s *s)
 
     CS2_ASSERT_MSG(err < EPS_LEN,
                    "failed to obtain a valid spinor: "
-                   "len=%.12f, s=%.12f e12 + %.12f e23 + %.12f e31 + %.12f]",
-                   len, s->s12, s->s23, s->s31, s->s0);
+                   "eps=%.12f, err=%.12f, len=%.12f, s=%.12f e12 + %.12f e23 + %.12f e31 + %.12f",
+                   EPS_LEN, err, len, s->s12, s->s23, s->s31, s->s0);
+}
+
+static void _cs2_debug_verify_eigenvector(const struct cs2_vec4f_s *v)
+{
+    double len, err;
+
+    const double EPS_LEN = 10e-7;
+
+    len = cs2_vec4f_len(v);
+    err = fabs(1.0 - len);
+
+    CS2_ASSERT_MSG(err < EPS_LEN,
+                   "failed to obtain a valid normalized eigenvector: "
+                   "eps=%.12f, err=%.12f, len=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T",
+                   EPS_LEN, err, len, v->x, v->y, v->z, v->w);
 }
 
 static void _cs2_predgparam3f_eval_an_empty_set(double *t12, double *t23, double *t31, double *t0, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
@@ -1146,7 +1164,7 @@ void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s
     zb = _cs2_almost_zero(pp->b);
 
     if (!za || !zb)
-        cs2_predg3f_eigen(&pp->q, 0, g);
+        cs2_predg3f_eigen(&pp->q, &pp->l, g);
     else
         cs2_mat44f_zero(&pp->q);
 
@@ -1206,29 +1224,32 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
 {
     struct cs2_vec3f_s p, q, u, v;
     struct cs2_vec4f_s w1, w2, w3, w4;
-    double pl, ql, ul, vl;
+    struct cs2_vec4f_s l;
+    double pl, ql, ul, vl, a, b;
 
     /* base */
     cs2_predg3f_pquv(&p, &q, &u, &v, g);
 
     /* eigenvalues */
-    if (e)
-    {
-        pl = cs2_vec3f_len(&p);
-        ql = cs2_vec3f_len(&q);
-        ul = cs2_vec3f_len(&u);
-        vl = cs2_vec3f_len(&v);
+    pl = cs2_vec3f_len(&p);
+    ql = cs2_vec3f_len(&q);
+    ul = cs2_vec3f_len(&u);
+    vl = cs2_vec3f_len(&v);
 
-        e->x = g->c - (pl * ql + ul * vl);
-        e->y = g->c - (pl * ql - ul * vl);
-        e->z = g->c - (- pl * ql + ul * vl);
-        e->w = g->c - (- pl * ql - ul * vl);
-    }
+    a = pl * ql;
+    b = ul * vl;
+
+    cs2_vec4f_set(&l, g->c - (a + b),
+                      g->c - (a - b),
+                      g->c - (-a + b),
+                      g->c - (-a - b));
+
+    if (e)
+        cs2_vec4f_copy(e, &l);
 
     /* eigenvectors */
     if (m)
     {
-        /* eigenvectors */
         switch (cs2_predg3f_type(g))
         {
             case cs2_predgtype3f_improper:
@@ -1272,6 +1293,12 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
                 break;
         }
 
+        /* debug */
+        _cs2_debug_verify_eigenvector(&w1);
+        _cs2_debug_verify_eigenvector(&w2);
+        _cs2_debug_verify_eigenvector(&w3);
+        _cs2_debug_verify_eigenvector(&w4);
+
         /* copy */
         m->m[0][0] = w1.x;
         m->m[1][0] = w1.y;
@@ -1294,6 +1321,6 @@ void cs2_predg3f_eigen(struct cs2_mat44f_s *m, struct cs2_vec4f_s *e, const stru
         m->m[3][3] = w4.w;
 
         /* debug */
-        _cs2_debug_verify_eigen_decomposition(m, g);
+        _cs2_debug_verify_eigen_decomposition(m, e, g);
     }
 }
