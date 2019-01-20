@@ -87,6 +87,20 @@ static void _cs2_calc_r(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
         cs2_vec3f_set(r, v->z, v->y, -v->x); /* take z-x plane */
 }
 
+static void _cs2_debug_verify_ellipsoidal_eigen_pinor(const struct cs2_pin3f_s *p)
+{
+    double len;
+
+    const double EPS_LEN = 10e-8;
+
+    len = cs2_pin3f_len(p);
+
+    CS2_ASSERT_MSG(len > EPS_LEN,
+                   "failed to obtain a valid ellipoidal eigen pinor: "
+                   "eps=%.12f, len=%.12f, p=%.12f e12 + %.12f e23 + %.12f e31 + %.12f",
+                   EPS_LEN, len, p->p12, p->p23, p->p31, p->p0);
+}
+
 static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double a, double b)
 {
     /*
@@ -94,7 +108,7 @@ static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struc
      *   = 1 + a b (p^xu^) (q^xv^) - a p^ q^ - b u^ v^
      */
     struct cs2_vec3f_s ph, qh, uh, vh, phxuh, qhxvh;
-    struct cs2_pin3f_s wp, ws, phqh, uhvh, phuhqhvh;
+    struct cs2_pin3f_s wp, ws, phqh, uhvh, phxuhqhxvh;
 
     cs2_vec3f_unit(&ph, p);
     cs2_vec3f_unit(&qh, q);
@@ -104,8 +118,9 @@ static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struc
     cs2_vec3f_cross(&qhxvh, &qh, &vh);
     cs2_vec3f_cl(&phqh, &ph, &qh);
     cs2_vec3f_cl(&uhvh, &uh, &vh);
-    cs2_vec3f_cl(&phuhqhvh, &phxuh, &qhxvh);
-    cs2_pin3f_mad4(&wp, &CS2_PIN3F_ONE, 1.0, &phuhqhvh, a * b, &phqh, -a, &uhvh, -b);
+    cs2_vec3f_cl(&phxuhqhxvh, &phxuh, &qhxvh);
+    cs2_pin3f_mad4(&wp, &CS2_PIN3F_ONE, 1.0, &phxuhqhxvh, a * b, &phqh, -a, &uhvh, -b);
+    _cs2_debug_verify_ellipsoidal_eigen_pinor(&wp);
     cs2_pin3f_mul(&ws, &wp, 0.5 / sqrt(_cs2_clamp_0(wp.p0)));
     cs2_vec4f_from_pin3f(w, &ws);
 }
