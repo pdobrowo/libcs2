@@ -116,9 +116,9 @@ static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struc
     cs2_vec3f_unit(&vh, v);
     cs2_vec3f_cross(&phxuh, &ph, &uh);
     cs2_vec3f_cross(&qhxvh, &qh, &vh);
-    cs2_vec3f_cl(&phqh, &ph, &qh);
-    cs2_vec3f_cl(&uhvh, &uh, &vh);
-    cs2_vec3f_cl(&phxuhqhxvh, &phxuh, &qhxvh);
+    cs2_pin3f_cl(&phqh, &ph, &qh);
+    cs2_pin3f_cl(&uhvh, &uh, &vh);
+    cs2_pin3f_cl(&phxuhqhxvh, &phxuh, &qhxvh);
     cs2_pin3f_mad4(&wp, &CS2_PIN3F_ONE, 1.0, &phxuhqhxvh, a * b, &phqh, -a, &uhvh, -b);
     _cs2_debug_verify_ellipsoidal_eigen_pinor(&wp);
     cs2_pin3f_mul(&ws, &wp, 0.5 / sqrt(_cs2_clamp_0(wp.p0)));

@@ -92,6 +92,7 @@ set(unittest_SOURCES
     src/vec3f.c
     src/vec3x.c
     src/predg3f.c
+    src/pin3f.c
 )
 
 add_executable(unittest ${unittest_SOURCES})

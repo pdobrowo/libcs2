@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/vec3f.h"
+#include "cs2/pin3f.h"
 #include "unittest/unittest.h"
 #include <math.h>
 
@@ -115,18 +116,6 @@ TEST_CASE(vec3f, mul)
     test_almost_equal(c.v.z, 15.0);
 }
 
-TEST_CASE(vec3f, cl)
-{
-    struct ctx c;
-    struct cs2_pin3f_s p;
-    ctx_init(&c);
-    cs2_vec3f_cl(&p, &c.v123, &c.v357);
-    test_almost_equal(p.p0, 34.0);
-    test_almost_equal(p.p12, -1.0);
-    test_almost_equal(p.p23, -1.0);
-    test_almost_equal(p.p31, 2.0);
-}
-
 TEST_CASE(vec3f, mad2)
 {
     struct ctx c;
@@ -192,7 +181,7 @@ TEST_CASE(vec3f, cl_vs_cross_and_dot)
     struct cs2_pin3f_s p;
     double d;
     ctx_init(&c);
-    cs2_vec3f_cl(&p, &c.v123, &c.v357);
+    cs2_pin3f_cl(&p, &c.v123, &c.v357);
     cs2_vec3f_cross(&c.v, &c.v123, &c.v357);
     d = cs2_vec3f_dot(&c.v123, &c.v357);
     test_almost_equal(p.p0, d);

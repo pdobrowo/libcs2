@@ -85,14 +85,6 @@ void cs2_vec3f_mul(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as
     r->z = a->z * as;
 }
 
-void cs2_vec3f_cl(struct cs2_pin3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
-{
-    r->p12 = a->x * b->y - a->y * b->x;
-    r->p23 = a->y * b->z - a->z * b->y;
-    r->p31 = a->z * b->x - a->x * b->z;
-    r->p0 = a->x * b->x + a->y * b->y + a->z * b->z;
-}
-
 void cs2_vec3f_mad2(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs)
 {
     r->x = a->x * as + b->x * bs;

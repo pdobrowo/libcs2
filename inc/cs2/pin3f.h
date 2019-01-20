@@ -26,6 +26,7 @@
 #define CS2_PIN3F_H
 
 #include "defs.h"
+#include "vec3f.h"
 #include <gmp.h>
 
 CS2_API_BEGIN
@@ -45,6 +46,8 @@ CS2_API void cs2_pin3f_add(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, c
 CS2_API void cs2_pin3f_sub(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, const struct cs2_pin3f_s *b);
 CS2_API void cs2_pin3f_neg(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *v);
 CS2_API void cs2_pin3f_mul(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as);
+
+CS2_API void cs2_pin3f_cl(struct cs2_pin3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
 
 CS2_API void cs2_pin3f_mad2(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs);
 CS2_API void cs2_pin3f_mad3(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs);
