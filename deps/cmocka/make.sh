@@ -26,7 +26,14 @@ else
     )
     mv build/out/include .
     mkdir lib
-    cp build/out/lib64/libcmocka-static.a lib/libcmocka.a
+    if [ -f build/out/lib64/libcmocka-static.a ]; then
+        cp build/out/lib64/libcmocka-static.a lib/libcmocka.a
+    elif [ -f build/out/lib/libcmocka-static.a ]; then
+        cp build/out/lib/libcmocka-static.a lib/libcmocka.a
+    else
+        echo "cmocka: static library not found!"
+        exit 1
+    fi
     echo "cmocka: done"
 )
 fi
