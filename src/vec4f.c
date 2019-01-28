@@ -129,6 +129,13 @@ double cs2_vec4f_dot(const struct cs2_vec4f_s *a, const struct cs2_vec4f_s *b)
     return a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
 }
 
+void cs2_vec4f_unit(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *v)
+{
+    double len = cs2_vec4f_len(v);
+    CS2_ASSERT_MSG(len > 0.0, "vector must be non-zero");
+    cs2_vec4f_mul(r, v, 1.0 / len);
+}
+
 double cs2_vec4f_len(const struct cs2_vec4f_s *v)
 {
     return sqrt(v->x * v->x + v->y * v->y + v->z * v->z + v->w * v->w);

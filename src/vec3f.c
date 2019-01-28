@@ -127,7 +127,9 @@ void cs2_vec3f_cross(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const s
 
 void cs2_vec3f_unit(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
 {
-    cs2_vec3f_mul(r, v, 1.0 / cs2_vec3f_len(v));
+    double len = cs2_vec3f_len(v);
+    CS2_ASSERT_MSG(len > 0.0, "vector must be non-zero");
+    cs2_vec3f_mul(r, v, 1.0 / len);
 }
 
 double cs2_vec3f_len(const struct cs2_vec3f_s *v)

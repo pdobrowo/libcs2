@@ -111,17 +111,23 @@ CS2_API int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pt);
 
 struct cs2_predgparam3f_s
 {
+    /* parametrization type */
     enum cs2_predgparamtype3f_e t;
-    struct cs2_vec4f_s ev[4];
-    struct cs2_vec4f_s e;
+
+    /* basic properties */
+    struct cs2_vec3f_s p, q, u, v;
     double a, b, c;
+
+    /* eigenvectors */
+    struct cs2_vec4f_s ev[4];
+
+    /* eigenvalues */
+    struct cs2_vec4f_s e;
+
 };
 
 CS2_API void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g);
 CS2_API void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component);
-
-/* special */
-CS2_API void cs2_predg3f_eigen(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g);
 
 CS2_API_END
 

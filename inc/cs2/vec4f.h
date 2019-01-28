@@ -56,6 +56,8 @@ CS2_API void cs2_vec4f_mad5(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *a, 
 
 CS2_API double cs2_vec4f_dot(const struct cs2_vec4f_s *a, const struct cs2_vec4f_s *b);
 
+CS2_API void cs2_vec4f_unit(struct cs2_vec4f_s *r, const struct cs2_vec4f_s *v);
+
 CS2_API double cs2_vec4f_len(const struct cs2_vec4f_s *v);
 CS2_API double cs2_vec4f_sqlen(const struct cs2_vec4f_s *v);
 
