@@ -77,7 +77,7 @@ static void _cs2_debug_verify_eigen_decomposition(const struct cs2_predgparam3f_
     int i;
 
     const double EPS_LEN = 10e-8;
-    const double EPS_DIFF = 10e-10;
+    const double EPS_DIFF = 10e-8;
 
     cs2_spinquad3f_from_predg3f(&sq, g);
 
@@ -109,10 +109,6 @@ static void _cs2_debug_verify_eigen_decomposition(const struct cs2_predgparam3f_
                            len, e, tv.x, tv.y, tv.z, tv.w);
             continue;
         }
-
-        /* normalize */
-        cs2_vec4f_unit(&tv, &tv);
-        cs2_vec4f_unit(&lv, &lv);
 
         /* compare results */
         cs2_vec4f_sub(&df, &tv, &lv);
