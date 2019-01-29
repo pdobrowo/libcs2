@@ -87,7 +87,7 @@ static void _cs2_debug_verify_eigen_decomposition(const struct cs2_predgparam3f_
         cs2_vec4f_copy(&ev, &pp->ev[i]);
 
         /* eigenvalue */
-        e = cs2_vec4f_coord(&pp->e, i);
+        e = pp->e[i];
 
         /* transform eigenvector by matrix */
         cs2_vec4f_set(&tv,
@@ -241,11 +241,10 @@ static void _cs2_calc_eigen_decomposition(struct cs2_predgparam3f_s *pp, const s
     int i;
 
     /* eigenvalues */
-    cs2_vec4f_set(&pp->e,
-                  pp->c - (pp->a + pp->b),
-                  pp->c - (pp->a - pp->b),
-                  pp->c - (-pp->a + pp->b),
-                  pp->c - (-pp->a - pp->b));
+    pp->e[0] = pp->c - (pp->a + pp->b);
+    pp->e[1] = pp->c - (pp->a - pp->b);
+    pp->e[2] = pp->c - (-pp->a + pp->b);
+    pp->e[3] = pp->c - (-pp->a - pp->b);
 
     /* eigenvectors */
     switch (cs2_predg3f_type(g))
@@ -306,7 +305,10 @@ static void _cs2_improper_eigen_decomposition(struct cs2_predgparam3f_s *pp, con
     cs2_vec4f_set(&pp->ev[2], 0.0, 0.0, 1.0, 0.0);
     cs2_vec4f_set(&pp->ev[3], 0.0, 0.0, 0.0, 1.0);
 
-    cs2_vec4f_set(&pp->e, g->c, g->c, g->c, g->c);
+    pp->e[0] = g->c;
+    pp->e[1] = g->c;
+    pp->e[2] = g->c;
+    pp->e[3] = g->c;
 }
 
 static enum cs2_predgparamtype3f_e _cs2_improper_param_type(void)

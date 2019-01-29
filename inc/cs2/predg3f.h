@@ -122,8 +122,7 @@ struct cs2_predgparam3f_s
     struct cs2_vec4f_s ev[4];
 
     /* eigenvalues */
-    struct cs2_vec4f_s e;
-
+    double e[4];
 };
 
 CS2_API void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g);
