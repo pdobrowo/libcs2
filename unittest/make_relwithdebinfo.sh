@@ -1,3 +1,9 @@
 #!/bin/sh
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo . && make
+
+GENERATOR=""
+if [[ "$OSTYPE" == "msys" ]]; then
+    GENERATOR=(-G "MSYS Makefiles")
+fi
+
+cmake . "${GENERATOR[@]}" -DCMAKE_BUILD_TYPE=RelWithDebInfo && make
 

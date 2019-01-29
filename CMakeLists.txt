@@ -154,7 +154,11 @@ add_library(cs2 SHARED ${cs2_SOURCES})
 add_library(cs2_s STATIC ${cs2_SOURCES})
 
 set_target_properties(cs2 PROPERTIES C_VISIBILITY_PRESET hidden)
-target_link_libraries(cs2 c m)
+target_link_libraries(cs2 m)
+
+if(NOT MINGW)
+    target_link_libraries(cs2 c)
+endif(NOT MINGW)
 
 # deps: gmp (system)
 target_link_libraries(cs2 ${GMP_LIBRARIES})

@@ -23,10 +23,77 @@
  * SOFTWARE.
  */
 #include "cs2/plugin.h"
+#include "cs2/mem.h"
+#include "cs2/assert.h"
 #include <string.h>
 #include <stdlib.h>
+
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+
 #include <dlfcn.h>
-#include <cs2/assert.h>
+
+void *_cs2_plugin_load(const char *filename)
+{
+    return dlopen(filename, RTLD_NOW);
+}
+
+void _cs2_plugin_unload(void *handle)
+{
+    if (dlclose(handle))
+        CS2_PANIC_MSG("dlclose() failed");
+}
+
+void *_cs2_plugin_sym(void *handle, const char *symbol)
+{
+	return dlsym(handle, symbol);
+}
+
+char *_cs2_plugin_realpath(const char *path)
+{
+    return realpath(path, 0);
+}
+
+#endif /* defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) */
+
+#if defined(__MINGW32__)
+
+#define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
+
+#include <windows.h>
+
+void *_cs2_plugin_load(const char *filename)
+{
+    return (void *)LoadLibrary(filename);
+}
+
+void _cs2_plugin_unload(void *handle)
+{
+    if (!FreeLibrary(handle))
+        CS2_PANIC_MSG("FreeLibrary() failed");
+}
+
+void *_cs2_plugin_sym(void *handle, const char *symbol)
+{
+    return (void *)GetProcAddress((HMODULE)handle, symbol);
+}
+
+char *_cs2_plugin_realpath(const char *path)
+{
+    char *canon = CS2_MEM_MALLOC_N(char, MAX_PATH + 1);
+
+    DWORD rc = GetFullPathNameA(path, MAX_PATH, canon, NULL);
+
+    if (!rc)
+    {
+        CS2_MEM_FREE(canon);
+        return 0;
+    }
+
+    return canon;
+}
+
+#endif /* defined(__MINGW32__) */
 
 #define PLUGIN_MAXPATH 1024
 
@@ -53,7 +120,7 @@ void *cs2_plugin_load(const char *f)
     void *d;
 
     /* real ld path */
-    p = realpath(g_ldpath, 0);
+    p = _cs2_plugin_realpath(g_ldpath);
 
     if (!p)
         return 0;
@@ -64,7 +131,7 @@ void *cs2_plugin_load(const char *f)
     fl = strlen(f);
 
     /* full path */
-    r = (char *)malloc(pl + fl + 2);
+    r = (char *)CS2_MEM_MALLOC_N(char, pl + fl + 2);
 
     if (!r)
     {
@@ -76,7 +143,7 @@ void *cs2_plugin_load(const char *f)
     r[pl] = '/';
     memcpy(r + pl + 1, f, fl + 1);
 
-    d = dlopen(r, RTLD_NOW);
+    d = _cs2_plugin_load(r);
 
     free(r);
     free(p);
@@ -86,12 +153,12 @@ void *cs2_plugin_load(const char *f)
 
 void *cs2_plugin_sym(void *p, const char *s)
 {
-    return dlsym(p, s);
+    return _cs2_plugin_sym(p, s);
 }
 
 void cs2_plugin_unload(void *p)
 {
-    (void)dlclose(p);
+    _cs2_plugin_unload(p);
 }
 
 cs2_plugin_func_t cs2_plugin_func(void *p, const char *s)

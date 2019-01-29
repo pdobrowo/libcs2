@@ -1,14 +1,18 @@
 #!/bin/sh
 set -e
 
+GENERATOR=""
+if [[ "$OSTYPE" == "msys" ]]; then
+    GENERATOR=(-G "MSYS Makefiles")
+fi
+
 PKGNAME=cmocka-1.1.3.tar.xz
 
 if [ -d include ]; then
     echo "cmocka: already built"
-else
-(
+else (
     echo "wget cmocka $PKGNAME"
-    wget http://cmocka.org/files/1.1/$PKGNAME
+    wget --no-check-certificate http://cmocka.org/files/1.1/$PKGNAME
 
     echo "cmocka: build"
     rm -rf include lib build
@@ -19,7 +23,7 @@ else
         mkdir tmp-build
         (
             cd tmp-build
-            cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/../out -DWITH_STATIC_LIB=ON
+            cmake .. "${GENERATOR[@]}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/../out -DWITH_STATIC_LIB=ON
             make
             make install
         )
