@@ -121,6 +121,32 @@ static void _cs2_debug_verify_eigen_decomposition(const struct cs2_predgparam3f_
     }
 }
 
+static void _cs2_debug_verify_rotation_matrix(const struct cs2_predgparam3f_s *pp)
+{
+    double dot, err;
+    int i, j;
+
+    const double EPS_DOT = 10e-7;
+
+    for (i = 0; i < 4; ++i)
+    {
+        for (j = i; j < 4; ++j)
+        {
+            dot = cs2_vec4f_dot(&pp->ev[i], &pp->ev[j]);
+
+            if (i == j)
+                err = fabs(1.0 - dot);
+            else
+                err = fabs(dot);
+
+            CS2_ASSERT_MSG(err < EPS_DOT,
+                           "failed to obtain rotation matrix: "
+                           "eps=%.12f, err=%.12f, dot=%.12f, ev_%d=[%.12f, %.12f, %.12f, %.12f]^T, ev_%d=[%.12f, %.12f, %.12f, %.12f]^T",
+                           EPS_DOT, err, dot, i, pp->ev[i].x, pp->ev[i].y, pp->ev[i].z, pp->ev[i].w, j, pp->ev[j].x, pp->ev[j].y, pp->ev[j].z, pp->ev[j].w);
+        }
+    }
+}
+
 static void _cs2_debug_verify_spinor(const struct cs2_spin3f_s *s)
 {
     double len, err;
@@ -138,17 +164,16 @@ static void _cs2_debug_verify_spinor(const struct cs2_spin3f_s *s)
 
 static void _cs2_debug_verify_eigenvector(const struct cs2_vec4f_s *v)
 {
-    double len, err;
+    double len;
 
     const double EPS_LEN = 10e-7;
 
     len = cs2_vec4f_len(v);
-    err = fabs(1.0 - len);
 
-    CS2_ASSERT_MSG(err < EPS_LEN,
-                   "failed to obtain a valid normalized eigenvector: "
-                   "eps=%.12f, err=%.12f, len=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T",
-                   EPS_LEN, err, len, v->x, v->y, v->z, v->w);
+    CS2_ASSERT_MSG(len > EPS_LEN,
+                   "failed to obtain a valid non-zero eigenvector: "
+                   "eps=%.12f, len=%.12f, v=[%.12f, %.12f, %.12f, %.12f]^T",
+                   EPS_LEN, len, v->x, v->y, v->z, v->w);
 }
 
 static void _cs2_debug_verify_ellipsoidal_eigenpinor(const struct cs2_pin3f_s *p)
@@ -290,8 +315,8 @@ static void _cs2_calc_eigen_decomposition(struct cs2_predgparam3f_s *pp, const s
     for (i = 0; i < 4; ++i)
         _cs2_debug_verify_eigenvector(&pp->ev[i]);
 
-    /* debug */
     _cs2_debug_verify_eigen_decomposition(pp, g);
+    _cs2_debug_verify_rotation_matrix(pp);
 }
 
 static void _cs2_improper_eigen_decomposition(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g)
