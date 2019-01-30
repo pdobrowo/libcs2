@@ -193,27 +193,27 @@ static const struct cs2_predg3f_s test_predg3f_a_zw_circle = {
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_xz_yw_torus = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    0.0
+    { -10.0, 5.0, 10.0 },
+    { 4.0, -2.0, -4.0 },
+    { -1.0, -6.0, -4.0 },
+    { -3.0, 10.0, 4.0 },
+    111.0
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_xz_circle = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    0.0
+    { -10.0, 5.0, 10.0 },
+    { 4.0, -2.0, -4.0 },
+    { -1.0, -6.0, -4.0 },
+    { -3.0, 10.0, 4.0 },
+    756.0
 };
 
 static const struct cs2_predg3f_s test_predg3f_a_yw_circle = {
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    { 0.0, 0.0, 0.0 },
-    0.0
+    { -10.0, 5.0, 10.0 },
+    { 4.0, -2.0, -4.0 },
+    { -1.0, -6.0, -4.0 },
+    { -3.0, 10.0, 4.0 },
+    -756.0
 };
 
 static const double EPS = 10e-8;
@@ -585,7 +585,6 @@ TEST_CASE(predg3f, param_a_pair_of_separate_yz_caps)
 
 TEST_CASE(predg3f, param_a_xy_zw_torus)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -608,12 +607,10 @@ TEST_CASE(predg3f, param_a_xy_zw_torus)
         cs2_predgparam3f_eval(&sp, &pp, u, v, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 }
 
 TEST_CASE(predg3f, param_a_xy_circle)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -636,12 +633,10 @@ TEST_CASE(predg3f, param_a_xy_circle)
         cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 }
 
 TEST_CASE(predg3f, param_a_zw_circle)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -664,12 +659,10 @@ TEST_CASE(predg3f, param_a_zw_circle)
         cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 }
 
 TEST_CASE(predg3f, param_a_xz_yw_torus)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -692,12 +685,10 @@ TEST_CASE(predg3f, param_a_xz_yw_torus)
         cs2_predgparam3f_eval(&sp, &pp, u, v, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 }
 
 TEST_CASE(predg3f, param_a_xz_circle)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -720,12 +711,10 @@ TEST_CASE(predg3f, param_a_xz_circle)
         cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 }
 
 TEST_CASE(predg3f, param_a_yw_circle)
 {
-    /*
     struct cs2_predgparam3f_s pp;
     struct cs2_spinquad3f_s sq;
     struct cs2_spin3f_s sp;
@@ -748,5 +737,4 @@ TEST_CASE(predg3f, param_a_yw_circle)
         cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
     }
-    */
 }

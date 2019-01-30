@@ -235,6 +235,7 @@ static void _cs2_calc_toroidal_eigenplane(struct cs2_vec4f_s *w1, struct cs2_vec
      */
     struct cs2_vec3f_s np, nq;
     struct cs2_vec4f_s zu, zv;
+    struct cs2_vec4f_s ozu, ozv;
 
     cs2_vec3f_unit(&np, p);
     cs2_vec3f_unit(&nq, q);
@@ -253,8 +254,13 @@ static void _cs2_calc_toroidal_eigenplane(struct cs2_vec4f_s *w1, struct cs2_vec
 
     /* TODO: handle zu = 0 or zv = 0 */
 
-    cs2_vec4f_unit(w1, &zu);
-    cs2_vec4f_unit(w2, &zv);
+    /* orthogonalize */
+    cs2_vec4f_copy(&ozu, &zu);
+    cs2_vec4f_mad2(&ozv, &zv, 1.0, &zu, -cs2_vec4f_dot(&zu, &zv) / cs2_vec4f_sqlen(&zu));
+
+    /* normalize */
+    cs2_vec4f_unit(w1, &ozu);
+    cs2_vec4f_unit(w2, &ozv);
 }
 
 static void _cs2_calc_eigen_decomposition(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g)
@@ -855,8 +861,8 @@ static void _cs2_predgparam3f_eval_a_xz_yw_torus(double *t12, double *t23, doubl
     cs2_sincosf(beta, &sb, &cb);
 
     *t12 = rp * ca;
-    *t23 = rm * sa;
-    *t31 = rp * cb;
+    *t23 = rm * cb;
+    *t31 = rp * sa;
     *t0 = rm * sb;
 }
 
