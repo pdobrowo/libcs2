@@ -5,14 +5,13 @@ PKGNAME=cmocka-1.1.3.tar.xz
 
 if [ -d include ]; then
     echo "cmocka: already built"
-else
-(
-    echo "wget cmocka $PKGNAME"
-    curl -L http://cmocka.org/files/1.1/$PKGNAME > $PKGNAME
+else (
+    echo "cmocka: download $PKGNAME"
+    curl -L http://www.cmocka.org/files/1.1/$PKGNAME > $PKGNAME
 
     echo "cmocka: build"
     rm -rf include lib build
-    tar xvf $PKGNAME
+    xz -d -c $PKGNAME | tar xvf -
     mv `basename $PKGNAME .tar.xz` build
     (
         cd build;
