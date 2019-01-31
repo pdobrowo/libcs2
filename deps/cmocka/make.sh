@@ -8,7 +8,7 @@ if [ -d include ]; then
 else
 (
     echo "wget cmocka $PKGNAME"
-    wget http://cmocka.org/files/1.1/$PKGNAME
+    curl -L http://cmocka.org/files/1.1/$PKGNAME > $PKGNAME
 
     echo "cmocka: build"
     rm -rf include lib build
