@@ -145,33 +145,17 @@ void MainWindow::updatePredicateInformation()
     ui->labelisconnval->setText(cs2_predgparamtype3f_is_connected(param.t) ? "yes" : "no");
 
     // information -> eigen decomposition
-    struct cs2_mat44f_s eigenvec;
-    struct cs2_vec4f_s eigenval;
-    cs2_predg3f_eigen(&eigenvec, &eigenval, &pred);
+    ui->labeldetval->setText(QString::number(param.e[0] * param.e[1] * param.e[2] * param.e[3], 'f', 8));
 
-    double l1 = eigenval.x;
-    double l2 = eigenval.y;
-    double l3 = eigenval.z;
-    double l4 = eigenval.w;
+    ui->labell1val->setText(QString::number(param.e[0], 'f', 4));
+    ui->labell2val->setText(QString::number(param.e[1], 'f', 4));
+    ui->labell3val->setText(QString::number(param.e[2], 'f', 4));
+    ui->labell4val->setText(QString::number(param.e[3], 'f', 4));
 
-    double det = l1 * l2 * l3 * l4;
-
-    struct cs2_vec4f_s w1 = { eigenvec.m[0][0], eigenvec.m[1][0], eigenvec.m[2][0], eigenvec.m[3][0] };
-    struct cs2_vec4f_s w2 = { eigenvec.m[0][1], eigenvec.m[1][1], eigenvec.m[2][1], eigenvec.m[3][1] };
-    struct cs2_vec4f_s w3 = { eigenvec.m[0][2], eigenvec.m[1][2], eigenvec.m[2][2], eigenvec.m[3][2] };
-    struct cs2_vec4f_s w4 = { eigenvec.m[0][3], eigenvec.m[1][3], eigenvec.m[2][3], eigenvec.m[3][3] };
-
-    ui->labeldetval->setText(QString::number(det, 'f', 8));
-
-    ui->labell1val->setText(QString::number(l1, 'f', 4));
-    ui->labell2val->setText(QString::number(l2, 'f', 4));
-    ui->labell3val->setText(QString::number(l3, 'f', 4));
-    ui->labell4val->setText(QString::number(l4, 'f', 4));
-
-    ui->labelw1val->setText(formatVector(&w1));
-    ui->labelw2val->setText(formatVector(&w2));
-    ui->labelw3val->setText(formatVector(&w3));
-    ui->labelw4val->setText(formatVector(&w4));
+    ui->labelw1val->setText(formatVector(&param.ev[0]));
+    ui->labelw2val->setText(formatVector(&param.ev[1]));
+    ui->labelw3val->setText(formatVector(&param.ev[2]));
+    ui->labelw4val->setText(formatVector(&param.ev[3]));
 
     // visual
     m_rv->removeAllObjects();
