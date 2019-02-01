@@ -704,30 +704,54 @@ void MainWindow::on_actionA_pair_of_separate_yz_caps_triggered()
 
 void MainWindow::on_actionA_xy_zw_torus_triggered()
 {
-
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 4.0, -2.0, -4.0,
+                 -10.0, 5.0, 10.0,
+                 111.0);
 }
 
 void MainWindow::on_actionA_xy_circle_triggered()
 {
-
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 4.0, -2.0, -4.0,
+                 -10.0, 5.0, 10.0,
+                 756.0);
 }
 
 void MainWindow::on_actionA_zw_circle_triggered()
 {
-
+    setPredicate(-3.0, 10.0, 4.0,
+                 -1.0, -6.0, -4.0,
+                 4.0, -2.0, -4.0,
+                 -10.0, 5.0, 10.0,
+                 -756.0);
 }
 
 void MainWindow::on_actionA_xz_yw_torus_triggered()
 {
-
+    setPredicate(-10.0, 5.0, 10.0,
+                 4.0, -2.0, -4.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 111.0);
 }
 
 void MainWindow::on_actionA_xz_circle_triggered()
 {
-
+    setPredicate(-10.0, 5.0, 10.0,
+                 4.0, -2.0, -4.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 756.0);
 }
 
 void MainWindow::on_actionA_yw_circle_triggered()
 {
-
+    setPredicate(-10.0, 5.0, 10.0,
+                 4.0, -2.0, -4.0,
+                 -1.0, -6.0, -4.0,
+                 -3.0, 10.0, 4.0,
+                 -756.0);
 }
