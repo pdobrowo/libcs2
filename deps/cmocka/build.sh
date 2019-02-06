@@ -29,7 +29,7 @@ else (
     if [ -f .build/install/lib64/libcmocka-static.a ]; then
         cp .build/install/lib64/libcmocka-static.a lib/libcmocka.a
     elif [ -f .build/install/lib/libcmocka-static.a ]; then
-        cp .build/out/install/libcmocka-static.a lib/libcmocka.a
+        cp .build/install/lib/libcmocka-static.a lib/libcmocka.a
     else
         echo "cmocka: static library not found!"
         exit 1
