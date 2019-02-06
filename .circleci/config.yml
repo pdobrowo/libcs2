@@ -16,7 +16,7 @@ jobs:
         command: make release
     - run:
         name: Make unit tests
-        command: make release -C unittest
+        command: make test
     - run:
         name: Create testing directory
         command: mkdir -p bin/testing/test
