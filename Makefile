@@ -1,3 +1,5 @@
+.PHONY: dep clean plugin test example
+
 all: dep release test example
 
 dep:
