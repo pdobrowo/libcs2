@@ -14,6 +14,7 @@ freebsd*:{
 
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../common
+INCLUDEPATH += ../../../test/inc
 
 LIBS += -lGLEW
 LIBS += -lGLU
@@ -31,7 +32,8 @@ SOURCES += \
     ../common/renderviewflycamera.cpp \
     ../common/shader.cpp \
     ../common/trianglelistmesh.cpp \
-    ../common/meshing.cpp
+    ../common/meshing.cpp \
+    ../../../test/src/testpredg3f.c
 
 HEADERS += \
     mainwindow.h \
@@ -44,7 +46,8 @@ HEADERS += \
     ../common/renderviewflycamera.h \
     ../common/shader.h \
     ../common/trianglelistmesh.h \
-    ../common/meshing.h
+    ../common/meshing.h \
+    ../../../test/inc/test/testpredg3f.h
 
 FORMS += \
     mainwindow.ui

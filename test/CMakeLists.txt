@@ -75,6 +75,9 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 set(test_HEADERS
     # runner
     inc/test/test.h
+
+    # test
+    inc/test/testpredg3f.h
 )
 
 # src
@@ -84,6 +87,9 @@ set(test_SOURCES
     # runner
     src/main.c
     src/test.c
+
+    # test
+    src/testpredg3f.c
 
     # suites
     src/bezierqq1f.c

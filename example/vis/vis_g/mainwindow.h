@@ -27,6 +27,7 @@
 
 #include "cs2/spin3f.h"
 #include "cs2/vec3f.h"
+#include "cs2/predg3f.h"
 #include "meshing.h"
 #include <QCloseEvent>
 #include <QMainWindow>
@@ -59,6 +60,8 @@ private:
                       double ax, double ay, double az,
                       double bx, double by, double bz,
                       double c);
+
+    void setPredicate(const struct cs2_predg3f_s *p);
 
     QString formatVector(const struct cs2_vec3f_s *v);
     QString formatVector(const struct cs2_vec4f_s *v);

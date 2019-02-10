@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_UNITTEST_H
-#define CS2_UNITTEST_H
+#ifndef CS2_TEST_H
+#define CS2_TEST_H
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -96,4 +96,4 @@ struct test_suite_s
 /* suites */
 struct test_suite_s *test_suites(void);
 
-#endif /* CS2_UNITTEST_H */
+#endif /* CS2_TEST_H */

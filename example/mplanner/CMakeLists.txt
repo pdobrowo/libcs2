@@ -17,9 +17,9 @@ find_package(CS2 REQUIRED)
 include_directories(${CS2_INCLUDE_DIR})
 link_directories(${CS2_LIBRARY_DIR})
 
-# prefabs
-set(CS2_PREFABS_DIR ${CMAKE_SOURCE_DIR}/../../prefabs)
-include_directories(${CS2_PREFABS_DIR})
+# test
+set(CS2_TEST_DIR ${CMAKE_SOURCE_DIR}/../../test)
+include_directories(${CS2_TEST_DIR}/inc)
 
 # output directory
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../../bin)
@@ -44,16 +44,16 @@ endif(COMPILER_SUPPORT_OFAST)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_RELEASE_OPTIMIZATION} -fomit-frame-pointer -mtune=native")
 
 set(mplanner_HEADERS
-    # prefabs
-    ${CS2_PREFABS_DIR}/prefabs.h
+    # test
+    ${CS2_TEST_DIR}/inc/test/testpredg3f.h
 )
 
 set(mplanner_SOURCES
     ${mplanner_HEADERS}
     main.cpp
 
-    # prefabs
-    ${CS2_PREFABS_DIR}/prefabs.c
+    # test
+    ${CS2_TEST_DIR}/src/testpredg3f.c
 )
 
 add_executable(mplanner ${mplanner_SOURCES})

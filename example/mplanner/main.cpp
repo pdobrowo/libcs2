@@ -26,7 +26,7 @@
 #include "cs2/predg3f.h"
 #include "cs2/beziertreeqq4f.h"
 #include "cs2/timer.h"
-#include "prefabs.h"
+#include "test/testpredg3f.h"
 #include <stdint.h>
 #include <cstdio>
 #include <cmath>
@@ -55,7 +55,7 @@ int main()
     struct predbb_func_s f;
     uint64_t start;
 
-    cs2_prefabs_predg3f_a_z_barrel_1(&f.p);
+    cs2_predg3f_copy(&f.p, &test_predg3f_a_z_barrel);
 
     cs2_predg3f_param(&f.pp, &f.p);
 

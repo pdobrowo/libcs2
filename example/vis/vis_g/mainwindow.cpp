@@ -28,6 +28,7 @@
 #include "renderviewarcballcamera.h"
 #include "renderviewflycamera.h"
 #include "renderviewautocamera.h"
+#include "test/testpredg3f.h"
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -204,6 +205,15 @@ void MainWindow::setPredicate(double kx, double ky, double kz, double lx, double
     m_blockPredicateUpdate = false;
 
     updatePredicateInformation();
+}
+
+void MainWindow::setPredicate(const cs2_predg3f_s *p)
+{
+    setPredicate(p->k.x, p->k.y, p->k.z,
+                 p->l.x, p->l.y, p->l.z,
+                 p->a.x, p->a.y, p->a.z,
+                 p->b.x, p->b.y, p->b.z,
+                 p->c);
 }
 
 QString MainWindow::formatVector(const struct cs2_vec3f_s *v)
@@ -606,152 +616,80 @@ void MainWindow::on_actionNormals_triggered()
 
 void MainWindow::on_actionA_pair_of_points_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 6.0, 2.0, -5.0,
-                 10.0, -2.0, -3.0,
-                 -1080.0);
+    setPredicate(&test_predg3f_a_pair_of_points);
 }
 
 void MainWindow::on_actionA_pair_of_separate_ellipsoids_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 6.0, 2.0, -5.0,
-                 10.0, -2.0, -3.0,
-                 -1000.0);
+    setPredicate(&test_predg3f_a_pair_of_separate_ellipsoids);
 }
 
 void MainWindow::on_actionA_pair_of_y_touching_ellipsoids_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 6.0, 2.0, -5.0,
-                 10.0, -2.0, -3.0,
-                 -648.0);
-
+    setPredicate(&test_predg3f_a_pair_of_y_touching_ellipsoids);
 }
 
 void MainWindow::on_actionA_pair_of_yz_crossed_ellipsoids_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 0.0);
-
+    setPredicate(&test_predg3f_a_pair_of_yz_crossed_ellipsoids);
 }
 
 void MainWindow::on_actionA_pair_of_z_touching_ellipsoids_triggered()
 {
-    setPredicate(10.0, -2.0, -3.0,
-                 6.0, 2.0, -5.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 -648.0);
-
+    setPredicate(&test_predg3f_a_pair_of_z_touching_ellipsoids);
 }
 
 void MainWindow::on_actionA_y_barrel_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 6.0, 2.0, -5.0,
-                 10.0, -2.0, -3.0,
-                 17.0);
-
+    setPredicate(&test_predg3f_a_y_barrel);
 }
 
 void MainWindow::on_actionA_z_barrel_triggered()
 {
-    setPredicate(10.0, -2.0, -3.0,
-                 6.0, 2.0, -5.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 17.0);
-
+    setPredicate(&test_predg3f_a_z_barrel);
 }
 
 void MainWindow::on_actionA_notched_y_barrel_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 6.0, 2.0, -5.0,
-                 10.0, -2.0, -3.0,
-                 648.0);
-
+    setPredicate(&test_predg3f_a_notched_y_barrel);
 }
 
 void MainWindow::on_actionA_notched_z_barrel_triggered()
 {
-    setPredicate(10.0, -2.0, -3.0,
-                 6.0, 2.0, -5.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 648.0);
-
+    setPredicate(&test_predg3f_a_notched_z_barrel);
 }
 
 void MainWindow::on_actionA_pair_of_separate_yz_caps_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 6.0, 2.0, -5.0,
-                 10.0, -2.0, -3.0,
-                 1080.0);
-
+    setPredicate(&test_predg3f_a_pair_of_separate_yz_caps);
 }
 
 void MainWindow::on_actionA_xy_zw_torus_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 4.0, -2.0, -4.0,
-                 -10.0, 5.0, 10.0,
-                 111.0);
+    setPredicate(&test_predg3f_a_xy_zw_torus);
 }
 
 void MainWindow::on_actionA_xy_circle_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 4.0, -2.0, -4.0,
-                 -10.0, 5.0, 10.0,
-                 756.0);
+    setPredicate(&test_predg3f_a_xy_circle);
 }
 
 void MainWindow::on_actionA_zw_circle_triggered()
 {
-    setPredicate(-3.0, 10.0, 4.0,
-                 -1.0, -6.0, -4.0,
-                 4.0, -2.0, -4.0,
-                 -10.0, 5.0, 10.0,
-                 -756.0);
+    setPredicate(&test_predg3f_a_zw_circle);
 }
 
 void MainWindow::on_actionA_xz_yw_torus_triggered()
 {
-    setPredicate(-10.0, 5.0, 10.0,
-                 4.0, -2.0, -4.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 111.0);
+    setPredicate(&test_predg3f_a_xz_yw_torus);
 }
 
 void MainWindow::on_actionA_xz_circle_triggered()
 {
-    setPredicate(-10.0, 5.0, 10.0,
-                 4.0, -2.0, -4.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 756.0);
+    setPredicate(&test_predg3f_a_xz_circle);
 }
 
 void MainWindow::on_actionA_yw_circle_triggered()
 {
-    setPredicate(-10.0, 5.0, 10.0,
-                 4.0, -2.0, -4.0,
-                 -1.0, -6.0, -4.0,
-                 -3.0, 10.0, 4.0,
-                 -756.0);
+    setPredicate(&test_predg3f_a_yw_circle);
 }
