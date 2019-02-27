@@ -178,7 +178,7 @@ static void _cs2_debug_verify_eigenvector(const struct cs2_vec4f_s *v)
 
 static void _cs2_debug_verify_ellipsoidal_eigenpinor(const struct cs2_pin3f_s *p)
 {
-    double len;
+    double len, prop;
 
     const double EPS_LEN = 10e-8;
 
@@ -188,6 +188,13 @@ static void _cs2_debug_verify_ellipsoidal_eigenpinor(const struct cs2_pin3f_s *p
                    "failed to obtain a valid ellipoidal eigen pinor: "
                    "eps=%.12f, len=%.12f, p=%.12f e12 + %.12f e23 + %.12f e31 + %.12f",
                    EPS_LEN, len, p->p12, p->p23, p->p31, p->p0);
+
+    prop = 2.0 * sqrt(_cs2_clamp_0(p->p0));
+
+    CS2_ASSERT_MSG(fabs(len - prop) < EPS_LEN,
+                   "failed to check property of scalar in ellipoidal eigen pinor: "
+                   "eps=%.12f, len=%.12f, prop=%.12f, p=%.12f e12 + %.12f e23 + %.12f e31 + %.12f",
+                   EPS_LEN, len, prop, p->p12, p->p23, p->p31, p->p0);
 }
 
 static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double a, double b)
