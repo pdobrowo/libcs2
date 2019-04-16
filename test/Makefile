@@ -5,3 +5,6 @@ debug:
 
 release:
 	$(CURDIR)/../scripts/make_release.sh
+
+coverage:
+	$(CURDIR)/../scripts/make_coverage.sh

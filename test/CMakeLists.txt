@@ -25,10 +25,15 @@
 project(test)
 cmake_minimum_required(VERSION 2.6)
 
-include(CheckCCompilerFlag)
-
 # modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/../cmake)
+
+# includes
+include(CheckCCompilerFlag)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    include(CodeCoverage)
+endif()
 
 # deps: cs2 (local)
 find_package(CS2 REQUIRED)
@@ -37,6 +42,11 @@ include_directories(${CS2_INCLUDE_DIR})
 # deps: cmocka (local)
 set(CMOCKA_BASE_DIR ${CMAKE_SOURCE_DIR}/../deps/cmocka)
 include_directories(${CMOCKA_BASE_DIR}/include)
+
+# code coverage
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    append_coverage_compiler_flags()
+endif()
 
 # compiler flags
 set(COMPILER_FLAGS "-Wall -Wextra -Wno-long-long -Wformat=2 -Wno-variadic-macros")
@@ -109,3 +119,7 @@ target_link_libraries(test ${CS2_STATIC_LIBRARIES})
 # deps: cmocka (local)
 target_link_libraries(test ${CMOCKA_BASE_DIR}/lib/libcmocka.a)
 
+# code coverage
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    setup_target_for_coverage_gcovr_html(NAME test_coverage EXECUTABLE test DEPENDENCIES test)
+endif()
