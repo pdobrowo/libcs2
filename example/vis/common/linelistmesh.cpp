@@ -22,21 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef MESHING_H
-#define MESHING_H
-
-#include "trianglelistmesh.h"
 #include "linelistmesh.h"
-#include "cs2/predg3f.h"
+#include <QVector3D>
+#include <GL/gl.h>
 
-namespace meshing
+LineListMesh::LineListMesh(QGLWidget *gl, LineListPtr lineList)
+    : Mesh(gl),
+      m_lineList(lineList)
 {
-// 1-dimensional curves
-void meshCurveSimple(LineListPtr lines, struct cs2_predgparam3f_s *param, double radius);
+}
 
-// 2-dimensional surfaces
-void meshSurfaceAdaptive(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions);
-void meshSurfaceSimple(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius);
-} // namespace meshing
+void LineListMesh::drawMesh()
+{
+    drawLineList();
+}
 
-#endif // MESHING_H
+void LineListMesh::drawLineList()
+{
+    // draw lines
+    glBegin(GL_LINES);
+
+    for (LineList::const_iterator iterator = m_lineList->begin(); iterator != m_lineList->end(); ++iterator)
+    {
+        const Line &line = *iterator;
+
+        for (size_t i = 0; i < 2; ++i)
+            glVertex3f(line.vertex(i).x(), line.vertex(i).y(), line.vertex(i).z());
+    }
+
+    glEnd();
+}

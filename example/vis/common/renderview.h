@@ -28,6 +28,7 @@
 #include "renderviewcamera.h"
 #include "shader.h"
 #include "gridmesh.h"
+#include "linelistmesh.h"
 #include "trianglelistmesh.h"
 #include <QVector3D>
 #include <QQuaternion>
@@ -68,6 +69,27 @@ protected:
     QVector3D   m_translation;
     QQuaternion m_quaternion;
 };
+
+class LineListData
+    : public MeshData
+{
+public:
+    LineListData(QGLWidget *gl,
+                 LineListPtr lineList,
+                 QColor color);
+
+    void    render();
+
+    void    setColor(QColor color);
+    QColor  color() const;
+
+private:
+    LineListMesh    m_renderObject;
+    QColor          m_color;
+};
+
+typedef boost::shared_ptr<LineListData> LineListDataPtr;
+typedef std::map<LineListPtr, LineListDataPtr> LineLists;
 
 class TriangleListData
     : public MeshData
@@ -140,6 +162,7 @@ private:
 
     // render objects
     TriangleLists m_triangleLists;
+    LineLists m_lineLists;
 
     size_t m_nextSuggestedColor;
 
@@ -168,9 +191,9 @@ protected:
     virtual void paintGL();
 
 public:
-    explicit RenderView(QWidget* parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
-    explicit RenderView(QGLContext *context, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
-    explicit RenderView(const QGLFormat &format, QWidget *parent = 0, const QGLWidget *shareWidget = 0, Qt::WindowFlags f = 0);
+    explicit RenderView(QWidget* parent = nullptr, const QGLWidget *shareWidget = nullptr, Qt::WindowFlags f = nullptr);
+    explicit RenderView(QGLContext *context, QWidget *parent = nullptr, const QGLWidget *shareWidget = nullptr, Qt::WindowFlags f = nullptr);
+    explicit RenderView(const QGLFormat &format, QWidget *parent = nullptr, const QGLWidget *shareWidget = nullptr, Qt::WindowFlags f = nullptr);
     virtual ~RenderView();
 
     // properties
@@ -198,6 +221,22 @@ public:
 
     void setTriangleListColor(TriangleListPtr triangleList, const QColor &color);
     QColor TriangleListColor(TriangleListPtr triangleList);
+
+    // line lists
+    void addLineList(LineListPtr lineList, QColor color);
+    void removeLineList(LineListPtr lineList);
+
+    void setLineListVisible(LineListPtr lineList, bool visible);
+    bool isLineListVisible(LineListPtr lineList);
+
+    void setLineListTranslation(LineListPtr lineList, const QVector3D &translation);
+    QVector3D LineListTranslation(LineListPtr lineList);
+
+    void setLineListQuaternion(LineListPtr lineList, const QQuaternion &rotation);
+    QQuaternion LineListQuaternion(LineListPtr lineList);
+
+    void setLineListColor(LineListPtr lineList, const QColor &color);
+    QColor LineListColor(LineListPtr lineList);
 
     // cleanup
     void removeAllObjects();

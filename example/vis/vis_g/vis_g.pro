@@ -32,6 +32,7 @@ SOURCES += \
     ../common/renderviewflycamera.cpp \
     ../common/shader.cpp \
     ../common/trianglelistmesh.cpp \
+    ../common/linelistmesh.cpp \
     ../common/meshing.cpp \
     ../../../test/src/testpredg3f.c
 
@@ -46,6 +47,7 @@ HEADERS += \
     ../common/renderviewflycamera.h \
     ../common/shader.h \
     ../common/trianglelistmesh.h \
+    ../common/linelistmesh.h \
     ../common/meshing.h \
     ../../../test/inc/test/testpredg3f.h
 

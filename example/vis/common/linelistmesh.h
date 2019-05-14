@@ -22,21 +22,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef MESHING_H
-#define MESHING_H
+#ifndef LINELISTMESH_H
+#define LINELISTMESH_H
 
-#include "trianglelistmesh.h"
-#include "linelistmesh.h"
-#include "cs2/predg3f.h"
+#include "mesh.h"
+#include <boost/shared_ptr.hpp>
+#include <vector>
+#include <QVector3D>
 
-namespace meshing
+class Line
 {
-// 1-dimensional curves
-void meshCurveSimple(LineListPtr lines, struct cs2_predgparam3f_s *param, double radius);
+public:
+    Line()
+    {
+    }
 
-// 2-dimensional surfaces
-void meshSurfaceAdaptive(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions);
-void meshSurfaceSimple(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius);
-} // namespace meshing
+    Line(const QVector3D &vertexA, const QVector3D &vertexB)
+    {
+        m_vertex[0] = vertexA;
+        m_vertex[1] = vertexB;
+    }
 
-#endif // MESHING_H
+    const QVector3D &vertex(size_t i) const
+    {
+        return m_vertex[i];
+    }
+
+private:
+    QVector3D m_vertex[2];
+};
+
+typedef std::vector<Line> LineList;
+typedef boost::shared_ptr<LineList> LineListPtr;
+
+class LineListMesh
+    : public Mesh
+{
+public:
+    LineListMesh(QGLWidget *gl, LineListPtr lineList);
+
+private:
+    LineListPtr m_lineList;
+
+    void drawLineList();
+
+protected:
+    virtual void drawMesh();
+};
+
+typedef boost::shared_ptr<LineListMesh> LineListMeshPtr;
+
+#endif // LINELISTMESH_H

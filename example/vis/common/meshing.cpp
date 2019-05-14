@@ -24,6 +24,7 @@
  */
 #include "meshing.h"
 #include <boost/scoped_array.hpp>
+#include <cmath>
 
 namespace meshing
 {
@@ -38,7 +39,9 @@ int clampCoord(int x, int m)
 
 QVector3D projectSpin(struct cs2_spin3f_s &spin)
 {
-    return QVector3D(spin.s12 / (1.0 - spin.s0), spin.s23 / (1.0 - spin.s0), spin.s31 / (1.0 - spin.s0));
+    return QVector3D(static_cast<float>(spin.s12 / (1.0 - spin.s0)),
+                     static_cast<float>(spin.s23 / (1.0 - spin.s0)),
+                     static_cast<float>(spin.s31 / (1.0 - spin.s0)));
 }
 
 double projectedDistance(const struct cs2_spin3f_s *a, const struct cs2_spin3f_s *b)
@@ -58,7 +61,7 @@ double projectedDistance(const struct cs2_spin3f_s *a, const struct cs2_spin3f_s
     return cs2_vec3f_len(&pc);
 }
 
-void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
+void meshSurfaceAdaptiveStep(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double targetRadius, int component, double minU, double maxU, double minV, double maxV, int maxSubdivisions, int subdivision)
 {
     struct cs2_spin3f_s sp00, sp01, sp10, sp11;
 
@@ -70,10 +73,10 @@ void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesB
     if (subdivision == maxSubdivisions || (projectedDistance(&sp00, &sp01) <= targetRadius && projectedDistance(&sp00, &sp10) <= targetRadius && projectedDistance(&sp00, &sp11) <= targetRadius &&
                                            projectedDistance(&sp01, &sp10) <= targetRadius && projectedDistance(&sp01, &sp11) <= targetRadius && projectedDistance(&sp10, &sp11) <= targetRadius))
     {
-        QVector3D v00(sp00.s12 / (1 - sp00.s0), sp00.s23 / (1 - sp00.s0), sp00.s31 / (1 - sp00.s0));
-        QVector3D v01(sp01.s12 / (1 - sp01.s0), sp01.s23 / (1 - sp01.s0), sp01.s31 / (1 - sp01.s0));
-        QVector3D v10(sp10.s12 / (1 - sp10.s0), sp10.s23 / (1 - sp10.s0), sp10.s31 / (1 - sp10.s0));
-        QVector3D v11(sp11.s12 / (1 - sp11.s0), sp11.s23 / (1 - sp11.s0), sp11.s31 / (1 - sp11.s0));
+        QVector3D v00 = projectSpin(sp00);
+        QVector3D v01 = projectSpin(sp01);
+        QVector3D v10 = projectSpin(sp10);
+        QVector3D v11 = projectSpin(sp11);
 
         QVector3D nu = QVector3D::crossProduct(v00 - v11, v01 - v11).normalized();
         QVector3D nl = QVector3D::crossProduct(v10 - v11, v00 - v11).normalized();
@@ -100,14 +103,14 @@ void autoMeshInternal(TriangleListPtr trianglesFront, TriangleListPtr trianglesB
     }
     else
     {
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
-        autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
+        meshSurfaceAdaptiveStep(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
+        meshSurfaceAdaptiveStep(trianglesFront, trianglesBack, param, targetRadius, component, minU, minU + 0.5 * (maxU - minU), minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
+        meshSurfaceAdaptiveStep(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV, minV + 0.5 * (maxV - minV), maxSubdivisions, subdivision + 1);
+        meshSurfaceAdaptiveStep(trianglesFront, trianglesBack, param, targetRadius, component, minU + 0.5 * (maxU - minU), maxU, minV + 0.5 * (maxV - minV), maxV, maxSubdivisions, subdivision + 1);
     }
 }
 
-void simpleMeshGenPatch(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, int c, Coord2i controls[4][4], int evalCacheSize, QVector3D *evalCache)
+void meshSurfaceSimplePatch(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, int c, Coord2i controls[4][4], int evalCacheSize, QVector3D *evalCache)
 {
     // ----
     // |\ |
@@ -170,17 +173,41 @@ void simpleMeshGenPatch(TriangleListPtr trianglesFront, TriangleListPtr triangle
 
 } // namespace anonymous
 
-void autoMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions)
+void meshCurveSimple(LineListPtr lines, cs2_predgparam3f_s *param, double radius)
 {
-    int number_of_components = cs2_predgparamtype3f_domain_components(param->t);
+    int numOfComponents = cs2_predgparamtype3f_domain_components(param->t);
+    struct cs2_spin3f_s sp0, sp1;
+    int c;
+    double pu;
 
-    for (int component = 0; component < number_of_components; ++component)
-        for (double u = 0; u <= 1 - initialRadius; u += initialRadius)
-            for (double v = 0; v <= 1 - initialRadius; v += initialRadius)
-                autoMeshInternal(trianglesFront, trianglesBack, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
+    for (c = 0; c < numOfComponents; ++c)
+    {
+        for (pu = 0.0; pu < 1.0; pu += radius)
+        {
+            cs2_predgparam3f_eval(&sp0, param, pu, 0, c);
+            cs2_predgparam3f_eval(&sp1, param, fmod(pu + radius, 1.0), 0, c);
+
+            QVector3D v0 = projectSpin(sp0);
+            QVector3D v1 = projectSpin(sp1);
+
+            Line l(v0, v1);
+
+            lines->push_back(l);
+        }
+    }
 }
 
-void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius)
+void meshSurfaceAdaptive(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double initialRadius, double targetRadius, int maxSubdivisions)
+{
+    int componentCount = cs2_predgparamtype3f_domain_components(param->t);
+
+    for (int component = 0; component < componentCount; ++component)
+        for (double u = 0; u <= 1 - initialRadius; u += initialRadius)
+            for (double v = 0; v <= 1 - initialRadius; v += initialRadius)
+                meshSurfaceAdaptiveStep(trianglesFront, trianglesBack, param, targetRadius, component, u, u + initialRadius, v, v + initialRadius, maxSubdivisions, 0);
+}
+
+void meshSurfaceSimple(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, struct cs2_predgparam3f_s *param, double radius)
 {
     int numOfComponents = cs2_predgparamtype3f_domain_components(param->t);
     Coord2i controls[4][4]; /* [u][v] */
@@ -237,37 +264,10 @@ void simpleMesh(TriangleListPtr trianglesFront, TriangleListPtr trianglesBack, s
                     for (int v = 0; v < 4; ++v)
                         controls[u][v] = Coord2i(clampCoord(pu + u - 1, evalCacheSize), clampCoord(pv + v - 1, evalCacheSize));
 
-                simpleMeshGenPatch(trianglesFront, trianglesBack, c, controls, evalCacheSize, evalCache.get());
+                meshSurfaceSimplePatch(trianglesFront, trianglesBack, c, controls, evalCacheSize, evalCache.get());
             }
         }
     }
-
-//    for (int pu = 0; pu < evalCacheSize - 1; ++pu)
-//    {
-//        for (int u = 0; u < 4; ++u)
-//            for (int v = 0; v < 4; ++v)
-//                controls[u][v] = Coord2i(clampZeroUpper(pu + u - 1, evalCacheSize - 1), clampZeroUpper(evalCacheSize + v - 2, evalCacheSize - 1));
-
-//        for (int c = 0; c < numOfComponents; ++c)
-//            simpleMeshGenPatch(trianglesFront, trianglesBack, c, controls, evalCacheSize, evalCache.get());
-//    }
-
-//    for (int pv = 0; pv < evalCacheSize - 1; ++pv)
-//    {
-//        for (int u = 0; u < 4; ++u)
-//            for (int v = 0; v < 4; ++v)
-//                controls[u][v] = Coord2i(clampZeroUpper(evalCacheSize + u - 2, evalCacheSize - 1), clampZeroUpper(pv + v - 1, evalCacheSize - 1));
-
-//        for (int c = 0; c < numOfComponents; ++c)
-//            simpleMeshGenPatch(trianglesFront, trianglesBack, c, controls, evalCacheSize, evalCache.get());
-//    }
-
-//    for (int u = 0; u < 4; ++u)
-//        for (int v = 0; v < 4; ++v)
-//            controls[u][v] = Coord2i(clampZeroUpper(evalCacheSize + u - 2, evalCacheSize - 1), clampZeroUpper(evalCacheSize + v - 2, evalCacheSize - 1));
-
-//    for (int c = 0; c < numOfComponents; ++c)
-//        simpleMeshGenPatch(trianglesFront, trianglesBack, c, controls, evalCacheSize, evalCache.get());
 }
 
 } // namespace meshing
