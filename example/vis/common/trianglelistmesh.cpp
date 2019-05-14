@@ -26,8 +26,8 @@
 #include <QVector3D>
 #include <GL/gl.h>
 
-const double NORMAL_VECTOR_LENGTH = 0.1;
-const double SHARED_NORMAL_VECTOR_LENGTH = 0.12;
+const float NORMAL_VECTOR_LENGTH = 0.1f;
+const float SHARED_NORMAL_VECTOR_LENGTH = 0.12f;
 
 TriangleListMesh::TriangleListMesh(QGLWidget *gl, TriangleListPtr triangleList)
     : Mesh(gl),
@@ -50,9 +50,9 @@ void TriangleListMesh::renderOutlines()
     {
         const Triangle &triangle = *iterator;
 
-        glVertex3d(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
-        glVertex3d(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
-        glVertex3d(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
+        glVertex3f(triangle.vertex(0).x(), triangle.vertex(0).y(), triangle.vertex(0).z());
+        glVertex3f(triangle.vertex(1).x(), triangle.vertex(1).y(), triangle.vertex(1).z());
+        glVertex3f(triangle.vertex(2).x(), triangle.vertex(2).y(), triangle.vertex(2).z());
     }
 
     glEnd();
@@ -74,11 +74,11 @@ void TriangleListMesh::renderNormals()
 
         for (size_t i = 0; i < 3; ++i)
         {
-            glVertex3d(triangle.vertex(i).x(),
+            glVertex3f(triangle.vertex(i).x(),
                        triangle.vertex(i).y(),
                        triangle.vertex(i).z());
 
-            glVertex3d(triangle.vertex(i).x() + NORMAL_VECTOR_LENGTH * triangle.normal(i).x(),
+            glVertex3f(triangle.vertex(i).x() + NORMAL_VECTOR_LENGTH * triangle.normal(i).x(),
                        triangle.vertex(i).y() + NORMAL_VECTOR_LENGTH * triangle.normal(i).y(),
                        triangle.vertex(i).z() + NORMAL_VECTOR_LENGTH * triangle.normal(i).z());
         }
@@ -92,11 +92,11 @@ void TriangleListMesh::renderNormals()
 
         for (size_t i = 0; i < 3; ++i)
         {
-            glVertex3d(triangle.vertex(i).x(),
+            glVertex3f(triangle.vertex(i).x(),
                        triangle.vertex(i).y(),
                        triangle.vertex(i).z());
 
-            glVertex3d(triangle.vertex(i).x() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).x(),
+            glVertex3f(triangle.vertex(i).x() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).x(),
                        triangle.vertex(i).y() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).y(),
                        triangle.vertex(i).z() + SHARED_NORMAL_VECTOR_LENGTH * triangle.sharedNormal(i).z());
         }
@@ -121,8 +121,8 @@ void TriangleListMesh::drawTriangleList()
 
         for (size_t i = 0; i < 3; ++i)
         {
-            glNormal3d(triangle.sharedNormal(i).x(), triangle.sharedNormal(i).y(), triangle.sharedNormal(i).z());
-            glVertex3d(triangle.vertex(i).x(), triangle.vertex(i).y(), triangle.vertex(i).z());
+            glNormal3f(triangle.sharedNormal(i).x(), triangle.sharedNormal(i).y(), triangle.sharedNormal(i).z());
+            glVertex3f(triangle.vertex(i).x(), triangle.vertex(i).y(), triangle.vertex(i).z());
         }
     }
 

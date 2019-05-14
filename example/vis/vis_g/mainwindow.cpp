@@ -39,6 +39,10 @@
 #include <cassert>
 #include <cmath>
 
+const QColor salemColor(9, 127, 75);
+const QColor redBerryColor(142, 0, 0);
+const QColor darkOrangeColor(255, 140, 0);
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     m_blockPredicateUpdate(false),
@@ -161,22 +165,32 @@ void MainWindow::updatePredicateInformation()
     // visual
     m_rv->removeAllObjects();
 
-    // only 2-dimensional
-    if (cs2_predgparamtype3f_dim(param.t) == 2)
+    switch (cs2_predgparamtype3f_dim(param.t))
     {
-        TriangleListPtr trianglesFront(new TriangleList());
-        TriangleListPtr trianglesBack(new TriangleList());
+        case 1: // 1-dimensional
+            {
+                LineListPtr lines(new LineList());
 
-        if (ui->actionAutoMesh->isChecked())
-            meshing::autoMesh(trianglesFront, trianglesBack, &param, 0.1, 0.5, 10);
-        else
-            meshing::simpleMesh(trianglesFront, trianglesBack, &param, 0.01);
+                meshing::meshCurveSimple(lines, &param, 0.01);
 
-        const QColor salemColor(9, 127, 75);
-        const QColor redBerryColor(142, 0, 0);
+                m_rv->addLineList(lines, darkOrangeColor);
+            }
+            break;
 
-        m_rv->addTriangleList(trianglesFront, salemColor);
-        m_rv->addTriangleList(trianglesBack, redBerryColor);
+        case 2: // 2-dimensional
+            {
+                TriangleListPtr trianglesFront(new TriangleList());
+                TriangleListPtr trianglesBack(new TriangleList());
+
+                if (ui->actionAutoMesh->isChecked())
+                    meshing::meshSurfaceAdaptive(trianglesFront, trianglesBack, &param, 0.1, 0.5, 10);
+                else
+                    meshing::meshSurfaceSimple(trianglesFront, trianglesBack, &param, 0.01);
+
+                m_rv->addTriangleList(trianglesFront, salemColor);
+                m_rv->addTriangleList(trianglesBack, redBerryColor);
+            }
+            break;
     }
 }
 
@@ -428,7 +442,7 @@ void MainWindow::on_doubleSpinBoxC_valueChanged(double)
 
 void MainWindow::on_labelZeroK_linkActivated(const QString &link)
 {
-    Q_UNUSED(link);
+    Q_UNUSED(link)
 
     ui->doubleSpinBoxKX->setValue(0);
     ui->doubleSpinBoxKY->setValue(0);
@@ -437,7 +451,7 @@ void MainWindow::on_labelZeroK_linkActivated(const QString &link)
 
 void MainWindow::on_labelZeroL_linkActivated(const QString &link)
 {
-    Q_UNUSED(link);
+    Q_UNUSED(link)
 
     ui->doubleSpinBoxLX->setValue(0);
     ui->doubleSpinBoxLY->setValue(0);
@@ -446,7 +460,7 @@ void MainWindow::on_labelZeroL_linkActivated(const QString &link)
 
 void MainWindow::on_labelZeroA_linkActivated(const QString &link)
 {
-    Q_UNUSED(link);
+    Q_UNUSED(link)
 
     ui->doubleSpinBoxAX->setValue(0);
     ui->doubleSpinBoxAY->setValue(0);
@@ -455,7 +469,7 @@ void MainWindow::on_labelZeroA_linkActivated(const QString &link)
 
 void MainWindow::on_labelZeroB_linkActivated(const QString &link)
 {
-    Q_UNUSED(link);
+    Q_UNUSED(link)
 
     ui->doubleSpinBoxBX->setValue(0);
     ui->doubleSpinBoxBY->setValue(0);
@@ -464,7 +478,7 @@ void MainWindow::on_labelZeroB_linkActivated(const QString &link)
 
 void MainWindow::on_labelZeroC_linkActivated(const QString &link)
 {
-    Q_UNUSED(link);
+    Q_UNUSED(link)
 
     ui->doubleSpinBoxC->setValue(0);
 }

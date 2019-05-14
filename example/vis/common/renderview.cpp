@@ -93,7 +93,7 @@ RenderView::RenderView(const QGLFormat &format, QWidget *parent, const QGLWidget
 void RenderView::ctor()
 {
     m_nextSuggestedColor = 0;
-    m_viewModeOptions = 0;
+    m_viewModeOptions = nullptr;
 
     setMouseTracking(true);
 
@@ -210,7 +210,7 @@ void RenderView::initializeGL()
 
     // Clear mode
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClearDepth(1.0f);
+    glClearDepth(1.0);
 
     // Depth buffer
     glEnable(GL_DEPTH_TEST);
@@ -337,7 +337,7 @@ void RenderView::drawGradientBackground()
 
 void RenderView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     emit toggleFullScreenTriggered();
 }
 
@@ -350,15 +350,6 @@ void RenderView::drawLights()
 {
     GLfloat lightPositionA[] = { 2.0, 2.0, 2.0, 1.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPositionA);
-}
-
-void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)
-{
-    if (m_triangleLists.find(triangleList) != m_triangleLists.end())
-        return;
-
-    TriangleListDataPtr data(new TriangleListData(this, triangleList, color));
-    m_triangleLists[triangleList] = data;
 }
 
 void RenderView::renderMeshes()
@@ -381,6 +372,10 @@ void RenderView::renderMeshes()
         m_shaderLighting->unbind();
     }
 
+    // draw line lists
+    for (LineLists::const_iterator it = m_lineLists.begin(); it != m_lineLists.end(); ++it)
+        it->second->render();
+
     // draw outlines
     if (isViewModeOption(ViewMode::Outlines))
         for (TriangleLists::const_iterator it = m_triangleLists.begin(); it != m_triangleLists.end(); ++it)
@@ -392,38 +387,30 @@ void RenderView::renderMeshes()
             it->second->renderNormals();
 }
 
-void RenderView::setTriangleListVisible(TriangleListPtr triangleList, bool visible)
-{
-    if (m_triangleLists.find(triangleList) == m_triangleLists.end())
-        return;
-
-    m_triangleLists[triangleList]->setVisible(visible);
-}
-
 void RenderView::keyPressEvent(QKeyEvent *event)
 {
-    const double MOVE_AMOUNT = 4.0;
+    const double MOVE_DELTA = 4.0;
 
     switch (event->key())
     {
     case Qt::Key_Up:
     case Qt::Key_W:
-        m_camera->moveForward(MOVE_AMOUNT);
+        m_camera->moveForward(MOVE_DELTA);
         return;
 
     case Qt::Key_Down:
     case Qt::Key_S:
-        m_camera->moveForward(-MOVE_AMOUNT);
+        m_camera->moveForward(-MOVE_DELTA);
         return;
 
     case Qt::Key_Right:
     case Qt::Key_D:
-        m_camera->strafeRight(MOVE_AMOUNT);
+        m_camera->strafeRight(MOVE_DELTA);
         return;
 
     case Qt::Key_Left:
     case Qt::Key_A:
-        m_camera->strafeRight(-MOVE_AMOUNT);
+        m_camera->strafeRight(-MOVE_DELTA);
         return;
     }
 
@@ -477,6 +464,15 @@ void RenderView::toogleViewModeOption(ViewMode::Option option)
         enableViewModeOption(option);
 }
 
+void RenderView::addTriangleList(TriangleListPtr triangleList, QColor color)
+{
+    if (m_triangleLists.find(triangleList) != m_triangleLists.end())
+        return;
+
+    TriangleListDataPtr data(new TriangleListData(this, triangleList, color));
+    m_triangleLists[triangleList] = data;
+}
+
 void RenderView::removeTriangleList(TriangleListPtr triangleList)
 {
     TriangleLists::iterator it = m_triangleLists.find(triangleList);
@@ -485,6 +481,14 @@ void RenderView::removeTriangleList(TriangleListPtr triangleList)
         return;
 
     m_triangleLists.erase(it);
+}
+
+void RenderView::setTriangleListVisible(TriangleListPtr triangleList, bool visible)
+{
+    if (m_triangleLists.find(triangleList) == m_triangleLists.end())
+        return;
+
+    m_triangleLists[triangleList]->setVisible(visible);
 }
 
 bool RenderView::isTriangleListVisible(TriangleListPtr triangleList)
@@ -543,9 +547,93 @@ QColor RenderView::TriangleListColor(TriangleListPtr triangleList)
     return m_triangleLists[triangleList]->color();
 }
 
+void RenderView::addLineList(LineListPtr lineList, QColor color)
+{
+    if (m_lineLists.find(lineList) != m_lineLists.end())
+        return;
+
+    LineListDataPtr data(new LineListData(this, lineList, color));
+    m_lineLists[lineList] = data;
+}
+
+void RenderView::removeLineList(LineListPtr lineList)
+{
+    LineLists::iterator it = m_lineLists.find(lineList);
+
+    if (it == m_lineLists.end())
+        return;
+
+    m_lineLists.erase(it);
+}
+
+void RenderView::setLineListVisible(LineListPtr lineList, bool visible)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return;
+
+    m_lineLists[lineList]->setVisible(visible);
+}
+
+bool RenderView::isLineListVisible(LineListPtr lineList)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return false;
+
+    return m_lineLists[lineList]->isVisible();
+}
+
+void RenderView::setLineListTranslation(LineListPtr lineList, const QVector3D &translation)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return;
+
+    m_lineLists[lineList]->setTranslation(translation);
+}
+
+QVector3D RenderView::LineListTranslation(LineListPtr lineList)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return QVector3D();
+
+    return m_lineLists[lineList]->translation();
+}
+
+void RenderView::setLineListQuaternion(LineListPtr lineList, const QQuaternion &quaternion)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return;
+
+    m_lineLists[lineList]->setQuaternion(quaternion);
+}
+
+QQuaternion RenderView::LineListQuaternion(LineListPtr lineList)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return QQuaternion();
+
+    return m_lineLists[lineList]->quaternion();
+}
+
+void RenderView::setLineListColor(LineListPtr lineList, const QColor &color)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return;
+
+    m_lineLists[lineList]->setColor(color);
+}
+
+QColor RenderView::LineListColor(LineListPtr lineList)
+{
+    if (m_lineLists.find(lineList) == m_lineLists.end())
+        return QColor();
+
+    return m_lineLists[lineList]->color();
+}
+
 void RenderView::removeAllObjects()
 {
     m_triangleLists.clear();
+    m_lineLists.clear();
 }
 
 TriangleListData::TriangleListData(QGLWidget *gl, TriangleListPtr triangleList, QColor color)
@@ -572,7 +660,7 @@ void TriangleListData::render(bool wireframe)
 
     // draw geometry
     glPushMatrix();
-    glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+    glTranslatef(m_translation.x(), m_translation.y(), m_translation.z());
     applyRotationGL(m_quaternion);
     m_renderObject.render();
     glPopMatrix();
@@ -589,7 +677,7 @@ void TriangleListData::renderOutlines()
 
     // draw outlines
     glPushMatrix();
-    glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+    glTranslatef(m_translation.x(), m_translation.y(), m_translation.z());
     applyRotationGL(m_quaternion);
     m_renderObject.renderOutlines();
     glPopMatrix();
@@ -603,7 +691,7 @@ void TriangleListData::renderNormals()
 
     // draw normals
     glPushMatrix();
-    glTranslated(m_translation.x(), m_translation.y(), m_translation.z());
+    glTranslatef(m_translation.x(), m_translation.y(), m_translation.z());
     applyRotationGL(m_quaternion);
     m_renderObject.renderNormals();
     glPopMatrix();
@@ -615,6 +703,42 @@ void TriangleListData::setColor(QColor color)
 }
 
 QColor TriangleListData::color() const
+{
+    return m_color;
+}
+
+LineListData::LineListData(QGLWidget *gl, LineListPtr lineList, QColor color)
+    : m_renderObject(gl, lineList),
+      m_color(color)
+{
+}
+
+void LineListData::render()
+{
+    // check visibility
+    if (!m_visible)
+        return;
+
+    // setup material
+    GLfloat diffuse[] = { static_cast<GLfloat>(m_color.redF()), static_cast<GLfloat>(m_color.greenF()), static_cast<GLfloat>(m_color.blueF()), 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+
+    glColor4fv(diffuse);
+
+    // draw geometry
+    glPushMatrix();
+    glTranslatef(m_translation.x(), m_translation.y(), m_translation.z());
+    applyRotationGL(m_quaternion);
+    m_renderObject.render();
+    glPopMatrix();
+}
+
+void LineListData::setColor(QColor color)
+{
+    m_color = color;
+}
+
+QColor LineListData::color() const
 {
     return m_color;
 }
