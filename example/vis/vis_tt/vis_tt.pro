@@ -30,6 +30,7 @@ SOURCES += \
     ../common/renderviewautocamera.cpp \
     ../common/renderviewflycamera.cpp \
     ../common/shader.cpp \
+    ../common/linelistmesh.cpp \
     ../common/trianglelistmesh.cpp \
     ../common/meshing.cpp
 
@@ -43,6 +44,7 @@ HEADERS += \
     ../common/renderviewcamera.h \
     ../common/renderviewflycamera.h \
     ../common/shader.h \
+    ../common/linelistmesh.h \
     ../common/trianglelistmesh.h \
     ../common/meshing.h
 

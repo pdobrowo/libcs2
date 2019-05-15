@@ -123,9 +123,9 @@ void MainWindow::updatePredicateInformation()
                 TriangleListPtr trianglesBack(new TriangleList());
 
                 if (ui->actionAutoMesh->isChecked())
-                    meshing::autoMesh(trianglesFront, trianglesBack, &param, 0.1, 0.5, 10);
+                    meshing::meshSurfaceAdaptive(trianglesFront, trianglesBack, &param, 0.1, 0.5, 10);
                 else
-                    meshing::simpleMesh(trianglesFront, trianglesBack, &param, 0.01);
+                    meshing::meshSurfaceSimple(trianglesFront, trianglesBack, &param, 0.01);
 
                 filterTriangles(trianglesFront);
                 filterTriangles(trianglesBack);
