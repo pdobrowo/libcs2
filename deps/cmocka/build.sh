@@ -20,7 +20,7 @@ else (
         (
             cd .cmake
             cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/../install -DWITH_STATIC_LIB=ON
-            make -j
+            make -j 2
             make install
         )
     )

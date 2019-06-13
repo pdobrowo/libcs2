@@ -10,7 +10,7 @@ else (
     (
         cd .build;
         cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/install -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
-        make -j
+        make -j 2
         make install
     )
     mv .build/install/include .
