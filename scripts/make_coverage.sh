@@ -2,7 +2,7 @@
 mkdir -p .build
 (
     cd .build
-    cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j && make test_coverage
+    cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j 2 && make test_coverage
 )
 
 GREEN='\033[0;32m'
