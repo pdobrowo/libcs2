@@ -46,11 +46,12 @@ struct test_suite_s
     struct test_suite_s *next;
 };
 
+extern struct test_suite_s *test_suites_registry;
+
 #define TEST_SUITE_REGISTER(TestSuiteName) \
     static void test_suite_reg_##TestSuiteName(void) __attribute__((constructor)); \
     static void test_suite_reg_##TestSuiteName(void) \
     { \
-        extern struct test_suite_s *test_suites_registry; \
         if (!test_suites_registry) \
             test_suites_registry = &test_suite_##TestSuiteName; \
         else \

@@ -37,15 +37,25 @@ static int _cs2_almost_zero(double x)
     return fabs(x) < EPS;
 }
 
-static void rand_predg3f(struct cs2_rand_s *r, struct cs2_predg3f_s *g)
+static int _cs2_almost_equal(double x, double y)
+{
+    return _cs2_almost_zero(x - y);
+}
+
+static int _cs2_almost_equal_vector(const struct cs2_vec3f_s *v, const struct cs2_vec3f_s *w)
+{
+    return _cs2_almost_equal(v->x, w->x) && _cs2_almost_equal(v->y, w->y) && _cs2_almost_equal(v->z, w->z);
+}
+
+static void rand_predg3f(struct cs2_predg3f_s *g, struct cs2_rand_s *r)
 {
     const double MIN = -10;
     const double MAX = 10;
 
-    cs2_rand_vec3f_u1f(r, &g->a, MIN, MAX);
-    cs2_rand_vec3f_u1f(r, &g->b, MIN, MAX);
-    cs2_rand_vec3f_u1f(r, &g->k, MIN, MAX);
-    cs2_rand_vec3f_u1f(r, &g->l, MIN, MAX);
+    cs2_rand_vec3f_u1f(&g->a, r, MIN, MAX);
+    cs2_rand_vec3f_u1f(&g->b, r, MIN, MAX);
+    cs2_rand_vec3f_u1f(&g->k, r, MIN, MAX);
+    cs2_rand_vec3f_u1f(&g->l, r, MIN, MAX);
     g->c = cs2_rand_u1f(r, MIN, MAX);
 }
 
@@ -65,7 +75,7 @@ TEST_CASE(predg3f, param_random)
 
     for (i = 0; i < ITER; ++i)
     {
-        rand_predg3f(&r, &g);
+        rand_predg3f(&g, &r);
         cs2_predg3f_param(&pp, &g);
     }
 }
@@ -550,5 +560,38 @@ TEST_CASE(predg3f, param_a_yw_circle)
     {
         cs2_predgparam3f_eval(&sp, &pp, u, 0.0, 0);
         TEST_ASSERT_TRUE(_cs2_almost_zero(cs2_spinquad3f_eval(&sq, &sp)));
+    }
+}
+
+TEST_CASE(predg3f, from_pquvc)
+{
+    struct cs2_vec3f_s p, q, u, v, tp, tq, tu, tv;
+    struct cs2_predg3f_s g, tg;
+    struct cs2_rand_s r;
+    double alpha, beta;
+
+    const int ITER = 100;
+    int i;
+
+    cs2_rand_seed(&r);
+
+    for (i = 0; i < ITER; ++i)
+    {
+        rand_predg3f(&g, &r);
+        cs2_predg3f_pquv(&p, &q, &u, &v, &g);
+
+        for (alpha = 0.0; alpha <= 1.0; alpha += 0.01)
+        {
+            for (beta = 0.0; beta <= 1.0; beta += 0.01)
+            {
+                cs2_predg3f_from_pquvc(&tg, &p, &q, &u, &v, 0.0, alpha, beta);
+                cs2_predg3f_pquv(&tp, &tq, &tu, &tv, &tg);
+
+                TEST_ASSERT_TRUE(_cs2_almost_equal_vector(&p, &tp));
+                TEST_ASSERT_TRUE(_cs2_almost_equal_vector(&q, &tq));
+                TEST_ASSERT_TRUE(_cs2_almost_equal_vector(&u, &tu));
+                TEST_ASSERT_TRUE(_cs2_almost_equal_vector(&v, &tv));
+            }
+        }
     }
 }
