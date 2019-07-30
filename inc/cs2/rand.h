@@ -44,8 +44,8 @@ CS2_API double cs2_rand_u1f(struct cs2_rand_s *r, double min, double max); /* un
 CS2_API int cs2_rand_1i(struct cs2_rand_s *r); /* uniform rand {0, 1} */
 CS2_API int cs2_rand_u1i(struct cs2_rand_s *r, int min, int max); /* uniform rand {min, ..., max} */
 
-CS2_API void cs2_rand_vec3f_1f(struct cs2_rand_s *r, struct cs2_vec3f_s *v); /* uniform rand vec3f [0; 1] */
-CS2_API void cs2_rand_vec3f_u1f(struct cs2_rand_s *r, struct cs2_vec3f_s *v, double min, double max); /* uniform rand vec3f [min; max] */
+CS2_API void cs2_rand_vec3f_1f(struct cs2_vec3f_s *v, struct cs2_rand_s *r); /* uniform rand vec3f [0; 1] */
+CS2_API void cs2_rand_vec3f_u1f(struct cs2_vec3f_s *v, struct cs2_rand_s *r, double min, double max); /* uniform rand vec3f [min; max] */
 
 CS2_API_END
 

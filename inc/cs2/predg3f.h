@@ -53,6 +53,8 @@ CS2_API void cs2_predg3f_from_predh3f(struct cs2_predg3f_s *g, const struct cs2_
 CS2_API void cs2_predg3f_from_preds3f(struct cs2_predg3f_s *g, const struct cs2_preds3f_s *s);
 CS2_API void cs2_predg3f_pquv(struct cs2_vec3f_s *p, struct cs2_vec3f_s *q, struct cs2_vec3f_s *u, struct cs2_vec3f_s *v, const struct cs2_predg3f_s *g);
 
+CS2_API void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double c, double alpha, double beta);
+
 /* type */
 enum cs2_predgtype3f_e
 {

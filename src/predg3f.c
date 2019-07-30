@@ -958,6 +958,24 @@ void cs2_predg3f_pquv(struct cs2_vec3f_s *p, struct cs2_vec3f_s *q, struct cs2_v
     cs2_vec3f_cross(v, &g->a, &g->b);
 }
 
+void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double c, double alpha, double beta)
+{
+    struct cs2_vec3f_s pxu, vxq;
+    double usl = cs2_vec3f_sqlen(u);
+    double qsl = cs2_vec3f_sqlen(q);
+
+    CS2_ASSERT(!_cs2_almost_zero(usl) && !_cs2_almost_zero(qsl));
+
+    cs2_vec3f_cross(&pxu, p, u);
+    cs2_vec3f_cross(&vxq, v, q);
+
+    cs2_vec3f_mad2(&g->l, u, alpha, &pxu, 1.0 / usl);
+    cs2_vec3f_add(&g->k, &g->l, u);
+    cs2_vec3f_mad2(&g->b, q, beta, &vxq, 1.0 / qsl);
+    cs2_vec3f_add(&g->a, &g->b, q);
+    g->c = c;
+}
+
 const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t)
 {
     switch (t)
