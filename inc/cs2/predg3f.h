@@ -65,9 +65,9 @@ enum cs2_predgtype3f_e
     cs2_predgtype3f_COUNT
 };
 
-CS2_API const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t);
+CS2_API const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e pgt);
 
-CS2_API enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g);
+CS2_API enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *pg);
 
 /**
  * parametrization (17 cases):
@@ -103,13 +103,13 @@ enum cs2_predgparamtype3f_e
     cs2_predgparamtype3f_COUNT
 };
 
-CS2_API const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt);
+CS2_API const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pgpt);
 
-CS2_API int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt);
-CS2_API int cs2_predgparamtype3f_domain_components(enum cs2_predgparamtype3f_e pt);
-CS2_API int cs2_predgparamtype3f_is_manifold(enum cs2_predgparamtype3f_e pt);
-CS2_API int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pt);
-CS2_API int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pt);
+CS2_API int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pgpt);
+CS2_API int cs2_predgparamtype3f_domain_components(enum cs2_predgparamtype3f_e pgpt);
+CS2_API int cs2_predgparamtype3f_is_manifold(enum cs2_predgparamtype3f_e pgpt);
+CS2_API int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pgpt);
+CS2_API int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pgpt);
 
 struct cs2_predgparam3f_s
 {
@@ -127,8 +127,8 @@ struct cs2_predgparam3f_s
     double e[4];
 };
 
-CS2_API void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g);
-CS2_API void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component);
+CS2_API void cs2_predg3f_param(struct cs2_predgparam3f_s *pgp, const struct cs2_predg3f_s *pg);
+CS2_API void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pgp, double u, double v, int domain_component);
 
 CS2_API_END
 

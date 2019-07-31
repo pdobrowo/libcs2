@@ -31,31 +31,31 @@ void cs2_plane3f_set(struct cs2_plane3f_s *p, const struct cs2_vec3f_s *n, doubl
     p->d = d;
 }
 
-void cs2_plane3f_copy(struct cs2_plane3f_s *r, const struct cs2_plane3f_s *p)
+void cs2_plane3f_copy(struct cs2_plane3f_s *p, const struct cs2_plane3f_s *pa)
 {
-    cs2_vec3f_copy(&r->n, &p->n);
-    r->d = p->d;
+    cs2_vec3f_copy(&p->n, &pa->n);
+    p->d = pa->d;
 }
 
-double cs2_plane3f_pops(const struct cs2_plane3f_s *r, const struct cs2_vec3f_s *p)
+double cs2_plane3f_pops(const struct cs2_plane3f_s *p, const struct cs2_vec3f_s *vp)
 {
-    return cs2_vec3f_dot(&r->n, p) + r->d;
+    return cs2_vec3f_dot(&p->n, vp) + p->d;
 }
 
-void cs2_plane3f_print_json(const struct cs2_plane3f_s *r, FILE *f, size_t ind)
+void cs2_plane3f_print_json(const struct cs2_plane3f_s *p, FILE *f, size_t indent)
 {
-    cs2_fmt_indent(ind, f);
+    cs2_fmt_indent(indent, f);
     fprintf(f, "{\n");
 
-    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
+    cs2_fmt_indent(indent + CS2_FMT_DEFAULT_INDENT, f);
     fprintf(f, "\"n\": ");
-    cs2_vec3f_print_json(&r->n, f, 0);
+    cs2_vec3f_print_json(&p->n, f, 0);
 
     fprintf(f, ",\n");
 
-    cs2_fmt_indent(ind + CS2_FMT_DEFAULT_INDENT, f);
-    fprintf(f, "\"d\": %.2f\n", r->d);
+    cs2_fmt_indent(indent + CS2_FMT_DEFAULT_INDENT, f);
+    fprintf(f, "\"d\": %.2f\n", p->d);
 
-    cs2_fmt_indent(ind, f);
+    cs2_fmt_indent(indent, f);
     fprintf(f, "}");
 }

@@ -38,11 +38,11 @@ struct cs2_plane3f_s
     double d;
 };
 
-CS2_API void cs2_plane3f_set(struct cs2_plane3f_s *p, const struct cs2_vec3f_s *n, double d);
-CS2_API void cs2_plane3f_copy(struct cs2_plane3f_s *r, const struct cs2_plane3f_s *p);
-CS2_API double cs2_plane3f_pops(const struct cs2_plane3f_s *r, const struct cs2_vec3f_s *p);
+CS2_API void cs2_plane3f_set(struct cs2_plane3f_s *p, const struct cs2_vec3f_s *vn, double d);
+CS2_API void cs2_plane3f_copy(struct cs2_plane3f_s *p, const struct cs2_plane3f_s *pa);
+CS2_API double cs2_plane3f_pops(const struct cs2_plane3f_s *p, const struct cs2_vec3f_s *vp);
 
-CS2_API void cs2_plane3f_print_json(const struct cs2_plane3f_s *r, FILE *f, size_t ind);
+CS2_API void cs2_plane3f_print_json(const struct cs2_plane3f_s *p, FILE *f, size_t indent);
 
 CS2_API_END
 

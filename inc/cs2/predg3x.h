@@ -59,29 +59,14 @@ enum cs2_predgtype3x_e
 {
     cs2_predgtype3x_improper,
     cs2_predgtype3x_ellipsoidal,
-    cs2_predgtype3x_toroidal
+    cs2_predgtype3x_toroidal,
+
+    cs2_predgtype3x_COUNT
 };
 
-CS2_API const char *cs2_predgtype3x_str(enum cs2_predgtype3x_e t);
+CS2_API const char *cs2_predgtype3x_str(enum cs2_predgtype3x_e pgt);
 
-CS2_API enum cs2_predgtype3x_e cs2_predg3x_type(const struct cs2_predg3x_s *g);
-
-#if 0
-
-/* parametrization */
-struct predgparam3x_s
-{
-    struct mat44f_s q;
-    double r12, r23, r31;
-};
-
-CS2_API void predg3x_param(struct predgparam3x_s *pp, const struct predg3x_s *g);
-CS2_API void predgparam3x_eval(sstruct pin3x_s *s, const struct predgparam3x_s *pp, double u, double v, double sgn);
-
-/* special */
-CS2_API void predg3x_eigen(struct mat44f_s *m, struct vec4f_s *e, const struct predg3x_s *g);
-
-#endif
+CS2_API enum cs2_predgtype3x_e cs2_predg3x_type(const struct cs2_predg3x_s *pg);
 
 CS2_API_END
 

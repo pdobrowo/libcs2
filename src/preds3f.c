@@ -24,18 +24,18 @@
  */
 #include "cs2/preds3f.h"
 
-void cs2_preds3f_set(struct cs2_preds3f_s *s, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
+void cs2_preds3f_set(struct cs2_preds3f_s *ps, const struct cs2_vec3f_s *vk, const struct cs2_vec3f_s *vl, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
-    cs2_vec3f_copy(&s->k, k);
-    cs2_vec3f_copy(&s->l, l);
-    cs2_vec3f_copy(&s->a, a);
-    cs2_vec3f_copy(&s->b, b);
+    cs2_vec3f_copy(&ps->k, vk);
+    cs2_vec3f_copy(&ps->l, vl);
+    cs2_vec3f_copy(&ps->a, va);
+    cs2_vec3f_copy(&ps->b, vb);
 }
 
-void cs2_preds3f_copy(struct cs2_preds3f_s *r, const struct cs2_preds3f_s *s)
+void cs2_preds3f_copy(struct cs2_preds3f_s *ps, const struct cs2_preds3f_s *psa)
 {
-    cs2_vec3f_copy(&r->k, &s->k);
-    cs2_vec3f_copy(&r->l, &s->l);
-    cs2_vec3f_copy(&r->a, &s->a);
-    cs2_vec3f_copy(&r->b, &s->b);
+    cs2_vec3f_copy(&ps->k, &psa->k);
+    cs2_vec3f_copy(&ps->l, &psa->l);
+    cs2_vec3f_copy(&ps->a, &psa->a);
+    cs2_vec3f_copy(&ps->b, &psa->b);
 }

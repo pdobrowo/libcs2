@@ -63,7 +63,7 @@ CS2_API void cs2_spinquad3x_from_predh3x(struct cs2_spinquad3x_s *sq, const stru
 CS2_API void cs2_spinquad3x_from_preds3x(struct cs2_spinquad3x_s *sq, const struct cs2_preds3x_s *ps);
 CS2_API void cs2_spinquad3x_from_predg3x(struct cs2_spinquad3x_s *sq, const struct cs2_predg3x_s *pg);
 
-CS2_API void cs2_spinquad3x_eval(mpz_ptr v, const struct cs2_spinquad3x_s *sq, const struct cs2_pin3x_s *p);
+CS2_API void cs2_spinquad3x_eval(mpz_ptr s, const struct cs2_spinquad3x_s *sq, const struct cs2_pin3x_s *p);
 
 CS2_API_END
 

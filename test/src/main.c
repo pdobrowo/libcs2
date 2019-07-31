@@ -46,7 +46,7 @@ static size_t test_suite_count_test_cases(struct test_suite_s *test_suite)
     return count;
 }
 
-static size_t cm_tests_count()
+static size_t cm_tests_count(void)
 {
     struct test_suite_s *suite = test_suites();
     size_t count = 0;
@@ -87,7 +87,7 @@ static struct CMUnitTest *test_suite_fill_tests_cases(struct test_suite_s *test_
     return cm_tests;
 }
 
-static struct CMUnitTest *cm_tests_alloc()
+static struct CMUnitTest *cm_tests_alloc(void)
 {
     size_t count = cm_tests_count();
     struct CMUnitTest *cm_tests = CS2_MEM_MALLOC_N(struct CMUnitTest, count);

@@ -40,8 +40,8 @@ struct cs2_preds3f_s
     struct cs2_vec3f_s k, l, a, b;
 };
 
-CS2_API void cs2_preds3f_set(struct cs2_preds3f_s *s, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
-CS2_API void cs2_preds3f_copy(struct cs2_preds3f_s *r, const struct cs2_preds3f_s *s);
+CS2_API void cs2_preds3f_set(struct cs2_preds3f_s *ps, const struct cs2_vec3f_s *vk, const struct cs2_vec3f_s *vl, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb);
+CS2_API void cs2_preds3f_copy(struct cs2_preds3f_s *ps, const struct cs2_preds3f_s *psa);
 
 CS2_API_END
 

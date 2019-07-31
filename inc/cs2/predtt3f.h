@@ -60,7 +60,7 @@ struct cs2_predttdecomp3f_s
     struct cs2_preds3f_s s[3][3];
 };
 
-CS2_API void cs2_predtt3f_decomp(struct cs2_predttdecomp3f_s *d, const struct cs2_predtt3f_s *tt);
+CS2_API void cs2_predtt3f_decomp(struct cs2_predttdecomp3f_s *pttd, const struct cs2_predtt3f_s *ptt);
 
 CS2_API_END
 

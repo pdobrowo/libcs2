@@ -31,7 +31,7 @@ CS2_API_BEGIN
 
 struct cs2_mat44f_s
 {
-    double m[4][4];
+    double e[4][4];
 };
 
 CS2_API void cs2_mat44f_zero(struct cs2_mat44f_s *m);

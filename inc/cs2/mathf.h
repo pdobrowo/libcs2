@@ -34,7 +34,7 @@ CS2_API_BEGIN
 #define CS2_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define CS2_MAX(a, b) ((a) < (b) ? (b) : (a))
 
-CS2_API void cs2_sincosf(double x, double *s, double *c);
+CS2_API void cs2_sincosf(double *s, double *c, double x);
 
 CS2_API_END
 

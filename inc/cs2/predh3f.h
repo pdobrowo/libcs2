@@ -42,8 +42,8 @@ struct cs2_predh3f_s
     struct cs2_plane3f_s p;
 };
 
-CS2_API void cs2_predh3f_set(struct cs2_predh3f_s *g, const struct cs2_vec3f_s *b, const struct cs2_plane3f_s *p);
-CS2_API void cs2_predh3f_copy(struct cs2_predh3f_s *r, const struct cs2_predh3f_s *h);
+CS2_API void cs2_predh3f_set(struct cs2_predh3f_s *ph, const struct cs2_vec3f_s *vb, const struct cs2_plane3f_s *pp);
+CS2_API void cs2_predh3f_copy(struct cs2_predh3f_s *ph, const struct cs2_predh3f_s *pha);
 
 CS2_API_END
 
