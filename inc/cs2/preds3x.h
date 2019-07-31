@@ -40,8 +40,8 @@ struct cs2_preds3x_s
     struct cs2_vec3x_s k, l, a, b;
 };
 
-CS2_API void cs2_preds3x_init(struct cs2_preds3x_s *s);
-CS2_API void cs2_preds3x_clear(struct cs2_preds3x_s *s);
+CS2_API void cs2_preds3x_init(struct cs2_preds3x_s *ps);
+CS2_API void cs2_preds3x_clear(struct cs2_preds3x_s *ps);
 
 CS2_API_END
 

@@ -28,97 +28,97 @@
 const struct cs2_pin3f_s CS2_PIN3F_ZERO = { 0.0, 0.0, 0.0, 0.0 };
 const struct cs2_pin3f_s CS2_PIN3F_ONE = { 0.0, 0.0, 0.0, 1.0 };
 
-void cs2_pin3f_set(struct cs2_pin3f_s *r, double p12, double p23, double p31, double p0)
+void cs2_pin3f_set(struct cs2_pin3f_s *p, double p12, double p23, double p31, double p0)
 {
-    r->p12 = p12;
-    r->p23 = p23;
-    r->p31 = p31;
-    r->p0 = p0;
+    p->p12 = p12;
+    p->p23 = p23;
+    p->p31 = p31;
+    p->p0 = p0;
 }
 
-void cs2_pin3f_zero(struct cs2_pin3f_s *r)
+void cs2_pin3f_zero(struct cs2_pin3f_s *p)
 {
-    cs2_pin3f_set(r, 0, 0, 0, 0);
+    cs2_pin3f_set(p, 0, 0, 0, 0);
 }
 
-void cs2_pin3f_add(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, const struct cs2_pin3f_s *b)
+void cs2_pin3f_add(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, const struct cs2_pin3f_s *pb)
 {
-    r->p12 = a->p12 + b->p12;
-    r->p23 = a->p23 + b->p23;
-    r->p31 = a->p31 + b->p31;
-    r->p0 = a->p0 + b->p0;
+    p->p12 = pa->p12 + pb->p12;
+    p->p23 = pa->p23 + pb->p23;
+    p->p31 = pa->p31 + pb->p31;
+    p->p0 = pa->p0 + pb->p0;
 }
 
-void cs2_pin3f_sub(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, const struct cs2_pin3f_s *b)
+void cs2_pin3f_sub(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, const struct cs2_pin3f_s *pb)
 {
-    r->p12 = a->p12 - b->p12;
-    r->p23 = a->p23 - b->p23;
-    r->p31 = a->p31 - b->p31;
-    r->p0 = a->p0 - b->p0;
+    p->p12 = pa->p12 - pb->p12;
+    p->p23 = pa->p23 - pb->p23;
+    p->p31 = pa->p31 - pb->p31;
+    p->p0 = pa->p0 - pb->p0;
 }
 
-void cs2_pin3f_neg(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *v)
+void cs2_pin3f_neg(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa)
 {
-    r->p12 = -v->p12;
-    r->p23 = -v->p23;
-    r->p31 = -v->p31;
-    r->p0 = -v->p0;
+    p->p12 = -pa->p12;
+    p->p23 = -pa->p23;
+    p->p31 = -pa->p31;
+    p->p0 = -pa->p0;
 }
 
-void cs2_pin3f_mul(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as)
+void cs2_pin3f_mul(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, double sa)
 {
-    r->p12 = a->p12 * as;
-    r->p23 = a->p23 * as;
-    r->p31 = a->p31 * as;
-    r->p0 = a->p0 * as;
+    p->p12 = pa->p12 * sa;
+    p->p23 = pa->p23 * sa;
+    p->p31 = pa->p31 * sa;
+    p->p0 = pa->p0 * sa;
 }
 
-void cs2_pin3f_cl(struct cs2_pin3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
+void cs2_pin3f_cl(struct cs2_pin3f_s *p, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
-    r->p12 = a->x * b->y - a->y * b->x;
-    r->p23 = a->y * b->z - a->z * b->y;
-    r->p31 = a->z * b->x - a->x * b->z;
-    r->p0 = a->x * b->x + a->y * b->y + a->z * b->z;
+    p->p12 = va->x * vb->y - va->y * vb->x;
+    p->p23 = va->y * vb->z - va->z * vb->y;
+    p->p31 = va->z * vb->x - va->x * vb->z;
+    p->p0 = va->x * vb->x + va->y * vb->y + va->z * vb->z;
 }
 
-void cs2_pin3f_mad2(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs)
+void cs2_pin3f_mad2(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, double sa, const struct cs2_pin3f_s *pb, double sb)
 {
-    r->p12 = a->p12 * as + b->p12 * bs;
-    r->p23 = a->p23 * as + b->p23 * bs;
-    r->p31 = a->p31 * as + b->p31 * bs;
-    r->p0 = a->p0 * as + b->p0 * bs;
+    p->p12 = pa->p12 * sa + pb->p12 * sb;
+    p->p23 = pa->p23 * sa + pb->p23 * sb;
+    p->p31 = pa->p31 * sa + pb->p31 * sb;
+    p->p0 = pa->p0 * sa + pb->p0 * sb;
 }
 
-void cs2_pin3f_mad3(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs)
+void cs2_pin3f_mad3(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, double sa, const struct cs2_pin3f_s *vb, double sb, const struct cs2_pin3f_s *pc, double sc)
 {
-    r->p12 = a->p12 * as + b->p12 * bs + c->p12 * cs;
-    r->p23 = a->p23 * as + b->p23 * bs + c->p23 * cs;
-    r->p31 = a->p31 * as + b->p31 * bs + c->p31 * cs;
-    r->p0 = a->p0 * as + b->p0 * bs + c->p0 * cs;
+    p->p12 = pa->p12 * sa + vb->p12 * sb + pc->p12 * sc;
+    p->p23 = pa->p23 * sa + vb->p23 * sb + pc->p23 * sc;
+    p->p31 = pa->p31 * sa + vb->p31 * sb + pc->p31 * sc;
+    p->p0 = pa->p0 * sa + vb->p0 * sb + pc->p0 * sc;
 }
 
-void cs2_pin3f_mad4(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs, const struct cs2_pin3f_s *d, double ds)
+void cs2_pin3f_mad4(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, double sa, const struct cs2_pin3f_s *pb, double sb, const struct cs2_pin3f_s *pc, double sc, const struct cs2_pin3f_s *pd, double sd)
 {
-    r->p12 = a->p12 * as + b->p12 * bs + c->p12 * cs + d->p12 * ds;
-    r->p23 = a->p23 * as + b->p23 * bs + c->p23 * cs + d->p23 * ds;
-    r->p31 = a->p31 * as + b->p31 * bs + c->p31 * cs + d->p31 * ds;
-    r->p0 = a->p0 * as + b->p0 * bs + c->p0 * cs + d->p0 * ds;
+    p->p12 = pa->p12 * sa + pb->p12 * sb + pc->p12 * sc + pd->p12 * sd;
+    p->p23 = pa->p23 * sa + pb->p23 * sb + pc->p23 * sc + pd->p23 * sd;
+    p->p31 = pa->p31 * sa + pb->p31 * sb + pc->p31 * sc + pd->p31 * sd;
+    p->p0 = pa->p0 * sa + pb->p0 * sb + pc->p0 * sc + pd->p0 * sd;
 }
 
-void cs2_pin3f_mad5(struct cs2_pin3f_s *r, const struct cs2_pin3f_s *a, double as, const struct cs2_pin3f_s *b, double bs, const struct cs2_pin3f_s *c, double cs, const struct cs2_pin3f_s *d, double ds, const struct cs2_pin3f_s *e, double es)
+void cs2_pin3f_mad5(struct cs2_pin3f_s *p, const struct cs2_pin3f_s *pa, double sa, const struct cs2_pin3f_s *pb, double sb, const struct cs2_pin3f_s *pc, double sc, const struct cs2_pin3f_s *pd, double sd, const struct cs2_pin3f_s *pe, double se)
 {
-    r->p12 = a->p12 * as + b->p12 * bs + c->p12 * cs + d->p12 * ds + e->p12 * es;
-    r->p23 = a->p23 * as + b->p23 * bs + c->p23 * cs + d->p23 * ds + e->p23 * es;
-    r->p31 = a->p31 * as + b->p31 * bs + c->p31 * cs + d->p31 * ds + e->p31 * es;
-    r->p0 = a->p0 * as + b->p0 * bs + c->p0 * cs + d->p0 * ds + e->p0 * es;
+    p->p12 = pa->p12 * sa + pb->p12 * sb + pc->p12 * sc + pd->p12 * sd + pe->p12 * se;
+    p->p23 = pa->p23 * sa + pb->p23 * sb + pc->p23 * sc + pd->p23 * sd + pe->p23 * se;
+    p->p31 = pa->p31 * sa + pb->p31 * sb + pc->p31 * sc + pd->p31 * sd + pe->p31 * se;
+    p->p0 = pa->p0 * sa + pb->p0 * sb + pc->p0 * sc + pd->p0 * sd + pe->p0 * se;
 }
 
-double cs2_pin3f_len(const struct cs2_pin3f_s *v)
+double cs2_pin3f_len(const struct cs2_pin3f_s *p)
 {
-    return sqrt(v->p12 * v->p12 + v->p23 * v->p23 + v->p31 * v->p31 + v->p0 * v->p0);
+    return sqrt(p->p12 * p->p12 + p->p23 * p->p23 + p->p31 * p->p31 + p->p0 * p->p0);
 }
 
-double cs2_pin3f_sqlen(const struct cs2_pin3f_s *v)
+double cs2_pin3f_sqlen(const struct cs2_pin3f_s *p)
 {
-    return v->p12 * v->p12 + v->p23 * v->p23 + v->p31 * v->p31 + v->p0 * v->p0;
+    return p->p12 * p->p12 + p->p23 * p->p23 + p->p31 * p->p31 + p->p0 * p->p0;
 }

@@ -54,10 +54,10 @@ struct cs2_hull4f_s
 CS2_API void cs2_hull4f_init(struct cs2_hull4f_s *h);
 CS2_API void cs2_hull4f_clear(struct cs2_hull4f_s *h);
 
-CS2_API void cs2_hull4f_from_arr(struct cs2_hull4f_s *h, const struct cs2_vec4f_s *v, size_t c);
-CS2_API int cs2_hull4f_inter(const struct cs2_hull4f_s *p, const struct cs2_hull4f_s *q);
+CS2_API void cs2_hull4f_from_arr(struct cs2_hull4f_s *h, const struct cs2_vec4f_s *v, size_t n);
+CS2_API int cs2_hull4f_inter(const struct cs2_hull4f_s *ha, const struct cs2_hull4f_s *hb);
 
-CS2_API void cs2_hull4f_print_json(struct cs2_hull4f_s *h, FILE *f, size_t ind);
+CS2_API void cs2_hull4f_print_json(struct cs2_hull4f_s *h, FILE *f, size_t indent);
 
 CS2_API_END
 

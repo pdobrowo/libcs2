@@ -625,8 +625,8 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_ellipsoids(double *t12, do
     a = u * 2.0 * CS2_PI;
     b = v * CS2_PI;
 
-    cs2_sincosf(a, &sa, &ca);
-    cs2_sincosf(b, &sb, &cb);
+    cs2_sincosf(&sa, &ca, a);
+    cs2_sincosf(&sb, &cb, b);
 
     *t12 = sqrt(r / (pp->a + pp->b)) * sb * ca;
     *t23 = sqrt(r / pp->a) * sb * sa;
@@ -665,7 +665,7 @@ static void _cs2_predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *
     double sgn;
     double x, y, z, d;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
     if (v >= 0.5)
     {
@@ -680,7 +680,7 @@ static void _cs2_predgparam3f_eval_a_y_barrel(double *t12, double *t23, double *
 
     a = u * 2.0 * CS2_PI;
     h = 2.0 * v - 1.0;
-    cs2_sincosf(a, &sa, &ca);
+    cs2_sincosf(&sa, &ca, a);
 
     x = sqrt((pp->b - pp->a + pp->c) / (2.0 * pp->b)) * ca;
     z = sqrt((pp->b - pp->a + pp->c) / (2.0 * (pp->b - pp->a))) * sa;
@@ -700,7 +700,7 @@ static void _cs2_predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *
     double sgn;
     double x, y, z, d;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
     if (v >= 0.5)
     {
@@ -715,7 +715,7 @@ static void _cs2_predgparam3f_eval_a_z_barrel(double *t12, double *t23, double *
 
     a = u * 2.0 * CS2_PI;
     h = 2.0 * v - 1.0;
-    cs2_sincosf(a, &sa, &ca);
+    cs2_sincosf(&sa, &ca, a);
 
     x = sqrt((pp->a - pp->b + pp->c) / (2.0 * pp->a)) * ca;
     y = sqrt((pp->a - pp->b + pp->c) / (2.0 * (pp->a - pp->b))) * sa;
@@ -779,7 +779,7 @@ static void _cs2_predgparam3f_eval_a_pair_of_separate_yz_caps(double *t12, doubl
     }
 
     a = u * 2.0 * CS2_PI;
-    cs2_sincosf(a, &sa, &ca);
+    cs2_sincosf(&sa, &ca, a);
 
     y = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->b)) * ca;
     z = sqrt((pp->a + pp->b - pp->c) / (2.0 * pp->a)) * sa;
@@ -803,13 +803,13 @@ static void _cs2_predgparam3f_eval_a_xy_zw_torus(double *t12, double *t23, doubl
     double beta = v * 2 * CS2_PI;
     double rp, rm, sa, ca, sb, cb;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
     rp = sqrt((pp->a + pp->c) / (2.0 * pp->a));
     rm = sqrt((pp->a - pp->c) / (2.0 * pp->a));
 
-    cs2_sincosf(alpha, &sa, &ca);
-    cs2_sincosf(beta, &sb, &cb);
+    cs2_sincosf(&sa, &ca, alpha);
+    cs2_sincosf(&sb, &cb, beta);
 
     *t12 = rp * ca;
     *t23 = rp * sa;
@@ -825,9 +825,9 @@ static void _cs2_predgparam3f_eval_a_xy_circle(double *t12, double *t23, double 
     double alpha = u * 2 * CS2_PI;
     double sa, ca;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
-    cs2_sincosf(alpha, &sa, &ca);
+    cs2_sincosf(&sa, &ca, alpha);
 
     *t12 = ca;
     *t23 = sa;
@@ -843,9 +843,9 @@ static void _cs2_predgparam3f_eval_a_zw_circle(double *t12, double *t23, double 
     double alpha = u * 2 * CS2_PI;
     double sa, ca;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
-    cs2_sincosf(alpha, &sa, &ca);
+    cs2_sincosf(&sa, &ca, alpha);
 
     *t12 = 0.0;
     *t23 = 0.0;
@@ -859,13 +859,13 @@ static void _cs2_predgparam3f_eval_a_xz_yw_torus(double *t12, double *t23, doubl
     double beta = v * 2 * CS2_PI;
     double rp, rm, sa, ca, sb, cb;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
     rp = sqrt((pp->b + pp->c) / (2.0 * pp->b));
     rm = sqrt((pp->b - pp->c) / (2.0 * pp->b));
 
-    cs2_sincosf(alpha, &sa, &ca);
-    cs2_sincosf(beta, &sb, &cb);
+    cs2_sincosf(&sa, &ca, alpha);
+    cs2_sincosf(&sb, &cb, beta);
 
     *t12 = rp * ca;
     *t23 = rm * cb;
@@ -881,9 +881,9 @@ static void _cs2_predgparam3f_eval_a_xz_circle(double *t12, double *t23, double 
     double alpha = u * 2 * CS2_PI;
     double sa, ca;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
-    cs2_sincosf(alpha, &sa, &ca);
+    cs2_sincosf(&sa, &ca, alpha);
 
     *t12 = ca;
     *t23 = 0.0;
@@ -899,9 +899,9 @@ static void _cs2_predgparam3f_eval_a_yw_circle(double *t12, double *t23, double 
     double alpha = u * 2 * CS2_PI;
     double sa, ca;
 
-    CS2_ASSERT(domain_component == 0);
+    CS2_ASSERT_MSG(domain_component == 0, "invalid component");
 
-    cs2_sincosf(alpha, &sa, &ca);
+    cs2_sincosf(&sa, &ca, alpha);
 
     *t12 = 0.0;
     *t23 = ca;
@@ -964,7 +964,7 @@ void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p
     double usl = cs2_vec3f_sqlen(u);
     double qsl = cs2_vec3f_sqlen(q);
 
-    CS2_ASSERT(!_cs2_almost_zero(usl) && !_cs2_almost_zero(qsl));
+    CS2_ASSERT_MSG(!_cs2_almost_zero(usl) && !_cs2_almost_zero(qsl), "improper pred");
 
     cs2_vec3f_cross(&pxu, p, u);
     cs2_vec3f_cross(&vxq, v, q);
@@ -976,9 +976,9 @@ void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p
     g->c = c;
 }
 
-const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t)
+const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e pgt)
 {
-    switch (t)
+    switch (pgt)
     {
     case cs2_predgtype3f_improper: return "improper";
     case cs2_predgtype3f_ellipsoidal: return "ellipsoidal";
@@ -991,13 +991,13 @@ const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e t)
     return 0;
 }
 
-enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g)
+enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *pg)
 {
     struct cs2_vec3f_s p, q, u, v;
     double a, b;
     int za, zb;
 
-    cs2_predg3f_pquv(&p, &q, &u, &v, g);
+    cs2_predg3f_pquv(&p, &q, &u, &v, pg);
 
     a = cs2_vec3f_len(&p) * cs2_vec3f_len(&q);
     b = cs2_vec3f_len(&u) * cs2_vec3f_len(&v);
@@ -1012,9 +1012,9 @@ enum cs2_predgtype3f_e cs2_predg3f_type(const struct cs2_predg3f_s *g)
         return cs2_predgtype3f_improper;
 }
 
-const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt)
+const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pgpt)
 {
-    switch (pt)
+    switch (pgpt)
     {
     /* common */
     case cs2_predgparamtype3f_an_empty_set: return "an empty set";
@@ -1046,9 +1046,9 @@ const char *cs2_predgparamtype3f_str(enum cs2_predgparamtype3f_e pt)
     return 0;
 }
 
-int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt)
+int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pgpt)
 {
-    switch (pt)
+    switch (pgpt)
     {
     /* common */
     case cs2_predgparamtype3f_an_empty_set: return -1;
@@ -1081,9 +1081,9 @@ int cs2_predgparamtype3f_dim(enum cs2_predgparamtype3f_e pt)
     return -1;
 }
 
-int cs2_predgparamtype3f_domain_components(enum cs2_predgparamtype3f_e pt)
+int cs2_predgparamtype3f_domain_components(enum cs2_predgparamtype3f_e pgpt)
 {
-    switch (pt)
+    switch (pgpt)
     {
     /* common */
     case cs2_predgparamtype3f_an_empty_set: return 0;
@@ -1116,9 +1116,9 @@ int cs2_predgparamtype3f_domain_components(enum cs2_predgparamtype3f_e pt)
     return -1;
 }
 
-int cs2_predgparamtype3f_is_manifold(enum cs2_predgparamtype3f_e pt)
+int cs2_predgparamtype3f_is_manifold(enum cs2_predgparamtype3f_e pgpt)
 {
-    switch (pt)
+    switch (pgpt)
     {
     /* common */
     case cs2_predgparamtype3f_an_empty_set: return 1;
@@ -1151,9 +1151,9 @@ int cs2_predgparamtype3f_is_manifold(enum cs2_predgparamtype3f_e pt)
     return -1;
 }
 
-int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pt)
+int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pgpt)
 {
-    switch (pt)
+    switch (pgpt)
     {
     /* common */
     case cs2_predgparamtype3f_an_empty_set: return 0;
@@ -1186,9 +1186,9 @@ int cs2_predgparamtype3f_has_domain_hole(enum cs2_predgparamtype3f_e pt)
     return -1;
 }
 
-int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pt)
+int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pgpt)
 {
-    switch (pt)
+    switch (pgpt)
     {
     /* common */
     case cs2_predgparamtype3f_an_empty_set: return 1;
@@ -1221,42 +1221,42 @@ int cs2_predgparamtype3f_is_connected(enum cs2_predgparamtype3f_e pt)
     return -1;
 }
 
-void cs2_predg3f_param(struct cs2_predgparam3f_s *pp, const struct cs2_predg3f_s *g)
+void cs2_predg3f_param(struct cs2_predgparam3f_s *pgp, const struct cs2_predg3f_s *pg)
 {
     int za, zb;
 
     /* basic properties */
-    cs2_predg3f_pquv(&pp->p, &pp->q, &pp->u, &pp->v, g);
+    cs2_predg3f_pquv(&pgp->p, &pgp->q, &pgp->u, &pgp->v, pg);
 
-    pp->a = cs2_vec3f_len(&pp->p) * cs2_vec3f_len(&pp->q);
-    pp->b = cs2_vec3f_len(&pp->u) * cs2_vec3f_len(&pp->v);
-    pp->c = g->c;
+    pgp->a = cs2_vec3f_len(&pgp->p) * cs2_vec3f_len(&pgp->q);
+    pgp->b = cs2_vec3f_len(&pgp->u) * cs2_vec3f_len(&pgp->v);
+    pgp->c = pg->c;
 
     /* non-zero characteristics */
-    za = _cs2_almost_zero(pp->a);
-    zb = _cs2_almost_zero(pp->b);
+    za = _cs2_almost_zero(pgp->a);
+    zb = _cs2_almost_zero(pgp->b);
 
     /* parametrization type */
     if (!za && !zb)
-        pp->t = _cs2_ellipsoidal_param_type(pp->a, pp->b, pp->c);
+        pgp->t = _cs2_ellipsoidal_param_type(pgp->a, pgp->b, pgp->c);
     else if (!za || !zb)
-        pp->t = _cs2_toroidal_param_type(pp->a, pp->b, pp->c);
+        pgp->t = _cs2_toroidal_param_type(pgp->a, pgp->b, pgp->c);
     else
-        pp->t = _cs2_improper_param_type();
+        pgp->t = _cs2_improper_param_type();
 
     /* eigen decomposition */
     if (!za || !zb)
-        _cs2_calc_eigen_decomposition(pp, g);
+        _cs2_calc_eigen_decomposition(pgp, pg);
     else
-        _cs2_improper_eigen_decomposition(pp, g);
+        _cs2_improper_eigen_decomposition(pgp, pg);
 }
 
-void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pp, double u, double v, int domain_component)
+void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f_s *pgp, double u, double v, int domain_component)
 {
     double t12, t23, t31, t0;
 
-    CS2_ASSERT(u >= 0.0 && u <= 1.0 && v >= 0.0 && v <= 1.0);
-    CS2_ASSERT(pp->t >= 0 && pp->t < cs2_predgparamtype3f_COUNT);
+    CS2_ASSERT_MSG(u >= 0.0 && u <= 1.0 && v >= 0.0 && v <= 1.0, "param outside domain");
+    CS2_ASSERT_MSG(pgp->t >= 0 && pgp->t < cs2_predgparamtype3f_COUNT, "invalid param type");
 
     static void (* const eval_tab[cs2_predgparamtype3f_COUNT])(double *, double *, double *, double *, const struct cs2_predgparam3f_s *, double, double, int) = {
         /* common */
@@ -1283,13 +1283,13 @@ void cs2_predgparam3f_eval(struct cs2_spin3f_s *s, const struct cs2_predgparam3f
         _cs2_predgparam3f_eval_a_yw_circle
     };
 
-    eval_tab[pp->t](&t12, &t23, &t31, &t0, pp, u, v, domain_component);
+    eval_tab[pgp->t](&t12, &t23, &t31, &t0, pgp, u, v, domain_component);
 
     /* eigenmatrix rotation */
-    s->s12 = pp->ev[0].x * t12 + pp->ev[1].x * t23 + pp->ev[2].x * t31 + pp->ev[3].x * t0;
-    s->s23 = pp->ev[0].y * t12 + pp->ev[1].y * t23 + pp->ev[2].y * t31 + pp->ev[3].y * t0;
-    s->s31 = pp->ev[0].z * t12 + pp->ev[1].z * t23 + pp->ev[2].z * t31 + pp->ev[3].z * t0;
-    s->s0 = pp->ev[0].w * t12 + pp->ev[1].w * t23 + pp->ev[2].w * t31 + pp->ev[3].w * t0;
+    s->s12 = pgp->ev[0].x * t12 + pgp->ev[1].x * t23 + pgp->ev[2].x * t31 + pgp->ev[3].x * t0;
+    s->s23 = pgp->ev[0].y * t12 + pgp->ev[1].y * t23 + pgp->ev[2].y * t31 + pgp->ev[3].y * t0;
+    s->s31 = pgp->ev[0].z * t12 + pgp->ev[1].z * t23 + pgp->ev[2].z * t31 + pgp->ev[3].z * t0;
+    s->s0 = pgp->ev[0].w * t12 + pgp->ev[1].w * t23 + pgp->ev[2].w * t31 + pgp->ev[3].w * t0;
 
     /* debug */
     _cs2_debug_verify_spinor(s);

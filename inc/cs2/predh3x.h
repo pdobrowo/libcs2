@@ -42,8 +42,8 @@ struct cs2_predh3x_s
     struct cs2_plane3x_s p;
 };
 
-CS2_API void cs2_predh3x_init(struct cs2_predh3x_s *h);
-CS2_API void cs2_predh3x_clear(struct cs2_predh3x_s *h);
+CS2_API void cs2_predh3x_init(struct cs2_predh3x_s *ph);
+CS2_API void cs2_predh3x_clear(struct cs2_predh3x_s *ph);
 
 CS2_API_END
 

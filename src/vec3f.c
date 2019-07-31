@@ -27,109 +27,110 @@
 #include "cs2/assert.h"
 #include <math.h>
 
-void cs2_vec3f_set(struct cs2_vec3f_s *r, double x, double y, double z)
+void cs2_vec3f_set(struct cs2_vec3f_s *v, double x, double y, double z)
 {
-    r->x = x;
-    r->y = y;
-    r->z = z;
+    v->x = x;
+    v->y = y;
+    v->z = z;
 }
 
-void cs2_vec3f_zero(struct cs2_vec3f_s *r)
+void cs2_vec3f_zero(struct cs2_vec3f_s *v)
 {
-    cs2_vec3f_set(r, 0, 0, 0);
+    cs2_vec3f_set(v, 0, 0, 0);
 }
 
-double cs2_vec3f_coord(const struct cs2_vec3f_s *r, int k)
+double cs2_vec3f_coord(const struct cs2_vec3f_s *v, int i)
 {
-    switch (k) {
-    case 0: return r->x;
-    case 1: return r->y;
-    case 2: return r->z;
+    switch (i)
+    {
+    case 0: return v->x;
+    case 1: return v->y;
+    case 2: return v->z;
     }
     CS2_PANIC_MSG("invalid coordinate");
     return 0.0;
 }
 
-void cs2_vec3f_copy(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
+void cs2_vec3f_copy(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va)
 {
-    r->x = v->x;
-    r->y = v->y;
-    r->z = v->z;
+    v->x = va->x;
+    v->y = va->y;
+    v->z = va->z;
 }
 
-void cs2_vec3f_add(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
+void cs2_vec3f_add(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
-    r->x = a->x + b->x;
-    r->y = a->y + b->y;
-    r->z = a->z + b->z;
+    v->x = va->x + vb->x;
+    v->y = va->y + vb->y;
+    v->z = va->z + vb->z;
 }
 
-void cs2_vec3f_sub(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
+void cs2_vec3f_sub(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
-    r->x = a->x - b->x;
-    r->y = a->y - b->y;
-    r->z = a->z - b->z;
+    v->x = va->x - vb->x;
+    v->y = va->y - vb->y;
+    v->z = va->z - vb->z;
 }
 
-void cs2_vec3f_neg(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
+void cs2_vec3f_neg(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va)
 {
-    r->x = -v->x;
-    r->y = -v->y;
-    r->z = -v->z;
+    v->x = -va->x;
+    v->y = -va->y;
+    v->z = -va->z;
 }
 
-void cs2_vec3f_mul(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as)
+void cs2_vec3f_mul(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa)
 {
-    r->x = a->x * as;
-    r->y = a->y * as;
-    r->z = a->z * as;
+    v->x = va->x * sa;
+    v->y = va->y * sa;
+    v->z = va->z * sa;
 }
 
-void cs2_vec3f_mad2(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs)
+void cs2_vec3f_mad2(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb)
 {
-    r->x = a->x * as + b->x * bs;
-    r->y = a->y * as + b->y * bs;
-    r->z = a->z * as + b->z * bs;
+    v->x = va->x * sa + vb->x * sb;
+    v->y = va->y * sa + vb->y * sb;
+    v->z = va->z * sa + vb->z * sb;
 }
 
-void cs2_vec3f_mad3(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs)
+void cs2_vec3f_mad3(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb, const struct cs2_vec3f_s *vc, double sc)
 {
-    r->x = a->x * as + b->x * bs + c->x * cs;
-    r->y = a->y * as + b->y * bs + c->y * cs;
-    r->z = a->z * as + b->z * bs + c->z * cs;
+    v->x = va->x * sa + vb->x * sb + vc->x * sc;
+    v->y = va->y * sa + vb->y * sb + vc->y * sc;
+    v->z = va->z * sa + vb->z * sb + vc->z * sc;
 }
 
-void cs2_vec3f_mad4(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs, const struct cs2_vec3f_s *d, double ds)
+void cs2_vec3f_mad4(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb, const struct cs2_vec3f_s *vc, double sc, const struct cs2_vec3f_s *vd, double sd)
 {
-    r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds;
-    r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds;
-    r->z = a->z * as + b->z * bs + c->z * cs + d->z * ds;
+    v->x = va->x * sa + vb->x * sb + vc->x * sc + vd->x * sd;
+    v->y = va->y * sa + vb->y * sb + vc->y * sc + vd->y * sd;
+    v->z = va->z * sa + vb->z * sb + vc->z * sc + vd->z * sd;
 }
 
-void cs2_vec3f_mad5(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs, const struct cs2_vec3f_s *d, double ds, const struct cs2_vec3f_s *e, double es)
+void cs2_vec3f_mad5(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb, const struct cs2_vec3f_s *vc, double sc, const struct cs2_vec3f_s *vd, double sd, const struct cs2_vec3f_s *ve, double se)
 {
-    r->x = a->x * as + b->x * bs + c->x * cs + d->x * ds + e->x * es;
-    r->y = a->y * as + b->y * bs + c->y * cs + d->y * ds + e->y * es;
-    r->z = a->z * as + b->z * bs + c->z * cs + d->z * ds + e->z * es;
+    v->x = va->x * sa + vb->x * sb + vc->x * sc + vd->x * sd + ve->x * se;
+    v->y = va->y * sa + vb->y * sb + vc->y * sc + vd->y * sd + ve->y * se;
+    v->z = va->z * sa + vb->z * sb + vc->z * sc + vd->z * sd + ve->z * se;
 }
 
-double cs2_vec3f_dot(const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
+double cs2_vec3f_dot(const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
-    return a->x * b->x + a->y * b->y + a->z * b->z;
+    return va->x * vb->x + va->y * vb->y + va->z * vb->z;
 }
 
-void cs2_vec3f_cross(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b)
+void cs2_vec3f_cross(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
-    r->x = a->y * b->z - a->z * b->y;
-    r->y = a->z * b->x - a->x * b->z;
-    r->z = a->x * b->y - a->y * b->x;
+    v->x = va->y * vb->z - va->z * vb->y;
+    v->y = va->z * vb->x - va->x * vb->z;
+    v->z = va->x * vb->y - va->y * vb->x;
 }
 
-void cs2_vec3f_unit(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v)
+void cs2_vec3f_unit(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va)
 {
-    double len = cs2_vec3f_len(v);
+    double len = cs2_vec3f_len(va);
     CS2_ASSERT_MSG(len > 0.0, "vector must be non-zero");
-    cs2_vec3f_mul(r, v, 1.0 / len);
+    cs2_vec3f_mul(v, va, 1.0 / len);
 }
 
 double cs2_vec3f_len(const struct cs2_vec3f_s *v)
@@ -147,8 +148,8 @@ double cs2_vec3f_tr(const struct cs2_vec3f_s *v)
     return v->x + v->y + v->z;
 }
 
-void cs2_vec3f_print_json(const struct cs2_vec3f_s *r, FILE *f, size_t ind)
+void cs2_vec3f_print_json(const struct cs2_vec3f_s *v, FILE *f, size_t indent)
 {
-    cs2_fmt_indent(ind, f);
-    fprintf(f, "{ \"x\": %.2f, \"y\": %.2f, \"z\": %.2f }", r->x, r->y, r->z);
+    cs2_fmt_indent(indent, f);
+    fprintf(f, "{ \"x\": %.2f, \"y\": %.2f, \"z\": %.2f }", v->x, v->y, v->z);
 }

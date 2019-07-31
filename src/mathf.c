@@ -27,7 +27,7 @@
 
 #if defined(__linux__)
 
-void cs2_sincosf(double x, double *s, double *c)
+void cs2_sincosf(double *s, double *c, double x)
 {
     sincos(x, s, c);
 }
@@ -36,7 +36,7 @@ void cs2_sincosf(double x, double *s, double *c)
 
 #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 
-void cs2_sincosf(double x, double *s, double *c)
+void cs2_sincosf(double *s, double *c, double x)
 {
     *s = sin(x);
     *c = cos(x);

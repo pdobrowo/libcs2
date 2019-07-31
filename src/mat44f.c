@@ -31,7 +31,7 @@ void cs2_mat44f_zero(struct cs2_mat44f_s *m)
 
     for (i = 0; i < 4; ++i)
         for (j = 0; j < 4; ++j)
-            m->m[i][j] = 0;
+            m->e[i][j] = 0;
 }
 
 void cs2_mat44f_identity(struct cs2_mat44f_s *m)
@@ -40,5 +40,5 @@ void cs2_mat44f_identity(struct cs2_mat44f_s *m)
 
     for (i = 0; i < 4; ++i)
         for (j = 0; j < 4; ++j)
-            m->m[i][j] = (i == j);
+            m->e[i][j] = (i == j);
 }

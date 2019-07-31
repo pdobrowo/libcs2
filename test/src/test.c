@@ -27,7 +27,7 @@
 
 struct test_suite_s *test_suites_registry = 0;
 
-struct test_suite_s *test_suites()
+struct test_suite_s *test_suites(void)
 {
     return test_suites_registry;
 }

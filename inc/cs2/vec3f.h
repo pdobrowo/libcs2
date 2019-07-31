@@ -36,34 +36,34 @@ struct cs2_vec3f_s
     double x, y, z;
 };
 
-CS2_API void cs2_vec3f_set(struct cs2_vec3f_s *r, double x, double y, double z);
-CS2_API void cs2_vec3f_zero(struct cs2_vec3f_s *r);
+CS2_API void cs2_vec3f_set(struct cs2_vec3f_s *v, double x, double y, double z);
+CS2_API void cs2_vec3f_zero(struct cs2_vec3f_s *v);
 
-CS2_API double cs2_vec3f_coord(const struct cs2_vec3f_s *r, int k);
+CS2_API double cs2_vec3f_coord(const struct cs2_vec3f_s *v, int i);
 
-CS2_API void cs2_vec3f_copy(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v);
+CS2_API void cs2_vec3f_copy(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va);
 
-CS2_API void cs2_vec3f_add(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
-CS2_API void cs2_vec3f_sub(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
-CS2_API void cs2_vec3f_neg(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v);
-CS2_API void cs2_vec3f_mul(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as);
+CS2_API void cs2_vec3f_add(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb);
+CS2_API void cs2_vec3f_sub(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb);
+CS2_API void cs2_vec3f_neg(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va);
+CS2_API void cs2_vec3f_mul(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa);
 
-CS2_API void cs2_vec3f_mad2(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs);
-CS2_API void cs2_vec3f_mad3(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs);
-CS2_API void cs2_vec3f_mad4(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs, const struct cs2_vec3f_s *d, double ds);
-CS2_API void cs2_vec3f_mad5(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, double as, const struct cs2_vec3f_s *b, double bs, const struct cs2_vec3f_s *c, double cs, const struct cs2_vec3f_s *d, double ds, const struct cs2_vec3f_s *e, double es);
+CS2_API void cs2_vec3f_mad2(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb);
+CS2_API void cs2_vec3f_mad3(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb, const struct cs2_vec3f_s *vc, double sc);
+CS2_API void cs2_vec3f_mad4(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb, const struct cs2_vec3f_s *vc, double sc, const struct cs2_vec3f_s *vd, double sd);
+CS2_API void cs2_vec3f_mad5(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, double sa, const struct cs2_vec3f_s *vb, double sb, const struct cs2_vec3f_s *vc, double sc, const struct cs2_vec3f_s *vd, double sd, const struct cs2_vec3f_s *ve, double se);
 
-CS2_API double cs2_vec3f_dot(const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
-CS2_API void cs2_vec3f_cross(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b);
+CS2_API double cs2_vec3f_dot(const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb);
+CS2_API void cs2_vec3f_cross(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb);
 
-CS2_API void cs2_vec3f_unit(struct cs2_vec3f_s *r, const struct cs2_vec3f_s *v);
+CS2_API void cs2_vec3f_unit(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va);
 
 CS2_API double cs2_vec3f_len(const struct cs2_vec3f_s *v);
 CS2_API double cs2_vec3f_sqlen(const struct cs2_vec3f_s *v);
 
 CS2_API double cs2_vec3f_tr(const struct cs2_vec3f_s *v);
 
-CS2_API void cs2_vec3f_print_json(const struct cs2_vec3f_s *r, FILE *f, size_t ind);
+CS2_API void cs2_vec3f_print_json(const struct cs2_vec3f_s *v, FILE *f, size_t indent);
 
 CS2_API_END
 

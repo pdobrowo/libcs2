@@ -209,39 +209,39 @@ void cs2_spinquad3x_from_predg3x(struct cs2_spinquad3x_s *sq, const struct cs2_p
     mpz_clear(uzvz);
 }
 
-void cs2_spinquad3x_eval(mpz_ptr v, const struct cs2_spinquad3x_s *sq, const struct cs2_pin3x_s *p)
+void cs2_spinquad3x_eval(mpz_ptr s, const struct cs2_spinquad3x_s *sq, const struct cs2_pin3x_s *p)
 {
     mpz_t t;
     mpz_init(t);
-    mpz_mul(v, p->p12, p->p23);
-    mpz_mul(v, v, sq->a12);
+    mpz_mul(s, p->p12, p->p23);
+    mpz_mul(s, s, sq->a12);
     mpz_mul(t, p->p12, p->p31);
     mpz_mul(t, t, sq->a13);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p12, p->p0);
     mpz_mul(t, t, sq->a14);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p23, p->p31);
     mpz_mul(t, t, sq->a23);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p23, p->p0);
     mpz_mul(t, t, sq->a24);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p31, p->p0);
     mpz_mul(t, t, sq->a34);
-    mpz_add(v, v, t);
-    mpz_mul_2exp(v, v, 1);
+    mpz_add(s, s, t);
+    mpz_mul_2exp(s, s, 1);
     mpz_mul(t, p->p12, p->p12);
     mpz_mul(t, t, sq->a11);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p23, p->p23);
     mpz_mul(t, t, sq->a22);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p31, p->p31);
     mpz_mul(t, t, sq->a33);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_mul(t, p->p0, p->p0);
     mpz_mul(t, t, sq->a44);
-    mpz_add(v, v, t);
+    mpz_add(s, s, t);
     mpz_clear(t);
 }
