@@ -26,16 +26,22 @@
 #define CS2_MAT44F_H
 
 #include "defs.h"
+#include "vec4f.h"
 
 CS2_API_BEGIN
 
 struct cs2_mat44f_s
 {
-    double e[4][4];
+    double e00, e01, e02, e03;
+    double e10, e11, e12, e13;
+    double e20, e21, e22, e23;
+    double e30, e31, e32, e33;
 };
 
 CS2_API void cs2_mat44f_zero(struct cs2_mat44f_s *m);
 CS2_API void cs2_mat44f_identity(struct cs2_mat44f_s *m);
+
+CS2_API void cs2_mat44f_transform(struct cs2_vec4f_s *v, const struct cs2_mat44f_s *ma, const struct cs2_vec4f_s *va);
 
 CS2_API_END
 

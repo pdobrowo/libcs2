@@ -67,6 +67,7 @@ set(cs2_HEADERS
     # floating-point arithmetic
     inc/cs2/vec3f.h
     inc/cs2/vec4f.h
+    inc/cs2/mat33f.h
     inc/cs2/mat44f.h
     inc/cs2/plane3f.h
     inc/cs2/plane4f.h
@@ -113,6 +114,7 @@ set(cs2_SOURCES
     # floating-point arithmetic
     src/vec3f.c
     src/vec4f.c
+    src/mat33f.c
     src/mat44f.c
     src/plane3f.c
     src/plane4f.c

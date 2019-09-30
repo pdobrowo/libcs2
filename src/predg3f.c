@@ -26,6 +26,7 @@
 #include "cs2/vec4f.h"
 #include "cs2/pin3f.h"
 #include "cs2/spinquad3f.h"
+#include "cs2/mat33f.h"
 #include "cs2/mathf.h"
 #include "cs2/assert.h"
 #include <math.h>
@@ -195,6 +196,95 @@ static void _cs2_debug_verify_ellipsoidal_eigenpinor(const struct cs2_pin3f_s *p
                    "failed to check property of scalar in ellipoidal eigen pinor: "
                    "eps=%.12f, len=%.12f, prop=%.12f, p=%.12f e12 + %.12f e23 + %.12f e31 + %.12f",
                    EPS_LEN, len, prop, p->p12, p->p23, p->p31, p->p0);
+}
+
+void _cs2_debug_verify_inverse_pquvc(const struct cs2_spinquad3f_s *sq, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double c)
+{
+    struct cs2_vec3f_s pxq, uxv, r;
+    struct cs2_spinquad3f_s tsq, nsq;
+    double t, pu, qv;
+
+    const double EPS_LEN = 10e-8;
+
+    cs2_vec3f_cross(&pxq, p, q);
+    cs2_vec3f_cross(&uxv, u, v);
+    cs2_vec3f_add(&r, &pxq, &uxv);
+    t = cs2_vec3f_dot(p, q) + cs2_vec3f_dot(u, v);
+    tsq.a11 = 2.0 * (p->z * q->z + u->z * v->z) - t + c;
+    tsq.a12 = 2.0 * (p->x * q->z + u->x * v->z) + r.y;
+    tsq.a13 = 2.0 * (p->z * q->y + u->z * v->y) + r.x;
+    tsq.a14 = r.z;
+    tsq.a22 = 2.0 * (p->x * q->x + u->x * v->x) - t + c;
+    tsq.a23 = 2.0 * (p->y * q->x + u->y * v->x) + r.z;
+    tsq.a24 = r.x;
+    tsq.a33 = 2.0 * (p->y * q->y + u->y * v->y) - t + c;
+    tsq.a34 = r.y;
+    tsq.a44 = t + c;
+    pu = cs2_vec3f_dot(p, u);
+    qv = cs2_vec3f_dot(q, v);
+
+    cs2_spinquad3f_unit(&nsq, sq);
+    cs2_spinquad3f_unit(&tsq, &tsq);
+
+    CS2_ASSERT_MSG(fabs(nsq.a11 - tsq.a11) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a11=%.12f, a11=%.12f",
+                   EPS_LEN, nsq.a11, tsq.a11);
+
+    CS2_ASSERT_MSG(fabs(nsq.a12 - tsq.a12) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a12=%.12f, a12=%.12f",
+                   EPS_LEN, nsq.a12, tsq.a12);
+
+    CS2_ASSERT_MSG(fabs(nsq.a13 - tsq.a13) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a13=%.12f, a13=%.12f",
+                   EPS_LEN, nsq.a13, tsq.a13);
+
+    CS2_ASSERT_MSG(fabs(nsq.a14 - tsq.a14) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a14=%.12f, a14=%.12f",
+                   EPS_LEN, nsq.a14, tsq.a14);
+
+    CS2_ASSERT_MSG(fabs(nsq.a22 - tsq.a22) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a22=%.12f, a22=%.12f",
+                   EPS_LEN, nsq.a22, tsq.a22);
+
+    CS2_ASSERT_MSG(fabs(nsq.a23 - tsq.a23) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a23=%.12f, a23=%.12f",
+                   EPS_LEN, nsq.a23, tsq.a23);
+
+    CS2_ASSERT_MSG(fabs(nsq.a24 - tsq.a24) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a24=%.12f, a24=%.12f",
+                   EPS_LEN, nsq.a24, tsq.a24);
+
+    CS2_ASSERT_MSG(fabs(nsq.a33 - tsq.a33) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a33=%.12f, a33=%.12f",
+                   EPS_LEN, nsq.a33, tsq.a33);
+
+    CS2_ASSERT_MSG(fabs(nsq.a34 - tsq.a34) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a34=%.12f, a34=%.12f",
+                   EPS_LEN, nsq.a34, tsq.a34);
+
+    CS2_ASSERT_MSG(fabs(nsq.a44 - tsq.a44) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, sq_a44=%.12f, a44=%.12f",
+                   EPS_LEN, nsq.a44, tsq.a44);
+
+    CS2_ASSERT_MSG(fabs(pu) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, pu=%.12f",
+                   EPS_LEN, pu);
+
+    CS2_ASSERT_MSG(fabs(qv) < EPS_LEN,
+                   "failed to check solution to inverse spin quadric: "
+                   "eps=%.12f, qv=%.12f",
+                   EPS_LEN, qv);
 }
 
 static void _cs2_calc_ellipsoidal_eigenvector(struct cs2_vec4f_s *w, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double a, double b)
@@ -958,7 +1048,7 @@ void cs2_predg3f_pquv(struct cs2_vec3f_s *p, struct cs2_vec3f_s *q, struct cs2_v
     cs2_vec3f_cross(v, &g->a, &g->b);
 }
 
-void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double c, double alpha, double beta)
+void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *pg, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double c, double alpha, double beta)
 {
     struct cs2_vec3f_s pxu, vxq;
     double usl = cs2_vec3f_sqlen(u);
@@ -969,11 +1059,89 @@ void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p
     cs2_vec3f_cross(&pxu, p, u);
     cs2_vec3f_cross(&vxq, v, q);
 
-    cs2_vec3f_mad2(&g->l, u, alpha, &pxu, 1.0 / usl);
-    cs2_vec3f_add(&g->k, &g->l, u);
-    cs2_vec3f_mad2(&g->b, q, beta, &vxq, 1.0 / qsl);
-    cs2_vec3f_add(&g->a, &g->b, q);
-    g->c = c;
+    cs2_vec3f_mad2(&pg->l, u, alpha, &pxu, 1.0 / usl);
+    cs2_vec3f_add(&pg->k, &pg->l, u);
+    cs2_vec3f_mad2(&pg->b, q, beta, &vxq, 1.0 / qsl);
+    cs2_vec3f_add(&pg->a, &pg->b, q);
+    pg->c = c;
+}
+
+void cs2_predg3f_from_spinquad3f(struct cs2_predg3f_s *pg, const struct cs2_spinquad3f_s *sq, int sign, double alpha, double beta, double mu, double nu)
+{
+    double p1 = sq->a11 - sq->a22 + sq->a33 - sq->a44;
+    double p2 = 2.0 * (sq->a12 + sq->a34);
+    double p3 = 2.0 * (sq->a13 + sq->a24);
+    double p4 = 2.0 * (sq->a14 + sq->a23);
+    double m1 = sq->a11 - sq->a22 - sq->a33 + sq->a44;
+    double m2 = 2.0 * (sq->a12 - sq->a34);
+    double m3 = 2.0 * (sq->a13 - sq->a24);
+    double m4 = 2.0 * (sq->a14 - sq->a23);
+    double t = sq->a11 + sq->a22 - sq->a33 - sq->a44;
+    double c = 0.25 * (sq->a11 + sq->a22 + sq->a33 + sq->a44);
+    struct cs2_vec3f_s g = { m2, p3, m1 };
+    struct cs2_vec3f_s h = { p1, m4, -p2 };
+    struct cs2_vec3f_s j = { p4, -t, m3 };
+    struct cs2_vec3f_s p, q, u, v;
+    struct cs2_mat33f_s m = { -h.x, -h.y, -h.z,
+                              j.x, j.y, j.z,
+                              g.x, g.y, g.z };
+    struct cs2_vec3f_s gxh, hxj, jxg, gwph, ngxh, ngwph, ngwphxngxh;
+    double gxhgxh, hxjhxj, jxgjxg, gg, hh, jj, gh, jg;
+    double g1, g2, gs, w, cond;
+
+    const double COND_EPS = 10e-5;
+
+    cs2_vec3f_cross(&gxh, &g, &h);
+    cs2_vec3f_cross(&hxj, &h, &j);
+    cs2_vec3f_cross(&jxg, &j, &g);
+
+    gg = cs2_vec3f_sqlen(&g);
+    hh = cs2_vec3f_sqlen(&h);
+    jj = cs2_vec3f_sqlen(&j);
+
+    gxhgxh = cs2_vec3f_sqlen(&gxh);
+    hxjhxj = cs2_vec3f_sqlen(&hxj);
+    jxgjxg = cs2_vec3f_sqlen(&jxg);
+
+    gh = cs2_vec3f_dot(&g, &h);
+    jg = cs2_vec3f_dot(&j, &g);
+
+    cond = cs2_vec3f_dot(&gxh, &j);
+
+    CS2_ASSERT(fabs(cond) < COND_EPS);
+
+    gs = (gg + hh + jj) * (gg + hh + jj) - 4.0 * (gxhgxh + hxjhxj + jxgjxg);
+    CS2_ASSERT(gs >= 0.0);
+
+    g1 = -gh * gxhgxh + jg * cs2_vec3f_dot(&jxg, &gxh);
+    CS2_ASSERT(fabs(g1) > 0.0);
+
+    g2 = gg * (gxhgxh + hxjhxj) - hh * (gxhgxh + jxgjxg);
+
+    w = (-g2 + sign * gxhgxh * sqrt(gs)) / (2.0 * g1);
+
+    cs2_vec3f_mad2(&gwph, &g, w, &h, 1.0);
+
+    CS2_ASSERT(cs2_vec3f_sqlen(&gxh) > 0.0);
+    CS2_ASSERT(cs2_vec3f_sqlen(&gwph) > 0.0);
+
+    cs2_vec3f_unit(&ngxh, &gxh);
+    cs2_vec3f_unit(&ngwph, &gwph);
+
+    cs2_vec3f_cross(&ngwphxngxh, &ngwph, &ngxh);
+
+    cs2_vec3f_mul(&p, &ngwph, 1.0 / (2.0 * mu));
+    cs2_vec3f_mul(&u, &ngwphxngxh, 1.0 / (2.0 * nu));
+
+    cs2_mat33f_transform(&q, &m, &ngwph);
+    cs2_vec3f_mul(&q, &q, mu / 2.0);
+
+    cs2_mat33f_transform(&v, &m, &ngwphxngxh);
+    cs2_vec3f_mul(&v, &v, nu / 2.0);
+
+    _cs2_debug_verify_inverse_pquvc(sq, &p, &q, &u, &v, c);
+
+    cs2_predg3f_from_pquvc(pg, &p, &q, &u, &v, c, alpha, beta);
 }
 
 const char *cs2_predgtype3f_str(enum cs2_predgtype3f_e pgt)

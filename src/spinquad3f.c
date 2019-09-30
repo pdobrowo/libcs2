@@ -24,6 +24,8 @@
  */
 #include "cs2/spinquad3f.h"
 #include "cs2/vec3f.h"
+#include "cs2/assert.h"
+#include <math.h>
 
 void cs2_spinquad3f_from_predh3f(struct cs2_spinquad3f_s *sq, const struct cs2_predh3f_s *ph)
 {
@@ -98,4 +100,41 @@ double cs2_spinquad3f_eval(const struct cs2_spinquad3f_s *sq, const struct cs2_s
                 sq->a23 * s->s23 * s->s31 +
                 sq->a24 * s->s23 * s->s0 +
                 sq->a34 * s->s31 * s->s0);
+}
+
+double cs2_spinquad3f_len(const struct cs2_spinquad3f_s *sq)
+{
+    return sqrt(sq->a11 * sq->a11 + sq->a12 * sq->a12 + sq->a13 * sq->a13 + sq->a14 * sq->a14 +
+                sq->a22 * sq->a22 + sq->a23 * sq->a23 + sq->a24 * sq->a24 +
+                sq->a33 * sq->a33 + sq->a34 * sq->a34 +
+                sq->a44 * sq->a44);
+}
+
+double cs2_spinquad3f_sqlen(const struct cs2_spinquad3f_s *sq)
+{
+    return sq->a11 * sq->a11 + sq->a12 * sq->a12 + sq->a13 * sq->a13 + sq->a14 * sq->a14 +
+           sq->a22 * sq->a22 + sq->a23 * sq->a23 + sq->a24 * sq->a24 +
+           sq->a33 * sq->a33 + sq->a34 * sq->a34 +
+           sq->a44 * sq->a44;
+}
+
+void cs2_spinquad3f_mul(struct cs2_spinquad3f_s *sq, const struct cs2_spinquad3f_s *sqa, double sa)
+{
+    sq->a11 = sqa->a11 * sa;
+    sq->a12 = sqa->a12 * sa;
+    sq->a13 = sqa->a13 * sa;
+    sq->a14 = sqa->a14 * sa;
+    sq->a22 = sqa->a22 * sa;
+    sq->a23 = sqa->a23 * sa;
+    sq->a24 = sqa->a24 * sa;
+    sq->a33 = sqa->a33 * sa;
+    sq->a34 = sqa->a34 * sa;
+    sq->a44 = sqa->a44 * sa;
+}
+
+void cs2_spinquad3f_unit(struct cs2_spinquad3f_s *sq, const struct cs2_spinquad3f_s *sqa)
+{
+    double len = cs2_spinquad3f_len(sqa);
+    CS2_ASSERT_MSG(len > 0.0, "vector must be non-zero");
+    cs2_spinquad3f_mul(sq, sqa, 1.0 / len);
 }

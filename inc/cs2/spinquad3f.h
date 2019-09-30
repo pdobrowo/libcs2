@@ -62,6 +62,12 @@ CS2_API void cs2_spinquad3f_from_predg3f(struct cs2_spinquad3f_s *sq, const stru
 
 CS2_API double cs2_spinquad3f_eval(const struct cs2_spinquad3f_s *sq, const struct cs2_spin3f_s *s);
 
+CS2_API double cs2_spinquad3f_len(const struct cs2_spinquad3f_s *sq);
+CS2_API double cs2_spinquad3f_sqlen(const struct cs2_spinquad3f_s *sq);
+
+CS2_API void cs2_spinquad3f_mul(struct cs2_spinquad3f_s *sq, const struct cs2_spinquad3f_s *sqa, double sa);
+CS2_API void cs2_spinquad3f_unit(struct cs2_spinquad3f_s *sq, const struct cs2_spinquad3f_s *sqa);
+
 CS2_API_END
 
 #endif /* CS2_SPINQUAD3F_H */

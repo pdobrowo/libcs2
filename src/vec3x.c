@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/vec3x.h"
+#include "cs2/assert.h"
 
 void cs2_vec3x_init(struct cs2_vec3x_s *v)
 {
@@ -234,6 +235,7 @@ void cs2_vec3x_dot(mpz_ptr s, const struct cs2_vec3x_s *va, const struct cs2_vec
 
 void cs2_vec3x_cross(struct cs2_vec3x_s *v, const struct cs2_vec3x_s *va, const struct cs2_vec3x_s *vb)
 {
+    CS2_ASSERT(va != vb);
     mpz_t t;
     mpz_init(t);
     mpz_mul(v->x, va->y, vb->z);

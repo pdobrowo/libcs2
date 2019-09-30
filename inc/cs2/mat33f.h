@@ -22,32 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/mat44f.h"
-#include "cs2/assert.h"
-#include <stddef.h>
+#ifndef CS2_MAT33F_H
+#define CS2_MAT33F_H
 
-void cs2_mat44f_zero(struct cs2_mat44f_s *m)
-{
-    m->e00 = m->e01 = m->e02 = m->e03 = 0.0;
-    m->e10 = m->e11 = m->e12 = m->e13 = 0.0;
-    m->e20 = m->e21 = m->e22 = m->e23 = 0.0;
-    m->e30 = m->e31 = m->e32 = m->e33 = 0.0;
-}
+#include "defs.h"
+#include "vec3f.h"
 
-void cs2_mat44f_identity(struct cs2_mat44f_s *m)
-{
-    m->e00 = m->e11 = m->e22 = m->e33 = 1.0;
-    m->e01 = m->e02 = m->e03 = 0.0;
-    m->e10 = m->e12 = m->e13 = 0.0;
-    m->e20 = m->e21 = m->e23 = 0.0;
-    m->e30 = m->e31 = m->e32 = 0.0;
-}
+CS2_API_BEGIN
 
-void cs2_mat44f_transform(struct cs2_vec4f_s *v, const struct cs2_mat44f_s *ma, const struct cs2_vec4f_s *va)
+struct cs2_mat33f_s
 {
-    CS2_ASSERT(v != va);
-    v->x = ma->e00 * va->x + ma->e01 * va->y + ma->e02 * va->z + ma->e03 * va->w;
-    v->y = ma->e10 * va->x + ma->e11 * va->y + ma->e12 * va->z + ma->e13 * va->w;
-    v->z = ma->e20 * va->x + ma->e21 * va->y + ma->e22 * va->z + ma->e23 * va->w;
-    v->w = ma->e30 * va->x + ma->e31 * va->y + ma->e32 * va->z + ma->e33 * va->w;
-}
+    double e00, e01, e02;
+    double e10, e11, e12;
+    double e20, e21, e22;
+};
+
+CS2_API void cs2_mat33f_zero(struct cs2_mat33f_s *m);
+CS2_API void cs2_mat33f_identity(struct cs2_mat33f_s *m);
+
+CS2_API void cs2_mat33f_transform(struct cs2_vec3f_s *v, const struct cs2_mat33f_s *ma, const struct cs2_vec3f_s *va);
+
+CS2_API_END
+
+#endif /* CS2_MAT33F_H */

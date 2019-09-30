@@ -121,6 +121,7 @@ double cs2_vec3f_dot(const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 
 void cs2_vec3f_cross(struct cs2_vec3f_s *v, const struct cs2_vec3f_s *va, const struct cs2_vec3f_s *vb)
 {
+    CS2_ASSERT(va != vb);
     v->x = va->y * vb->z - va->z * vb->y;
     v->y = va->z * vb->x - va->x * vb->z;
     v->z = va->x * vb->y - va->y * vb->x;

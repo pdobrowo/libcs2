@@ -46,6 +46,8 @@ struct cs2_predg3f_s
     double c;
 };
 
+struct cs2_spinquad3f_s;
+
 CS2_API void cs2_predg3f_set(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *k, const struct cs2_vec3f_s *l, const struct cs2_vec3f_s *a, const struct cs2_vec3f_s *b, double c);
 CS2_API void cs2_predg3f_copy(struct cs2_predg3f_s *r, const struct cs2_predg3f_s *g);
 
@@ -54,6 +56,7 @@ CS2_API void cs2_predg3f_from_preds3f(struct cs2_predg3f_s *g, const struct cs2_
 CS2_API void cs2_predg3f_pquv(struct cs2_vec3f_s *p, struct cs2_vec3f_s *q, struct cs2_vec3f_s *u, struct cs2_vec3f_s *v, const struct cs2_predg3f_s *g);
 
 CS2_API void cs2_predg3f_from_pquvc(struct cs2_predg3f_s *g, const struct cs2_vec3f_s *p, const struct cs2_vec3f_s *q, const struct cs2_vec3f_s *u, const struct cs2_vec3f_s *v, double c, double alpha, double beta);
+CS2_API void cs2_predg3f_from_spinquad3f(struct cs2_predg3f_s *pg, const struct cs2_spinquad3f_s *sq, int sign, double alpha, double beta, double mu, double nu);
 
 /* type */
 enum cs2_predgtype3f_e
