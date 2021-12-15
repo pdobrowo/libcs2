@@ -117,28 +117,24 @@ RenderView::~RenderView()
 
 void RenderView::mousePressEvent(QMouseEvent *event)
 {
-    QWidget::mousePressEvent(event);
     m_camera->mouseButtonPressed(rect(), event->button(), event->pos());
 }
 
 void RenderView::mouseMoveEvent(QMouseEvent *event)
 {
-    QWidget::mouseMoveEvent(event);
+    setFocus(Qt::MouseFocusReason);
     m_camera->mouseMoved(rect(), event->pos());
 }
 
 void RenderView::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWidget::mouseReleaseEvent(event);
     m_camera->mouseButtonReleased(rect(), event->button(), event->pos());
 }
 
 void RenderView::wheelEvent(QWheelEvent *event)
 {
-    QGLWidget::wheelEvent(event);
-
     // Handle mouse wheel
-    int numDegrees = event->angleDelta().x() / 8;
+    int numDegrees = event->angleDelta().y() / 8;
     int numSteps = numDegrees / 15;
 
     m_camera->mouseWheelMoved(rect(), numSteps);
@@ -412,9 +408,6 @@ void RenderView::keyPressEvent(QKeyEvent *event)
         m_camera->strafeRight(-MOVE_DELTA);
         return;
     }
-
-    // call base member
-    QGLWidget::keyPressEvent(event);
 }
 
 void RenderView::setRenderViewCamera(RenderViewCamera *camera)
