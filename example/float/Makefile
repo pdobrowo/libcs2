@@ -1,3 +1,5 @@
+.PHONY: clean
+
 all: release
 
 debug:
@@ -5,3 +7,6 @@ debug:
 
 release:
 	$(CURDIR)/../../scripts/make_release.sh
+
+clean:
+	$(CURDIR)/../../scripts/make_clean.sh
