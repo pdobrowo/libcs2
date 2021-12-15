@@ -191,9 +191,9 @@ protected:
     virtual void paintGL();
 
 public:
-    explicit RenderView(QWidget* parent = nullptr, const QGLWidget *shareWidget = nullptr, Qt::WindowFlags f = nullptr);
-    explicit RenderView(QGLContext *context, QWidget *parent = nullptr, const QGLWidget *shareWidget = nullptr, Qt::WindowFlags f = nullptr);
-    explicit RenderView(const QGLFormat &format, QWidget *parent = nullptr, const QGLWidget *shareWidget = nullptr, Qt::WindowFlags f = nullptr);
+    explicit RenderView(QWidget* parent = nullptr, const QGLWidget *shareWidget = nullptr);
+    explicit RenderView(QGLContext *context, QWidget *parent = nullptr, const QGLWidget *shareWidget = nullptr);
+    explicit RenderView(const QGLFormat &format, QWidget *parent = nullptr, const QGLWidget *shareWidget = nullptr);
     virtual ~RenderView();
 
     // properties

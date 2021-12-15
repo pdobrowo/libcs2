@@ -109,7 +109,7 @@ void RenderViewArcBallCamera::mouseButtonPressed(const QRect& panelRectangle, Qt
         return;
     }
 
-    if (buttons == Qt::MidButton)
+    if (buttons == Qt::MiddleButton)
     {
         m_dragMiddle = true;
 
@@ -160,7 +160,7 @@ void RenderViewArcBallCamera::mouseButtonReleased(const QRect& panelRectangle, Q
         return;
     }
 
-    if (buttons == Qt::MidButton && m_dragMiddle)
+    if (buttons == Qt::MiddleButton && m_dragMiddle)
     {
         QPoint deltaLocation = QPoint(location.x() - m_dragMiddleBeginLocation.x(),
                                       location.y() - m_dragMiddleBeginLocation.y());

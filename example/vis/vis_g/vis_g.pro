@@ -18,6 +18,7 @@ INCLUDEPATH += ../../../test/inc
 
 LIBS += -lGLEW
 LIBS += -lGLU
+LIBS += -ldl
 
 LIBS += ../../../lib/libcs2_s.a
 

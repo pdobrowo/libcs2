@@ -72,20 +72,20 @@ void applyRotationGL(const QQuaternion &quaternion)
 }
 } // namespace anonymous
 
-RenderView::RenderView(QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
-    : QGLWidget(parent, shareWidget, f)
+RenderView::RenderView(QWidget *parent, const QGLWidget *shareWidget)
+    : QGLWidget(parent, shareWidget)
 {
     ctor();
 }
 
-RenderView::RenderView(QGLContext *context, QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
-    : QGLWidget(context, parent, shareWidget, f)
+RenderView::RenderView(QGLContext *context, QWidget *parent, const QGLWidget *shareWidget)
+    : QGLWidget(context, parent, shareWidget)
 {
     ctor();
 }
 
-RenderView::RenderView(const QGLFormat &format, QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags f)
-    : QGLWidget(format, parent, shareWidget, f)
+RenderView::RenderView(const QGLFormat &format, QWidget *parent, const QGLWidget *shareWidget)
+    : QGLWidget(format, parent, shareWidget)
 {
     ctor();
 }
@@ -93,7 +93,6 @@ RenderView::RenderView(const QGLFormat &format, QWidget *parent, const QGLWidget
 void RenderView::ctor()
 {
     m_nextSuggestedColor = 0;
-    m_viewModeOptions = nullptr;
 
     setMouseTracking(true);
 
@@ -139,7 +138,7 @@ void RenderView::wheelEvent(QWheelEvent *event)
     QGLWidget::wheelEvent(event);
 
     // Handle mouse wheel
-    int numDegrees = event->delta() / 8;
+    int numDegrees = event->angleDelta().x() / 8;
     int numSteps = numDegrees / 15;
 
     m_camera->mouseWheelMoved(rect(), numSteps);
@@ -300,7 +299,7 @@ void RenderView::paintGL()
         renderText(5, 15, m_caption, m_textFont);
 
         QString percent;
-        percent.sprintf("%.0f%%", m_camera->zoom() * 100);
+        percent.asprintf("%.0f%%", m_camera->zoom() * 100);
         renderText(width() - 45, 15, percent, m_textFont);
     }
 }
