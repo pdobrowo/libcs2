@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-PKGNAME=cmocka-1.1.3.tar.xz
+PKGNAME=cmocka-1.1.5.tar.xz
 
 if [ -d include ]; then
     echo "cmocka: already built"
