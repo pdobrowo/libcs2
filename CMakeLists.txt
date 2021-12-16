@@ -168,6 +168,10 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(cs2 dl)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+    target_link_libraries(cs2 execinfo)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+
 message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")
 message("CS2 compiler: ${CMAKE_C_COMPILER_ID}")

@@ -39,6 +39,8 @@ static const char *_cs2_color_assert = CS2_COLOR_LIGHT_PURPLE;
 static const char *_cs2_color_panic = CS2_COLOR_LIGHT_RED;
 static const char *_cs2_color_warn = CS2_COLOR_LIGHT_YELLOW;
 
+#if defined(__linux__)
+
 size_t convert_to_vma(size_t addr)
 {
   Dl_info info;
@@ -48,6 +50,17 @@ size_t convert_to_vma(size_t addr)
 
   return addr-link_map->l_addr;
 }
+
+#endif /* defined(__linux__) */
+
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+
+size_t convert_to_vma(size_t addr)
+{
+  return addr;
+}
+
+#endif /* defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__) */
 
 void dump_stacktrace(int omit) {
     void* frames[128];
