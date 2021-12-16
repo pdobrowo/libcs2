@@ -2,5 +2,5 @@
 mkdir -p .build
 (
     cd .build
-    cmake .. && make clean
+    cmake .. -B=. && make clean
 )

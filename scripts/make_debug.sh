@@ -2,5 +2,5 @@
 mkdir -p .build
 (
     cd .build
-    cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j 2
+    cmake -DCMAKE_BUILD_TYPE=Debug .. -B=. && make -j 2
 )
