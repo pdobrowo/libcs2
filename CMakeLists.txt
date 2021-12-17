@@ -168,9 +168,16 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(cs2 dl)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR
+   ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD" OR
+   ${CMAKE_SYSTEM_NAME} MATCHES "NetBSD" OR
+   ${CMAKE_SYSTEM_NAME} MATCHES "DragonFly")
+    # link: backtrace, backtrace_symbols
     target_link_libraries(cs2 execinfo)
-endif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+endif(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR
+      ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD" OR
+      ${CMAKE_SYSTEM_NAME} MATCHES "NetBSD" OR
+      ${CMAKE_SYSTEM_NAME} MATCHES "DragonFly")
 
 message("CS2 system: ${CMAKE_SYSTEM_NAME}")
 message("CS2 system version: ${CMAKE_SYSTEM_VERSION}")
