@@ -22,38 +22,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "cs2/timer.h"
-#include "cs2/arch.h"
-#include <time.h>
+#ifndef CS2_ASSERT_H
+#define CS2_ASSERT_H
 
-#if defined(CS2_ARCH_LINUX) || defined(CS2_ARCH_BSD) || defined(CS2_ARCH_SOLARIS) || defined(CS2_ARCH_SUNOS)
+/* Linux */
+#if defined(__linux__)
+#  define CS2_ARCH_LINUX
+#endif /* defined(__linux__)*/
 
-uint64_t cs2_timer_sec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec;
-}
+/* FreeBSD */
+#if defined(__FreeBSD__)
+#  define CS2_ARCH_FREEBSD
+#  define CS2_ARCH_BSD
+#endif /* defined(__FreeBSD__) */
 
-uint64_t cs2_timer_msec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-}
+/* OpenBSD */
+#if defined(__OpenBSD__)
+#  define CS2_ARCH_OPENBSD
+#  define CS2_ARCH_BSD
+#endif /* defined(__OpenBSD__) */
 
-uint64_t cs2_timer_usec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000 + (uint64_t)ts.tv_nsec / 1000;
-}
+/* OpenBSD */
+#if defined(__NetBSD__)
+#  define CS2_ARCH_NETBSD
+#  define CS2_ARCH_BSD
+#endif /* defined(__NetBSD__) */
 
-uint64_t cs2_timer_nsec(void)
-{
-    struct timespec ts;
-    (void)clock_gettime(CLOCK_REALTIME, &ts);
-    return (uint64_t)ts.tv_sec * 1000000000 + (uint64_t)ts.tv_nsec;
-}
+/* DragonFly */
+#if defined(__DragonFly__)
+#  define CS2_ARCH_DRAGONFLY
+#  define CS2_ARCH_BSD
+#endif /* defined(__DragonFly__) */
 
-#endif /* defined(CS2_ARCH_LINUX) || defined(CS2_ARCH_BSD) || defined(CS2_ARCH_SOLARIS) || defined(CS2_ARCH_SUNOS) */
+/* Solaris + SunOS */
+#if defined(sun) || defined(__sun)
+#  if defined(__SVR4) || defined(__svr4__)
+#    define CS2_ARCH_SOLARIS
+#  else /* defined(__SVR4) || defined(__svr4__) */
+#    define CS2_ARCH_SUNOS
+#  endif /* defined(__SVR4) || defined(__svr4__) */
+#endif /* defined(sun) || defined(__sun) */
+
+#endif /* CS2_ASSERT_H */

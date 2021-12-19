@@ -23,18 +23,17 @@
  * SOFTWARE.
  */
 #include "cs2/mathf.h"
+#include "cs2/arch.h"
 #include <math.h>
 
-#if defined(__linux__)
+#if defined(CS2_ARCH_LINUX)
 
 void cs2_sincosf(double *s, double *c, double x)
 {
     sincos(x, s, c);
 }
 
-#endif /* defined(__linux__) */
-
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+#else /* defined(CS2_ARCH_LINUX) */
 
 void cs2_sincosf(double *s, double *c, double x)
 {
@@ -42,4 +41,4 @@ void cs2_sincosf(double *s, double *c, double x)
     *c = cos(x);
 }
 
-#endif /* defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__) */
+#endif /* defined(CS2_ARCH_LINUX) */

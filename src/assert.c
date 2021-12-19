@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 #include "cs2/assert.h"
+#include "cs2/arch.h"
 #include "cs2/color.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@ static const char *_cs2_color_assert = CS2_COLOR_LIGHT_PURPLE;
 static const char *_cs2_color_panic = CS2_COLOR_LIGHT_RED;
 static const char *_cs2_color_warn = CS2_COLOR_LIGHT_YELLOW;
 
-#if defined(__linux__)
+#if defined(CS2_ARCH_LINUX)
 
 size_t convert_to_vma(size_t addr)
 {
@@ -51,16 +52,14 @@ size_t convert_to_vma(size_t addr)
   return addr-link_map->l_addr;
 }
 
-#endif /* defined(__linux__) */
-
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+#else /* defined(CS2_ARCH_LINUX) */
 
 size_t convert_to_vma(size_t addr)
 {
   return addr;
 }
 
-#endif /* defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__) */
+#endif /* defined(CS2_ARCH_LINUX) */
 
 void dump_stacktrace(int omit) {
     void* frames[128];

@@ -97,6 +97,7 @@ set(cs2_HEADERS
     inc/cs2/predg3x.h
 
     # other
+    inc/cs2/arch.h
     inc/cs2/defs.h
     inc/cs2/plugin.h
     inc/cs2/timer.h
