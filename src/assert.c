@@ -29,16 +29,20 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
+#if defined(CS2_ARCH_UNIX)
 #include <unistd.h>
 #include <execinfo.h>
 #include <dlfcn.h>
 #include <link.h>
+#endif /* defined(CS2_ARCH_UNIX) */
 
 static const char *_cs2_color_default = CS2_COLOR_DEFAULT;
 static const char *_cs2_color_lib = CS2_COLOR_LIGHT_BLUE;
 static const char *_cs2_color_assert = CS2_COLOR_LIGHT_PURPLE;
 static const char *_cs2_color_panic = CS2_COLOR_LIGHT_RED;
 static const char *_cs2_color_warn = CS2_COLOR_LIGHT_YELLOW;
+
+#if defined(CS2_ARCH_UNIX)
 
 #if defined(CS2_ARCH_LINUX)
 
@@ -103,6 +107,16 @@ void dump_stacktrace(int omit) {
 
     free(symbols);
 }
+
+#endif /* defined(CS2_ARCH_UNIX) */
+
+#if defined(CS2_ARCH_MSYS)
+
+void dump_stacktrace(int omit) {
+    (void)omit;
+}
+
+#endif /* defined(CS2_ARCH_MSYS) */
 
 void cs2_assert(int value, const char *cond, const char *file, int line)
 {

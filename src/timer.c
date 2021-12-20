@@ -24,7 +24,11 @@
  */
 #include "cs2/timer.h"
 #include "cs2/arch.h"
+#include "cs2/assert.h"
 #include <time.h>
+#if defined(CS2_ARCH_MSYS)
+#include <windows.h>
+#endif /* defined(CS2_ARCH_MSYS) */
 
 #if defined(CS2_ARCH_LINUX) || defined(CS2_ARCH_BSD) || defined(CS2_ARCH_SOLARIS) || defined(CS2_ARCH_SUNOS)
 
@@ -57,3 +61,62 @@ uint64_t cs2_timer_nsec(void)
 }
 
 #endif /* defined(CS2_ARCH_LINUX) || defined(CS2_ARCH_BSD) || defined(CS2_ARCH_SOLARIS) || defined(CS2_ARCH_SUNOS) */
+
+#if defined(CS2_ARCH_MSYS)
+
+LARGE_INTEGER _cs2_timer_freq = { 0 };
+
+void _cs_timer_init(void)
+{
+  if (_cs2_timer_freq.QuadPart > 0)
+      return;
+
+  if (!QueryPerformanceFrequency(&_cs2_timer_freq))
+      CS2_PANIC_MSG("failed to get performance counter frequency");
+}
+
+uint64_t cs2_timer_sec(void)
+{
+    LARGE_INTEGER counter = { 0 };
+    _cs_timer_init();
+
+    if (!QueryPerformanceCounter(&counter))
+        CS2_PANIC_MSG("failed to get performance counter value");
+
+    return (uint64_t)(counter.QuadPart / _cs2_timer_freq .QuadPart);
+}
+
+uint64_t cs2_timer_msec(void)
+{
+    LARGE_INTEGER counter = { 0 };
+    _cs_timer_init();
+
+    if (!QueryPerformanceCounter(&counter))
+        CS2_PANIC_MSG("failed to get performance counter value");
+
+    return (uint64_t)(counter.QuadPart * 1000.0 / _cs2_timer_freq .QuadPart);
+}
+
+uint64_t cs2_timer_usec(void)
+{
+    LARGE_INTEGER counter = { 0 };
+    _cs_timer_init();
+
+    if (!QueryPerformanceCounter(&counter))
+        CS2_PANIC_MSG("failed to get performance counter value");
+
+    return (uint64_t)(counter.QuadPart * 1000000.0 / _cs2_timer_freq .QuadPart);
+}
+
+uint64_t cs2_timer_nsec(void)
+{
+    LARGE_INTEGER counter = { 0 };
+    _cs_timer_init();
+
+    if (!QueryPerformanceCounter(&counter))
+        CS2_PANIC_MSG("failed to get performance counter value");
+
+    return (uint64_t)(counter.QuadPart * 1000000000.0 / _cs2_timer_freq .QuadPart);
+}
+
+#endif /* defined(CS2_ARCH_MSYS) */

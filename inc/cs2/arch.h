@@ -22,36 +22,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CS2_ASSERT_H
-#define CS2_ASSERT_H
+#ifndef CS2_ARCH_H
+#define CS2_ARCH_H
 
 /* Linux */
 #if defined(__linux__)
 #  define CS2_ARCH_LINUX
+#  define CS2_ARCH_UNIX
 #endif /* defined(__linux__)*/
 
 /* FreeBSD */
 #if defined(__FreeBSD__)
 #  define CS2_ARCH_FREEBSD
 #  define CS2_ARCH_BSD
+#  define CS2_ARCH_UNIX
 #endif /* defined(__FreeBSD__) */
 
 /* OpenBSD */
 #if defined(__OpenBSD__)
 #  define CS2_ARCH_OPENBSD
 #  define CS2_ARCH_BSD
+#  define CS2_ARCH_UNIX
 #endif /* defined(__OpenBSD__) */
 
 /* OpenBSD */
 #if defined(__NetBSD__)
 #  define CS2_ARCH_NETBSD
 #  define CS2_ARCH_BSD
+#  define CS2_ARCH_UNIX
 #endif /* defined(__NetBSD__) */
 
 /* DragonFly */
 #if defined(__DragonFly__)
 #  define CS2_ARCH_DRAGONFLY
 #  define CS2_ARCH_BSD
+#  define CS2_ARCH_UNIX
 #endif /* defined(__DragonFly__) */
 
 /* Solaris + SunOS */
@@ -61,6 +66,12 @@
 #  else /* defined(__SVR4) || defined(__svr4__) */
 #    define CS2_ARCH_SUNOS
 #  endif /* defined(__SVR4) || defined(__svr4__) */
+#  define CS2_ARCH_UNIX
 #endif /* defined(sun) || defined(__sun) */
 
-#endif /* CS2_ASSERT_H */
+/* MSYS Windows */
+#if defined(__MSYS__) || defined(__MSYS2__)
+#  define CS2_ARCH_MSYS
+#endif /* defined(__MSYS__) || defined(__MSYS2__) */
+
+#endif /* CS2_ARCH_H */
